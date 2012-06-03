@@ -1,0 +1,27 @@
+<classpath>
+  <classpathentry output="target/scala-2.9.2/classes" path="src/main/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/classes" path="src/main/java" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/test-classes" path="src/test/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/test-classes" path="src/test/java" kind="src"></classpathentry>
+  <classpathentry path="org.scala-ide.sdt.launching.SCALA_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.slf4j/slf4j-log4j12/jars/slf4j-log4j12-1.6.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/log4j/log4j/bundles/log4j-1.2.16.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/net.tqft.toolkit/toolkit_2.9.2/jars/toolkit_2.9.2-0.1.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/net.java.dev.jets3t/jets3t/jars/jets3t-0.8.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/commons-httpclient/commons-httpclient/jars/commons-httpclient-3.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/com.jamesmurty.utils/java-xmlbuilder/jars/java-xmlbuilder-0.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/com.google.code.typica/typica/jars/typica-1.7.2.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.apache.httpcomponents/httpclient/jars/httpclient-4.0.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.apache.httpcomponents/httpcore/jars/httpcore-4.0.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/commons-codec/commons-codec/jars/commons-codec-1.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/com.google.guava/guava/jars/guava-r09.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.apache.commons/commons-math/jars/commons-math-2.2.jar" kind="lib"></classpathentry>
+  <classpathentry path="org.scala-ide.sdt.launching.SCALA_COMPILER_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/junit/junit/jars/junit-4.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.scalatest/scalatest_2.9.0/jars/scalatest_2.9.0-1.7.1.jar" kind="lib"></classpathentry>
+  <classpathentry exported="true" path="/omath.bootstrap" kind="src" combineaccessrules="false"></classpathentry>
+  <classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="bin" kind="output"></classpathentry>
+</classpath>
