@@ -24,14 +24,8 @@ trait OwnValueEvaluation extends EvaluationStrategy { es: Kernel =>
 
   abstract override def evaluateOneStep(evaluation: Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
-    findOwnValues(previousStep.current) match {
-      case Some(rules) => {
-        previousStep.updateCurrent(rules(previousStep.current)(previousStep))
-      }
-      case None => previousStep
-    }
+    previousStep.update(findOwnValues(previousStep.current))
   }
-
 }
 
 trait DownValueEvaluation extends EvaluationStrategy { es: Kernel =>
@@ -44,14 +38,8 @@ trait DownValueEvaluation extends EvaluationStrategy { es: Kernel =>
 
   abstract override def evaluateOneStep(evaluation: Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
-    findDownValues(previousStep.current) match {
-      case Some(rules) => {
-        previousStep.updateCurrent(rules(previousStep.current)(previousStep))
-      }
-      case None => previousStep
-    }
+    previousStep.update(findDownValues(previousStep.current))
   }
-
 }
 
 trait CompositeEvaluationStrategy

@@ -1,13 +1,14 @@
 package org.omath
 
-case class PartialBinding(binding: Map[SymbolExpression, Expression], remainingExpressions: Seq[Expression], lastBound: Option[Seq[Expression]])
+case class PartialBinding(binding: Map[SymbolExpression, Expression], remainingExpressions: Seq[Expression], lastBound: Seq[Expression])
 
 trait Pattern {
   def extend(partialBinding: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding]
   def extend(binding: Map[SymbolExpression, Expression])(expressions: Expression*)(implicit evaluation: Evaluation): Iterator[Map[SymbolExpression, Expression]] = {
-    extend(PartialBinding(binding, expressions, None)).collect({
-      case PartialBinding(b, r, _) if r.isEmpty => {
-        //        require(last == expressions)
+    extend(PartialBinding(binding, expressions, Nil)).collect({
+      case PartialBinding(b, Nil, last) => {
+        val last0 = last
+        require(last == expressions)
         b
       }
     })
@@ -30,7 +31,7 @@ object Pattern {
   def compose(patterns: Pattern*): Pattern = {
     case class PairPattern(first: Pattern, second: Pattern) extends Pattern {
       override def extend(a: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding] = {
-        for (b <- first.extend(a); c <- second.extend(b)) yield c
+        for (b <- first.extend(a); c <- second.extend(b)) yield c.copy(lastBound = b.lastBound ++ c.lastBound)
       }
     }
     patterns.reduce(PairPattern(_, _))
@@ -54,7 +55,7 @@ case class RawExpressionPattern(override val expression: RawExpression) extends 
       None
     } else {
       a.remainingExpressions.head match {
-        case h: RawExpression if h == expression => Some(PartialBinding(a.binding, a.remainingExpressions.tail, Some(Seq(h))))
+        case h: RawExpression if h == expression => Some(PartialBinding(a.binding, a.remainingExpressions.tail, Seq(h)))
         case _ => None
       }
     }).iterator
@@ -73,7 +74,7 @@ case object BlankPattern extends ExpressionPattern {
     (if (a.remainingExpressions.isEmpty) {
       None
     } else {
-      Some(a.copy(remainingExpressions = a.remainingExpressions.tail, lastBound = Some(Seq(a.remainingExpressions.head))))
+      Some(a.copy(remainingExpressions = a.remainingExpressions.tail, lastBound = Seq(a.remainingExpressions.head)))
     }).iterator
   }
 }
@@ -89,7 +90,7 @@ case class FullFormExpressionPattern(override val expression: FullFormExpression
           x match {
             case x: FullFormExpression => {
               for (b2 <- headPattern.extend(b1)(x.head); b3 <- argumentPattern.extend(b2)(x.arguments: _*)) yield {
-                PartialBinding(b3, expressions.tail, Some(Seq(x)))
+                PartialBinding(b3, expressions.tail, Seq(x))
               }
             }
             case _ => Nil.iterator

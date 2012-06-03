@@ -15,12 +15,21 @@ trait Kernel extends net.tqft.toolkit.Logging { kernel: EvaluationStrategy =>
       Evaluation(expression :: stack).fixedPoint.current
     }
 
-    def updateCurrent(expression: Expression): Evaluation = Evaluation(expression :: stack.tail)
-    def updateCurrent(iterator: Iterator[Expression]): Evaluation = {
+    private def updateCurrent(expression: Expression): Evaluation = Evaluation(expression :: stack.tail)
+    private def updateCurrent(iterator: Iterator[Expression]): Evaluation = {
       if (iterator.hasNext) {
         updateCurrent(iterator.next)
       } else {
         this
+      }
+    }
+    def update(rules: ReplacementRuleTable):Evaluation = {
+      updateCurrent(rules(current)(this))
+    }
+    def update(rulesOption: Option[ReplacementRuleTable]):Evaluation = {
+      rulesOption match {
+        case  Some(r) => update(r)
+        case None => this
       }
     }
     

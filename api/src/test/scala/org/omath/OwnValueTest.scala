@@ -19,9 +19,14 @@ class OwnValueTest extends FlatSpec with ShouldMatchers {
     }
   }
 
+  object K extends Tungsten with MockKernelState
+
+  "absent OwnValues" should "result in nothing happening" in {
+    val y: SymbolExpression = 'y
+    K.evaluate(y) should equal(y)
+  }
   "own values" should "correctly apply" in {
-    object K extends Tungsten with MockKernelState
-    K.evaluate('x) should equal (IntegerExpression(2))
+    K.evaluate('x) should equal(IntegerExpression(2))
   }
 
 }
