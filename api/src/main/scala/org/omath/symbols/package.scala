@@ -14,4 +14,5 @@ package object symbols {
     }
   }
   val Blank = SystemSymbolExpression("Blank")
+  val List = SystemSymbolExpression("List")
 }

@@ -1,7 +1,7 @@
 package org.omath
 
 trait Expression {
-  def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments)
+  def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this) 
 }
@@ -14,7 +14,9 @@ object Expression {
   implicit def long2IntegerExpression(i: Long): IntegerExpression = i
   implicit def bigint2IntegerExpression(i: BigInt): IntegerExpression = i
   
-  implicit def string2StringExpression(s: String) = StringExpression(s)  
+  implicit def string2StringExpression(s: String): StringExpression = StringExpression(s)  
+  
+  implicit def seq2ListExpression(s: Seq[Expression]): Expression = symbols.List(s:_*)
 }
 
 trait RawExpression extends Expression
@@ -82,7 +84,7 @@ trait RealExpression extends LiteralExpression {
   def toBigDecimal: BigDecimal
 }
 
-case class FullFormExpression(head: Expression, arguments: Seq[Expression]) extends Expression {
+case class FullFormExpression(head: Expression, arguments: List[Expression]) extends Expression {
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = {
     head.bindOption(binding) match {
       case None => {

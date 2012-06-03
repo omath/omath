@@ -23,6 +23,7 @@ object Pattern {
     e match {
       case e: RawExpression => RawExpressionPattern(e)
       case FullFormExpression(symbols.Blank, Nil) => BlankPattern
+      case e @ FullFormExpression(symbols.Blank, (n: SymbolExpression) :: Nil) => NamedPattern(e, n, BlankPattern)
       // TODO a lot more here!
       case e: FullFormExpression => FullFormExpressionPattern(e, expression2Pattern(e.head), compose(e.arguments.map(expression2Pattern): _*))
     }
@@ -63,8 +64,15 @@ case class RawExpressionPattern(override val expression: RawExpression) extends 
 }
 case class NamedPattern(override val expression: FullFormExpression, name: SymbolExpression, inner: Pattern) extends ExpressionPattern {
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
-    // FIXME broken
-    inner.extend(a.copy(binding = a.binding + (name -> symbols.Sequence(a.remainingExpressions: _*))))
+    for (
+      PartialBinding(binding, remaining, last) <- inner.extend(a);
+      lastSequence = symbols.Sequence(last:_*);
+      if (binding.get(name) match {
+        case None => true
+        case Some(e) if e == lastSequence => true
+        case _ => false
+      })
+    ) yield PartialBinding(binding + (name -> lastSequence), remaining, last)
   }
 }
 case object BlankPattern extends ExpressionPattern {
