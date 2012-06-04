@@ -1,5 +1,7 @@
 package org.omath
 
+import patterns.ReplacementRuleTable
+
 trait Evaluation { evaluation =>
   def current: Expression = stack.head
   def stack: List[Expression]

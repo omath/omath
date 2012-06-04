@@ -1,7 +1,6 @@
 package org.omath
 
 package object symbols {
-  val $Aborted = SystemSymbolExpression("$Aborted")
   val Sequence = new SymbolExpression {
     override val name = "Sequence"
     override val context = Context.system

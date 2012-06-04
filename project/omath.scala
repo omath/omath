@@ -17,7 +17,7 @@ object Omath extends Build {
                            base = file("core")) dependsOn(bootstrap)
 
     lazy val parser = Project(id = "omath.parser",
-                           base = file("parser")) dependsOn()
+                           base = file("parser")) dependsOn(api)
 
     lazy val ui = Project(id = "omath.ui",
                            base = file("ui")) dependsOn(kernel, core, parser)
