@@ -2,3 +2,6 @@ target
 project/target
 */target
 */project/target
+
+.cache
+*/.cache
