@@ -21,4 +21,12 @@ class BlankTest extends PatternTest {
     // FIXME:
     pattern.bind(SymbolExpression("h")()).size should equal(1)    
   }
+
+  "BlankSequence" should "match any nonempty sequence" in {
+    val pattern: Pattern = symbols.BlankSequence()
+    pattern.bind(2).size should equal(1)
+//    pattern.bind(2, 2).size should equal(1)
+//    pattern.bind(2, 'x).size should equal(1)
+//    pattern.bind().size should equal(0)
+  }
 }
