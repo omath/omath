@@ -11,7 +11,7 @@ import org.omath.Kernel
 import org.omath.patterns.ReplacementRule
 import org.omath.patterns.ReplacementRuleTable
 
-import org.omath.symbols.{ Blank, List }
+import org.omath.symbols.{ Pattern, Blank, List }
 
 
 @RunWith(classOf[JUnitRunner])
@@ -24,7 +24,7 @@ class DownValueTest extends FlatSpec with ShouldMatchers {
           case "f" => ReplacementRule(SymbolExpression("f")(2), 4)
           case "g" => ReplacementRule(SymbolExpression("g")(Blank()), 6)
           case "h" => ReplacementRule(SymbolExpression("h")(Blank(), Blank()), 8)
-          case "k" => ReplacementRule(SymbolExpression("k")(Blank('x)), List('x, 'x))
+          case "k" => ReplacementRule(SymbolExpression("k")(Pattern('x, Blank())), List('x, 'x))
           case _ => ReplacementRuleTable()
         }
       }

@@ -12,7 +12,17 @@ package object symbols {
       }
     }
   }
-  val Blank = SystemSymbolExpression("Blank")
+  
   val List = SystemSymbolExpression("List")
+  
   val String = SystemSymbolExpression("String")
+  val Symbol = SystemSymbolExpression("Symbol")
+  val Integer = SystemSymbolExpression("Integer")
+  val Real = SystemSymbolExpression("Real")
+
+  
+  val Blank = SystemSymbolExpression("Blank")
+  val BlankSequence = SystemSymbolExpression("BlankSequence")
+  val BlankNullSequence = SystemSymbolExpression("BlankNullSequence")
+  val Pattern = SystemSymbolExpression("Pattern")
 }

@@ -4,26 +4,24 @@ trait Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): Expression
 }
 
+trait ExpressionImplicits extends IntegerExpressionImplicits with SymbolExpressionImplicits {
+  implicit def string2StringExpression(s: String): StringExpression = StringExpression(s)
+  //  implicit def seq2ListExpression(s: Seq[Expression]): Expression = symbols.List(s: _*)
+}
+
+object Bindable extends ExpressionImplicits
+
 trait Expression extends Bindable {
+  def head: Expression
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
 }
-object Expression {
-  import SymbolExpression._
-  implicit def scalaSymbol2Expression(s: Symbol): SymbolExpression = s
+//object Expression extends ExpressionImplicits
 
-  import IntegerExpression._
-  implicit def int2IntegerExpression(i: Int): IntegerExpression = i
-  implicit def long2IntegerExpression(i: Long): IntegerExpression = i
-  implicit def bigint2IntegerExpression(i: BigInt): IntegerExpression = i
-
-  implicit def string2StringExpression(s: String): StringExpression = StringExpression(s)
-
-  implicit def seq2ListExpression(s: Seq[Expression]): Expression = symbols.List(s: _*)
+trait RawExpression extends Expression {
+  override def head: SymbolExpression
 }
-
-trait RawExpression extends Expression
 trait LiteralExpression extends RawExpression {
   override def bindOption(binding: Map[SymbolExpression, Expression]) = None
 }
@@ -31,6 +29,7 @@ trait LiteralExpression extends RawExpression {
 trait SymbolExpression extends RawExpression {
   def context: Context
   def name: String
+  override val head = symbols.Symbol
 
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = {
     binding.get(this)
@@ -38,17 +37,20 @@ trait SymbolExpression extends RawExpression {
 
   override def toString = name
 }
-object SymbolExpression {
+
+protected trait SymbolExpressionImplicits {
   implicit def scalaSymbol2Expression(s: Symbol): SymbolExpression = {
     s.toString.stripPrefix("'").split('`').toList match {
       case name :: Nil => GlobalSymbolExpression(name)
-      case qualifiedName => SymbolExpression_(Context(qualifiedName.init), qualifiedName.last)
+      case qualifiedName => SymbolExpression(qualifiedName.last, Context(qualifiedName.init))
     }
   }
-  def apply(name: String, context: Context = Context.global): SymbolExpression = SymbolExpression_(context, name)
+}
+object SymbolExpression {
+  def apply(name: String, context: Context = Context.global): SymbolExpression = SymbolExpression_(name, context)
   def apply(name: String, context: String*): SymbolExpression = apply(name, Context(context.flatMap(_.split('`'))))
 
-  private case class SymbolExpression_(context: Context, name: String) extends SymbolExpression {
+  private case class SymbolExpression_(name: String, context: Context) extends SymbolExpression {
     try {
       require(name.nonEmpty)
       require(name.head.isLetter || name.head == '$')
@@ -69,6 +71,7 @@ case class SystemSymbolExpression(override val name: String) extends SymbolExpre
 
 case class StringExpression(contents: String) extends LiteralExpression {
   override def toString = "\"" + contents + "\""
+  override val head = symbols.String
 }
 object StringExpression {
   implicit def string2StringExpression(s: String) = StringExpression(s)
@@ -79,30 +82,37 @@ trait IntegerExpression extends LiteralExpression {
   def toLong: Long
   def toBigInt: BigInt
 
+  override val head = symbols.Integer
+
   override def toString = toBigInt.toString
 }
-object IntegerExpression {
+trait IntegerExpressionImplicits {
   implicit def apply(i: Int): IntegerExpression = IntExpression(i)
   implicit def apply(i: Long): IntegerExpression = LongExpression(i)
   implicit def apply(i: BigInt): IntegerExpression = BigIntExpression(i)
-
-  private case class IntExpression(toInt: Int) extends IntegerExpression {
-    def toLong = toInt.toLong
-    def toBigInt = BigInt(toInt)
-  }
-  private case class LongExpression(toLong: Long) extends IntegerExpression {
-    def toInt = toLong.toInt
-    def toBigInt = BigInt(toLong)
-  }
-  private case class BigIntExpression(toBigInt: BigInt) extends IntegerExpression {
-    def toInt = toBigInt.intValue
-    def toLong = toBigInt.longValue
-  }
 }
+
+private case class IntExpression(toInt: Int) extends IntegerExpression {
+  def toLong = toInt.toLong
+  def toBigInt = BigInt(toInt)
+}
+private case class LongExpression(toLong: Long) extends IntegerExpression {
+  def toInt = toLong.toInt
+  def toBigInt = BigInt(toLong)
+}
+private case class BigIntExpression(toBigInt: BigInt) extends IntegerExpression {
+  def toInt = toBigInt.intValue
+  def toLong = toBigInt.longValue
+}
+
+object IntegerExpression extends IntegerExpressionImplicits
+
 trait RealExpression extends LiteralExpression {
   def toFloat: Float
   def toDouble: Double
   def toBigDecimal: BigDecimal
+
+  override val head = symbols.Real
 
   override def toString = toBigDecimal.toString
 }
