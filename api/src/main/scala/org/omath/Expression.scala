@@ -1,6 +1,10 @@
 package org.omath
 
-trait Expression {
+trait Bindable {
+  def bind(binding: Map[SymbolExpression, Expression]): Expression
+}
+
+trait Expression extends Bindable {
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
@@ -42,6 +46,7 @@ object SymbolExpression {
     }
   }
   def apply(name: String, context: Context = Context.global): SymbolExpression = SymbolExpression_(context, name)
+  def apply(name: String, context: String*): SymbolExpression = apply(name, Context(context.flatMap(_.split('`'))))
 
   private case class SymbolExpression_(context: Context, name: String) extends SymbolExpression {
     try {
@@ -52,7 +57,7 @@ object SymbolExpression {
       case e => throw new SymbolFormatException("'" + name + "' is not a valid omath symbol name.")
     }
   }
-  
+
   class SymbolFormatException(message: String) extends Exception(message)
 }
 case class GlobalSymbolExpression(override val name: String) extends SymbolExpression {
