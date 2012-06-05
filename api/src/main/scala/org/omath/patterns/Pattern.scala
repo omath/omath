@@ -1,6 +1,7 @@
 package org.omath.patterns
 
 import org.omath._
+import org.omath.kernel.Evaluation
 
 case class PartialBinding(binding: Map[SymbolExpression, Expression], remainingExpressions: Seq[Expression], lastBound: Seq[Expression])
 

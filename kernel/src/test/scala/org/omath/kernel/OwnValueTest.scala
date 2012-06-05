@@ -2,7 +2,6 @@ package org.omath.kernel
 
 import org.omath.IntegerExpression
 import org.omath.SymbolExpression
-import org.omath.Kernel
 import org.omath.patterns.ReplacementRule
 import org.omath.patterns.ReplacementRuleTable
 

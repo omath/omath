@@ -1,8 +1,7 @@
 package org.omath.patterns
 
-import org.omath.Evaluation
 import org.omath.Expression
-
+import org.omath.kernel.Evaluation
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FlatSpec

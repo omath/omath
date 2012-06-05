@@ -1,9 +1,20 @@
 package org.omath.bootstrap
 
 import org.omath._
+import org.omath.kernel.Kernel
 import java.lang.reflect.Method
 
-case object MethodReflection extends Bindable {
+case object JavaClassBindable extends Bindable {
+  def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[Class[_]] = {
+    val clazz: Class[_] = binding('class) match {
+      case name: StringExpression => Class.forName(name.contents)
+    }
+
+    JavaObjectExpression(clazz)
+  }
+}
+
+case object JavaMethodBindable extends Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[Method] = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
@@ -18,17 +29,7 @@ case object MethodReflection extends Bindable {
   }
 }
 
-case object ClassReflection extends Bindable {
-  def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[Class[_]] = {
-    val clazz: Class[_] = binding('class) match {
-      case name: StringExpression => Class.forName(name.contents)
-    }
-
-    JavaObjectExpression(clazz)
-  }
-}
-
-case object MethodInvocation extends Bindable {
+case object MethodInvocationBindable extends Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[_] = {
     val method = binding('method).asInstanceOf[JavaMethodExpression].contents
     val o = binding('object).asInstanceOf[JavaObjectExpression[_]].contents
@@ -38,7 +39,16 @@ case object MethodInvocation extends Bindable {
   }
 }
 
-case object JavaNew extends Bindable {
+case object StaticMethodInvocationBindable extends Bindable {
+  def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[_] = {
+    val method = binding('method).asInstanceOf[JavaMethodExpression].contents
+    val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
+
+    JavaObjectExpression(method.invoke(null, arguments: _*))
+  }
+}
+
+case object JavaNewBindable extends Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[_] = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
@@ -48,7 +58,20 @@ case object JavaNew extends Bindable {
     }
 
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
+
+    JavaObjectExpression(clazz.getConstructor().newInstance(arguments: _*))
+  }
+}
+
+case class SetDelayedBindable(kernel: Kernel) extends Bindable {
+  def bind(binding: Map[SymbolExpression, Expression]): SymbolExpression = {
+    val lhs = binding('lhs)
+    val rhs = binding('rhs)
+    // FIXME, decide whether this should be a OwnValue, DownValue or SubValue
+    lhs match {
+      case lhs: SymbolExpression => kernel.kernelState.addOwnValues(lhs, lhs :> rhs)
+    }
     
-    JavaObjectExpression(clazz.getConstructor().newInstance(arguments:_*))
+    org.omath.symbols.Null
   }
 }

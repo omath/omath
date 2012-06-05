@@ -13,10 +13,7 @@
   <classpathentry path="/Users/scott/.ivy2/cache/junit/junit/jars/junit-4.8.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/scott/.ivy2/cache/org.scalatest/scalatest_2.10.0-M3/jars/scalatest_2.10.0-M3-1.8-SNAPSHOT.jar" kind="lib"></classpathentry>
   <classpathentry path="/Users/scott/.ivy2/cache/org.scala-lang/scala-actors/jars/scala-actors-2.10.0-M3.jar" kind="lib"></classpathentry>
-  <classpathentry exported="true" path="/omath.kernel" kind="src" combineaccessrules="false"></classpathentry>
-  <classpathentry exported="true" path="/omath.patterns" kind="src" combineaccessrules="false"></classpathentry>
   <classpathentry exported="true" path="/omath.core" kind="src" combineaccessrules="false"></classpathentry>
-  <classpathentry exported="true" path="/omath.parser" kind="src" combineaccessrules="false"></classpathentry>
   <classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"></classpathentry>
   <classpathentry path="bin" kind="output"></classpathentry>
 </classpath>

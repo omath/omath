@@ -18,6 +18,8 @@ trait Expression extends Bindable {
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
+  
+  def :>(bindable: Bindable) = patterns.ReplacementRule(this, bindable)
 }
 
 trait RawExpression extends Expression {

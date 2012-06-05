@@ -1,6 +1,7 @@
 package org.omath.patterns
 
 import org.omath._
+import org.omath.kernel.Evaluation
 
 private case class Blank(head: Option[SymbolExpression]) extends ExpressionPattern {
   override def pure = true
@@ -17,6 +18,7 @@ private case class Blank(head: Option[SymbolExpression]) extends ExpressionPatte
     }).iterator
   }
 }
+
 private case class BlankSequence(head: Option[SymbolExpression]) extends ExpressionPattern {
   override def pure = true
   override val expression = symbols.BlankSequence(head.toSeq: _*)
@@ -32,6 +34,7 @@ private case class BlankSequence(head: Option[SymbolExpression]) extends Express
     }
   }
 }
+
 private case class BlankNullSequence(head: Option[SymbolExpression]) extends ExpressionPattern {
   override def pure = true
   override val expression = symbols.BlankNullSequence(head.toSeq: _*)
