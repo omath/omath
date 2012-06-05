@@ -5,6 +5,8 @@ trait Bindable {
 }
 
 trait ExpressionImplicits extends IntegerExpressionImplicits with SymbolExpressionImplicits {
+  import language.implicitConversions
+  
   implicit def string2StringExpression(s: String): StringExpression = StringExpression(s)
   //  implicit def seq2ListExpression(s: Seq[Expression]): Expression = symbols.List(s: _*)
 }
@@ -17,7 +19,6 @@ trait Expression extends Bindable {
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
 }
-//object Expression extends ExpressionImplicits
 
 trait RawExpression extends Expression {
   override def head: SymbolExpression
@@ -30,6 +31,13 @@ trait SymbolExpression extends RawExpression {
   def context: Context
   def name: String
   override val head = symbols.Symbol
+  override def equals(other: Any) = {
+    other match {
+      case other: SymbolExpression => name == other.name && context == other.context
+      case _ => false
+    }
+  }
+  override def hashCode = (name, context).hashCode
 
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = {
     binding.get(this)
@@ -39,16 +47,18 @@ trait SymbolExpression extends RawExpression {
 }
 
 protected trait SymbolExpressionImplicits {
+  import language.implicitConversions
   implicit def scalaSymbol2Expression(s: Symbol): SymbolExpression = {
     s.toString.stripPrefix("'").split('`').toList match {
-      case name :: Nil => GlobalSymbolExpression(name)
+      case name :: Nil => SymbolExpression(name)
       case qualifiedName => SymbolExpression(qualifiedName.last, Context(qualifiedName.init))
     }
   }
 }
 object SymbolExpression {
   def apply(name: String, context: Context = Context.global): SymbolExpression = SymbolExpression_(name, context)
-  def apply(name: String, context: String*): SymbolExpression = apply(name, Context(context.flatMap(_.split('`'))))
+  def apply(name: String, context: String): SymbolExpression = apply(name, Context(context.split('`')))
+  def apply(name: String, context: Seq[String]): SymbolExpression = apply(name, Context(context.flatMap(_.split('`'))))
 
   private case class SymbolExpression_(name: String, context: Context) extends SymbolExpression {
     try {
@@ -62,18 +72,19 @@ object SymbolExpression {
 
   class SymbolFormatException(message: String) extends Exception(message)
 }
-case class GlobalSymbolExpression(override val name: String) extends SymbolExpression {
-  override val context = Context.global
-}
-case class SystemSymbolExpression(override val name: String) extends SymbolExpression {
-  override val context = Context.system
-}
+//case class GlobalSymbolExpression(override val name: String) extends SymbolExpression {
+//  override val context = Context.global
+//}
+//case class SystemSymbolExpression(override val name: String) extends SymbolExpression {
+//  override val context = Context.system
+//}
 
 case class StringExpression(contents: String) extends LiteralExpression {
   override def toString = "\"" + contents + "\""
   override val head = symbols.String
 }
 object StringExpression {
+  import language.implicitConversions
   implicit def string2StringExpression(s: String) = StringExpression(s)
 }
 
@@ -87,6 +98,7 @@ trait IntegerExpression extends LiteralExpression {
   override def toString = toBigInt.toString
 }
 trait IntegerExpressionImplicits {
+  import language.implicitConversions
   implicit def apply(i: Int): IntegerExpression = IntExpression(i)
   implicit def apply(i: Long): IntegerExpression = LongExpression(i)
   implicit def apply(i: BigInt): IntegerExpression = BigIntExpression(i)

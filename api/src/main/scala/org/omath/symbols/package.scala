@@ -13,16 +13,16 @@ package object symbols {
     }
   }
   
-  val List = SystemSymbolExpression("List")
+  val List = SymbolExpression("List", "System")
   
-  val String = SystemSymbolExpression("String")
-  val Symbol = SystemSymbolExpression("Symbol")
-  val Integer = SystemSymbolExpression("Integer")
-  val Real = SystemSymbolExpression("Real")
+  val String = SymbolExpression("String", "System")
+  val Symbol = SymbolExpression("Symbol", "System")
+  val Integer = SymbolExpression("Integer", "System")
+  val Real = SymbolExpression("Real", "System")
 
   
-  val Blank = SystemSymbolExpression("Blank")
-  val BlankSequence = SystemSymbolExpression("BlankSequence")
-  val BlankNullSequence = SystemSymbolExpression("BlankNullSequence")
-  val Pattern = SystemSymbolExpression("Pattern")
+  val Blank = SymbolExpression("Blank", "System")
+  val BlankSequence = SymbolExpression("BlankSequence", "System")
+  val BlankNullSequence = SymbolExpression("BlankNullSequence", "System")
+  val Pattern = SymbolExpression("Pattern", "System")
 }

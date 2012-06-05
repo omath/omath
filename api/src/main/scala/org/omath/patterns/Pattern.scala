@@ -17,14 +17,15 @@ trait Pattern {
     })
   }
   def bind(expressions: Expression*)(implicit evaluation: Evaluation): Iterator[Map[SymbolExpression, Expression]] = {
-    extend(Map[SymbolExpression, Expression]())(expressions: _*)
+    extend(Map.empty[SymbolExpression, Expression])(expressions: _*)
   }
 }
 
 
 object Pattern {
-  var patternBuilder: Expression => ExpressionPattern = { _ => ??? }
+  var patternBuilder: Expression => ExpressionPattern = { _ => throw new Exception("The patternBuilder field of the Pattern object must be initialized before Expressions can be converted into Patterns. Probably you forgot to mention the PatternBuilder object in the patterns subproject.") }
   
+  import language.implicitConversions
   implicit def expression2Pattern(e: Expression): ExpressionPattern = patternBuilder(e)
 
   def compose(patterns: Pattern*): Pattern = {
@@ -40,6 +41,7 @@ object Pattern {
 
 trait ExpressionPattern extends Pattern {
   def expression: Expression
+  override def toString = expression.toString
 }
 
 

@@ -18,7 +18,6 @@ class BlankTest extends PatternTest {
     val pattern: Pattern = symbols.Blank('h)
     pattern.bind(2).size should equal(0)
     pattern.bind('h).size should equal(0)    
-    // FIXME:
     pattern.bind(SymbolExpression("h")()).size should equal(1)    
   }
 

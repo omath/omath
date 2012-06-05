@@ -10,6 +10,9 @@ object Omath extends Build {
     lazy val kernel = Project(id = "omath.kernel",
                            base = file("kernel")) dependsOn(api)
 
+    lazy val patterns = Project(id = "omath.patterns",
+                           base = file("patterns")) dependsOn(api)
+
     lazy val bootstrap = Project(id = "omath.bootstrap",
                            base = file("bootstrap")) dependsOn(api)
 
@@ -20,7 +23,7 @@ object Omath extends Build {
                            base = file("parser")) dependsOn(api)
 
     lazy val ui = Project(id = "omath.ui",
-                           base = file("ui")) dependsOn(kernel, core, parser)
+                           base = file("ui")) dependsOn(kernel, patterns, core, parser)
 
 
 }

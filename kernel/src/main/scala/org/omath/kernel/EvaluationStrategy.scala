@@ -1,6 +1,7 @@
 package org.omath.kernel
 
 import org.omath._
+import net.tqft.toolkit.Logging
 
 trait TrivialEvaluationStrategy extends EvaluationStrategy { es: Kernel =>
   override def evaluateOneStep(evaluation: Evaluation) = evaluation
@@ -11,7 +12,7 @@ trait OwnValueEvaluation extends EvaluationStrategy { es: Kernel =>
     expression match {
       case symbol: SymbolExpression => Some({
         val ownValues = kernelState.ownValues(symbol)
-        info("Found OwnValues for " + symbol + ": " + ownValues)
+        Logging.info("Found OwnValues for " + symbol + ": " + ownValues)
         ownValues
       })
       case _ => {

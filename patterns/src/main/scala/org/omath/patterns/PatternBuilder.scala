@@ -21,14 +21,14 @@ object PatternBuilder {
   }
 }
 
-case class AlternativePattern(alternatives: Pattern*) extends Pattern {
+private case class AlternativePattern(alternatives: Pattern*) extends Pattern {
   override lazy val pure = alternatives.foldLeft(true)(_ && _.pure)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding] = {
     for (x <- alternatives.iterator; b <- x.extend(a)) yield b
   }
 }
 
-case class RawExpressionPattern(override val expression: RawExpression) extends ExpressionPattern {
+private case class RawExpressionPattern(override val expression: RawExpression) extends ExpressionPattern {
   override def pure = true
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     // TODO clean this up once there's a proper Seq extractor
@@ -42,7 +42,7 @@ case class RawExpressionPattern(override val expression: RawExpression) extends 
     }).iterator
   }
 }
-case class NamedPattern(override val expression: FullFormExpression, name: SymbolExpression, inner: Pattern) extends ExpressionPattern {
+private case class NamedPattern(override val expression: FullFormExpression, name: SymbolExpression, inner: Pattern) extends ExpressionPattern {
   override def pure = inner.pure
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     for (
@@ -56,45 +56,7 @@ case class NamedPattern(override val expression: FullFormExpression, name: Symbo
     ) yield PartialBinding(binding + (name -> lastSequence), remaining, last)
   }
 }
-case class Blank(head: Option[SymbolExpression]) extends ExpressionPattern {
-  override def pure = true
-  override val expression = symbols.Blank(head.toSeq: _*)
-  override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
-    // TODO once there's head/tail extractor for Seq, clean this up.
-    (if (a.remainingExpressions.isEmpty || (head.nonEmpty && a.remainingExpressions.head.head != head.get)) {
-      None
-    } else {
-      Some(a.copy(remainingExpressions = a.remainingExpressions.tail, lastBound = Seq(a.remainingExpressions.head)))
-    }).iterator
-  }
-}
-case class BlankSequence(head: Option[SymbolExpression]) extends ExpressionPattern {
-  override def pure = true
-  override val expression = symbols.BlankSequence(head.toSeq: _*)
-  override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
-    if (a.remainingExpressions.isEmpty || (head.nonEmpty && a.remainingExpressions.head.head != head.get)) {
-      Iterator.empty
-    } else {
-      val range = head match {
-        case None => (1 until a.remainingExpressions.size).iterator
-        case Some(h) => (1 until a.remainingExpressions.size).iterator.takeWhile(i => a.remainingExpressions(i).head == h)
-      }
-      for (i <- range) yield PartialBinding(a.binding, a.remainingExpressions.drop(i), a.remainingExpressions.take(i))
-    }
-  }
-}
-case class BlankNullSequence(head: Option[SymbolExpression]) extends ExpressionPattern {
-  override def pure = true
-  override val expression = symbols.BlankNullSequence(head.toSeq: _*)
-  override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
-    val range = head match {
-      case None => (0 until a.remainingExpressions.size).iterator
-      case Some(h) => (0 until a.remainingExpressions.size).iterator.takeWhile(i => a.remainingExpressions(i).head == h)
-    }
-    for (i <- range) yield PartialBinding(a.binding, a.remainingExpressions.drop(i), a.remainingExpressions.take(i))
-  }
-}
-case class FullFormExpressionPattern(override val expression: FullFormExpression, headPattern: Pattern, argumentPattern: Pattern) extends ExpressionPattern {
+private case class FullFormExpressionPattern(override val expression: FullFormExpression, headPattern: Pattern, argumentPattern: Pattern) extends ExpressionPattern {
   override lazy val pure = headPattern.pure && argumentPattern.pure
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     a match {

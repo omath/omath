@@ -13,6 +13,7 @@ case class ReplacementRuleTable(table: ReplacementRule*) extends Replacement {
   }
 }
 object ReplacementRuleTable {
+  import language.implicitConversions
   implicit def singletonTable(rule: ReplacementRule) = ReplacementRuleTable(rule)
 }
 

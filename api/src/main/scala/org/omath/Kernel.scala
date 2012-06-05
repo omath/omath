@@ -1,6 +1,6 @@
 package org.omath
 
-import patterns.ReplacementRuleTable
+import org.omath.patterns.ReplacementRuleTable
 
 trait Evaluation { evaluation =>
   def current: Expression = stack.head
@@ -8,7 +8,7 @@ trait Evaluation { evaluation =>
   def evaluate(expression: Expression): Expression
 }
 
-trait Kernel extends net.tqft.toolkit.Logging { kernel: EvaluationStrategy =>
+trait Kernel { kernel: EvaluationStrategy =>
   def kernelState: KernelState
   def evaluate(expression: Expression): Expression = Evaluation(Nil).evaluate(expression)
 
@@ -25,19 +25,24 @@ trait Kernel extends net.tqft.toolkit.Logging { kernel: EvaluationStrategy =>
         this
       }
     }
-    def update(rules: ReplacementRuleTable):Evaluation = {
+    def update(rules: ReplacementRuleTable): Evaluation = {
       updateCurrent(rules(current)(this))
     }
-    def update(rulesOption: Option[ReplacementRuleTable]):Evaluation = {
+    def update(rulesOption: Option[ReplacementRuleTable]): Evaluation = {
       rulesOption match {
-        case  Some(r) => update(r)
+        case Some(r) => update(r)
         case None => this
       }
     }
-    
+
     private def fixedPoint: Evaluation = {
-      import net.tqft.toolkit.functions.FixedPoint._
-      (kernel.evaluateOneStep _).fixedPoint(this)
+      var a = this
+      var b = kernel.evaluateOneStep(this)
+      while (a != b) {
+        a = b
+        b = kernel.evaluateOneStep(a)
+      }
+      b
     }
   }
 }
