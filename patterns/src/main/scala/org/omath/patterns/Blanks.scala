@@ -6,11 +6,14 @@ private case class Blank(head: Option[SymbolExpression]) extends ExpressionPatte
   override def pure = true
   override val expression = symbols.Blank(head.toSeq: _*)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
-    // TODO once there's head/tail extractor for Seq, clean this up.
-    (if (a.remainingExpressions.isEmpty || (head.nonEmpty && a.remainingExpressions.head.head != head.get)) {
-      None
-    } else {
-      Some(a.copy(remainingExpressions = a.remainingExpressions.tail, lastBound = Seq(a.remainingExpressions.head)))
+    (a.remainingExpressions match {
+      case h +: t => {
+        head match {
+          case Some(s) if h.head != s => None
+          case _ => Some(PartialBinding(a.binding, a.remainingExpressions.tail, Seq(a.remainingExpressions.head)))
+        }
+      }
+      case _ => None
     }).iterator
   }
 }

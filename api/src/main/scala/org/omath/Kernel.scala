@@ -28,11 +28,8 @@ trait Kernel { kernel: EvaluationStrategy =>
     def update(rules: ReplacementRuleTable): Evaluation = {
       updateCurrent(rules(current)(this))
     }
-    def update(rulesOption: Option[ReplacementRuleTable]): Evaluation = {
-      rulesOption match {
-        case Some(r) => update(r)
-        case None => this
-      }
+    def update(rules: Traversable[ReplacementRuleTable]): Evaluation = {
+      rules.headOption.map(update).getOrElse(this)
     }
 
     private def fixedPoint: Evaluation = {
