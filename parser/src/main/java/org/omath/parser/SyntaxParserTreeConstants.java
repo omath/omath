@@ -2,7 +2,7 @@
 
 package org.omath.parser;
 
-public interface SyntaxParserTreeConstants
+ interface SyntaxParserTreeConstants
 {
   public int JJTSTART = 0;
   public int JJTVOID = 1;

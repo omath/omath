@@ -6,7 +6,7 @@ package org.omath.parser;
  * contain only ASCII characters (without unicode processing).
  */
 
-public class SimpleCharStream
+ class SimpleCharStream
 {
   public static final boolean staticFlag = false;
   int bufsize;

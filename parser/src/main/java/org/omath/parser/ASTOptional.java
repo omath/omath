@@ -3,7 +3,7 @@
 package org.omath.parser;
 
 
-public class ASTOptional extends FullFormNode {
+ class ASTOptional extends FullFormNode {
   
 	private boolean reachedSingleChild = false;
 	public ASTOptional(int id) {

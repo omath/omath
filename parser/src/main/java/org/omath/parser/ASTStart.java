@@ -2,7 +2,7 @@
 
 package org.omath.parser;
 
-public class ASTStart extends FullFormNode {
+ class ASTStart extends FullFormNode {
   public ASTStart(int id) {
     super(id);
   }

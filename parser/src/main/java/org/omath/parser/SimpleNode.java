@@ -4,7 +4,7 @@ package org.omath.parser;
 
 import java.util.List;
 
-public class SimpleNode implements Node {
+ class SimpleNode implements Node {
   protected Node parent;
   protected Node[] children;
   protected int id;

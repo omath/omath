@@ -128,6 +128,9 @@ trait RealExpression extends LiteralExpression {
 
   override def toString = toBigDecimal.toString
 }
+private case class BigDecimalExpression(toBigDecimal: BigDecimal) extends RealExpression {
+  def toFloat = toBigDecimal.toFloat
+}
 
 // TODO maybe this should just be a trait with an extractor on the companion object
 case class FullFormExpression(head: Expression, arguments: List[Expression]) extends Expression {

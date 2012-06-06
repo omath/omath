@@ -10,7 +10,7 @@ package org.omath.parser;
  * You can modify this class to customize your error reporting
  * mechanisms so long as you retain the public fields.
  */
-public class ParseException extends Exception {
+ class ParseException extends Exception {
 
   /**
    * This constructor is used by the method "generateParseException"

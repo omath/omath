@@ -9,7 +9,7 @@ import java.util.List;
 
 //import net.tqft.iterables.Iterables;
 
-public class FullFormNode implements Node {
+ class FullFormNode implements Node {
   
 	protected Node parent;
 	protected List<Node> children;

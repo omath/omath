@@ -2,7 +2,7 @@
 
 package org.omath.parser;
 
-public class ASTPlusTerm extends FullFormNode {
+ class ASTPlusTerm extends FullFormNode {
   public ASTPlusTerm(int id) {
     super(id);
     setHead("Times");

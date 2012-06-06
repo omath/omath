@@ -7,7 +7,7 @@ import org.omath.parser.ParseException;
 import org.omath.parser.Node;
 import org.omath.parser.TokenMgrError;
 
-public class SyntaxParserImpl/*@bgen(jjtree)*/implements SyntaxParserTreeConstants, SyntaxParserConstants {/*@bgen(jjtree)*/
+class SyntaxParserImpl/*@bgen(jjtree)*/implements SyntaxParserTreeConstants, SyntaxParserConstants {/*@bgen(jjtree)*/
   protected JJTSyntaxParserState jjtree = new JJTSyntaxParserState();
         public static Node parseSyntaxString(String input)
                         throws org.omath.parser.ParseException {

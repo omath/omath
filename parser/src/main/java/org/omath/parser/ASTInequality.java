@@ -2,7 +2,7 @@
 
 package org.omath.parser;
 
-public class ASTInequality extends InequalityNode {
+ class ASTInequality extends InequalityNode {
   public ASTInequality(int id) {
     super(id);
   }

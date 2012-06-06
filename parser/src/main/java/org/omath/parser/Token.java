@@ -5,7 +5,7 @@ package org.omath.parser;
  * Describes the input token stream.
  */
 
-public class Token {
+ class Token {
 
   /**
    * An integer that describes the kind of this token.  This numbering

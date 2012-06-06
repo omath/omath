@@ -23,7 +23,7 @@
 
 package org.omath.parser;
 
-public class ASTMyID extends RawNode {
+ class ASTMyID extends RawNode {
 
   ASTMyID(int id){
     super(id);

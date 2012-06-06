@@ -23,7 +23,7 @@
 
 package org.omath.parser;
 
-public class RawNode extends FullFormNode {
+ class RawNode extends FullFormNode {
 
   private String value;
   private String headString;

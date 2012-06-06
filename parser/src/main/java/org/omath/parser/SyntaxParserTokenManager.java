@@ -6,7 +6,7 @@ import org.omath.parser.Node;
 import org.omath.parser.SyntaxParserImpl;
 import org.omath.parser.TokenMgrError;
 
-public class SyntaxParserTokenManager implements SyntaxParserConstants
+ class SyntaxParserTokenManager implements SyntaxParserConstants
 {
     int commentNestingDepth ;
   public  java.io.PrintStream debugStream = System.out;

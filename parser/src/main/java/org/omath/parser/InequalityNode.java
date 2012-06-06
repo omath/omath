@@ -6,7 +6,7 @@ package org.omath.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InequalityNode extends FullFormNode {
+ class InequalityNode extends FullFormNode {
 
 	public InequalityNode(SyntaxParserImpl p, int id) {
 	  super(p, id);
