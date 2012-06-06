@@ -9,39 +9,39 @@ object Omath extends Build {
                             base = file("."),
 			    settings = buildSettings) aggregate(api, tungsten, bootstrap, core, parser, ui)
 
-    lazy val api = Project(id = "omath.api",
+    lazy val api = Project(id = "omath-api",
                            base = file("api"),
                             settings = buildSettings) dependsOn()
 
-    lazy val patterns = Project(id = "omath.patterns",
+    lazy val patterns = Project(id = "omath-patterns",
                            base = file("patterns"),
                             settings = buildSettings) dependsOn(api)
 
-    lazy val tungsten = Project(id = "omath.tungsten",
+    lazy val tungsten = Project(id = "omath-tungsten",
                            base = file("tungsten"),
                             settings = buildSettings ++ Seq(libraryDependencies += toolkit.base)) dependsOn(patterns)
 
-    lazy val bootstrap = Project(id = "omath.bootstrap",
+    lazy val bootstrap = Project(id = "omath-bootstrap",
                            base = file("bootstrap"),
                             settings = buildSettings) dependsOn(api)
 
-    lazy val tungstenBootstrap = Project(id = "omath.tungsten+bootstrap",
+    lazy val tungstenBootstrap = Project(id = "omath-tungsten+bootstrap",
                            base = file("tungsten+bootstrap"),
                             settings = buildSettings) dependsOn(tungsten, bootstrap)
 
-    lazy val parser = Project(id = "omath.parser",
+    lazy val parser = Project(id = "omath-parser",
                            base = file("parser"),
                             settings = buildSettings) dependsOn(api)
 
-    lazy val core = Project(id = "omath.core",
+    lazy val core = Project(id = "omath-core",
                            base = file("core"),
                             settings = buildSettings) dependsOn(bootstrap, parser)
 
-    lazy val tungstenCore = Project(id = "omath.tungsten+core",
+    lazy val tungstenCore = Project(id = "omath-tungsten+core",
                            base = file("tungsten+core"),
                             settings = buildSettings) dependsOn(tungstenBootstrap, core)
 
-    lazy val ui = Project(id = "omath.ui",
+    lazy val ui = Project(id = "omath-ui",
                            base = file("ui"),
                             settings = buildSettings) dependsOn(tungstenCore)
 
