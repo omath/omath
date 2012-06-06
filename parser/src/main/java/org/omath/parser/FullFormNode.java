@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.tqft.iterables.Iterables;
+//import net.tqft.iterables.Iterables;
 
 public class FullFormNode implements Node {
   
@@ -180,7 +180,7 @@ public String toString() {
 	if(getChildren().size()>0)
 		string.append(jjtGetChild(0).toString());
 
-	for (Node child:Iterables.rest(children)){
+	for (Node child:children.subList(1, children.size())){
 			string.append(betweenChildren());
 			if (child != null) {
 				string.append(child.toString());
