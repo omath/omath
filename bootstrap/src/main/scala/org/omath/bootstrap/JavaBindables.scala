@@ -67,9 +67,10 @@ case class SetDelayedBindable(kernel: Kernel) extends Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): SymbolExpression = {
     val lhs = binding('lhs)
     val rhs = binding('rhs)
-    // FIXME, decide whether this should be a OwnValue, DownValue or SubValue
     lhs match {
       case lhs: SymbolExpression => kernel.kernelState.addOwnValues(lhs, lhs :> rhs)
+      case lhs @ FullFormExpression(s: SymbolExpression, _) => kernel.kernelState.addDownValues(s, lhs :> rhs)
+      case lhs: FullFormExpression => kernel.kernelState.addSubValues(lhs.symbolHead, lhs :> rhs)
     }
     
     org.omath.symbols.Null

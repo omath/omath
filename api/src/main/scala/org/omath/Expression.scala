@@ -15,6 +15,7 @@ object Bindable extends ExpressionImplicits
 
 trait Expression extends Bindable {
   def head: Expression
+  def symbolHead: SymbolExpression
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
@@ -24,6 +25,7 @@ trait Expression extends Bindable {
 
 trait RawExpression extends Expression {
   override def head: SymbolExpression
+  override def symbolHead = head
 }
 trait LiteralExpression extends RawExpression {
   override def bindOption(binding: Map[SymbolExpression, Expression]) = None
@@ -50,14 +52,10 @@ trait SymbolExpression extends RawExpression {
 
 protected trait SymbolExpressionImplicits {
   import language.implicitConversions
-  implicit def scalaSymbol2Expression(s: Symbol): SymbolExpression = {
-    s.toString.stripPrefix("'").split('`').toList match {
-      case name :: Nil => SymbolExpression(name)
-      case qualifiedName => SymbolExpression(qualifiedName.last, Context(qualifiedName.init))
-    }
-  }
+  implicit def scalaSymbol2Expression(s: Symbol): SymbolExpression = SymbolExpression(s)
 }
 object SymbolExpression {
+  def apply(s: Symbol): SymbolExpression = SymbolExpression(s.toString.stripPrefix("'"))
   def apply(name: String, context: Context = Context.global): SymbolExpression = SymbolExpression_(name, context)
   def apply(name: String, context: String): SymbolExpression = apply(name, Context(context.split('`')))
   def apply(name: String, context: Seq[String]): SymbolExpression = apply(name, Context(context.flatMap(_.split('`'))))
@@ -131,6 +129,7 @@ trait RealExpression extends LiteralExpression {
   override def toString = toBigDecimal.toString
 }
 
+// TODO maybe this should just be a trait with an extractor on the companion object
 case class FullFormExpression(head: Expression, arguments: List[Expression]) extends Expression {
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = {
     head.bindOption(binding) match {
@@ -147,6 +146,11 @@ case class FullFormExpression(head: Expression, arguments: List[Expression]) ext
     }
   }
 
+  override def symbolHead = head match {
+    case head: SymbolExpression => head
+    case _ => head.symbolHead
+  }
+  
   override def toString = head.toString + arguments.mkString("[", ", ", "]")
 }
 

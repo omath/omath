@@ -1,6 +1,9 @@
 package org.omath.bootstrap
 
 import org.omath._
+import org.omath.kernel.Kernel;
+import org.omath.kernel.KernelState;
+import org.omath.kernel.MutableMapKernelState;
 import org.omath.kernel._
 
 object Bootstrap {
@@ -43,8 +46,5 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
 
 // a mixin for kernels
 trait BootstrapState { kernel: Kernel =>
-  override def kernelState = BootstrapKernelState(kernel)
+  override val kernelState = BootstrapKernelState(kernel)
 }
-
-//trait TungstenBootstrap extends Tungsten with BootstrapState
-//object TungstenBootstrap extends TungstenBootstrap

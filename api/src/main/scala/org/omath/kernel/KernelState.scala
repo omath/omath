@@ -68,17 +68,23 @@ trait MutableMapKernelState extends MutableKernelState {
     }
     this
   }
+  private def addRules(map: scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable], symbol: SymbolExpression, rules: Seq[ReplacementRule]): this.type = {
+    // FIXME rule specificity, etc.
+    map.put(symbol, ReplacementRuleTable((map(symbol).table ++ rules):_*))
+    this
+  }
+  
   override def addOwnValues(symbol: SymbolExpression, rules: ReplacementRule*) = {
-    ???
+    addRules(ownValuesMap, symbol, rules)
   }
   override def addDownValues(symbol: SymbolExpression, rules: ReplacementRule*) = {
-    ???
+    addRules(downValuesMap, symbol, rules)
   }
   override def addSubValues(symbol: SymbolExpression, rules: ReplacementRule*) = {
-    ???
+    addRules(subValuesMap, symbol, rules)
   }
   override def addUpValues(symbol: SymbolExpression, rules: ReplacementRule*) = {
-    ???
+    addRules(upValuesMap, symbol, rules)
   }
 }
 
