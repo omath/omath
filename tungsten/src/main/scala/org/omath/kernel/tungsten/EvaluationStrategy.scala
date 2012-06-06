@@ -49,9 +49,20 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
     previousStep.update(
       previousStep.current match {
         case FullFormExpression(head, arguments) => {
-          // TODO decide which arguments are meant to be held
-          // TODO is nothing changes, return the original Expression
-          Some(FullFormExpression(head, arguments.map(evaluation.evaluate(_))))
+          val attributes: Set[SymbolExpression] = head match {
+            case head: SymbolExpression => kernelState.attributes(head)
+            case _ => Set.empty
+          }
+          val holdFirst = attributes.contains(symbols.HoldFirst) || attributes.contains(symbols.HoldAll)
+          val holdRest = attributes.contains(symbols.HoldRest) || attributes.contains(symbols.HoldAll)
+          // TODO evaluate Evaluate (and maybe JavaClass, etc?) anyway
+          // TODO if nothing changes, return the original Expression
+          Some(FullFormExpression(head, arguments match {
+            case Nil => arguments
+            case h +: t => {
+             (if(holdFirst) h else evaluation.evaluate(h)) +: (t.map({ x => if(holdRest) x else evaluation.evaluate(x)}))  
+            }
+          }))
         }
         case _ => None
       })

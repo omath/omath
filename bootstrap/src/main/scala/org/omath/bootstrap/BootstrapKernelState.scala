@@ -34,9 +34,9 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
 
   val setDelayed = SetDelayedBindable(kernel)
   
-  import org.omath.symbols.{ SetDelayed, HoldRest }
+  import org.omath.symbols.{ SetDelayed, HoldAll }
 
-  addAttributes(SetDelayed, HoldRest)
+  addAttributes(SetDelayed, HoldAll)
 
   val _lhs = Pattern('lhs, Blank())
   val _rhs = Pattern('rhs, Blank())

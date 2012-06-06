@@ -31,7 +31,6 @@ class SetDelayedTest extends FlatSpec with ShouldMatchers {
     TungstenBootstrap.evaluate(SetDelayed(SymbolExpression('x3)()(), 'y3)) should equal(Null)
     TungstenBootstrap.evaluate(SymbolExpression('x3)()()) should equal(SymbolExpression('y3))
   }
-
   "SetDelayed" should "hold its arguments" in {
     TungstenBootstrap.evaluate(SetDelayed('y4, 2)) should equal(Null)
     TungstenBootstrap.evaluate(SetDelayed(SymbolExpression('x4)(Pattern('y4, Blank())), List('y4, 'y4))) should equal(Null)

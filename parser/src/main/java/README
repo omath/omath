@@ -1,0 +1,6 @@
+This is just copied, kersplunk, from the original omath project.
+
+The parser is mostly written by Yossi Farjoun, with some help from Scott Morrison.
+It mostly works, but still has a few bugs, some of which the tests catch.
+
+If you want to change anything here (scary!), I strongly recommend returning to the original sources at <http://svn.omath.org/parser/>.
