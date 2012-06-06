@@ -3,10 +3,9 @@ package org.omath.bootstrap
 import org.omath.SymbolExpression
 
 package object symbols {
-  def ??? = throw new NoSuchMethodError
-
-  val JavaMethod = SymbolExpression("JavaMethod", "Bootstrap")
-  val JavaClass = SymbolExpression("JavaClass", "Bootstrap")
-  val JavaObject = SymbolExpression("JavaObject", "Bootstrap")
-  val JavaNew = SymbolExpression("JavaNew", "Bootstrap")
+  // TODO put these in a Bootstrap context?
+  val JavaMethod = SymbolExpression("JavaMethod", "System")
+  val JavaClass = SymbolExpression("JavaClass", "System")
+  val JavaObject = SymbolExpression("JavaObject", "System")
+  val JavaNew = SymbolExpression("JavaNew", "System")
 }

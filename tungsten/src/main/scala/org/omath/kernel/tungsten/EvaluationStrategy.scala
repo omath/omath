@@ -60,7 +60,7 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
           Some(FullFormExpression(head, arguments match {
             case Nil => arguments
             case h +: t => {
-             (if(holdFirst) h else evaluation.evaluate(h)) +: (t.map({ x => if(holdRest) x else evaluation.evaluate(x)}))  
+              (if (holdFirst) h else evaluation.evaluate(h)) +: (t.map({ x => if (holdRest) x else evaluation.evaluate(x) }))
             }
           }))
         }
@@ -74,7 +74,7 @@ trait OwnValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
     expression match {
       case symbol: SymbolExpression => Some({
         val ownValues = kernelState.ownValues(symbol)
-        Logging.info("Found OwnValues for " + symbol + ": " + ownValues)
+        if (ownValues.table.nonEmpty) Logging.info("Found OwnValues for " + symbol + ": " + ownValues)
         ownValues
       })
       case _ => {
@@ -104,12 +104,14 @@ trait DownValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
 }
 
 trait SubValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
-  @scala.annotation.tailrec
   private def findSubValues(expression: Expression): Option[ReplacementRuleTable] = {
-    expression match {
-      case FullFormExpression(symbolicHead: SymbolExpression, _) => Some(kernelState.subValues(symbolicHead))
-      case FullFormExpression(other, _) => findSubValues(other)
-      case _ => None
+    if (expression.headDepth > 1) {
+      val symbol = expression.symbolHead
+      val subValues = kernelState.subValues(symbol)
+      if (subValues.table.nonEmpty) Logging.info("Found SubValues for " + symbol + ": " + subValues)
+      Some(subValues)
+    } else {
+      None
     }
   }
 

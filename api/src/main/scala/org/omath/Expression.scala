@@ -8,6 +8,7 @@ object Bindable extends IntegerExpressionImplicits with RealExpressionImplicits 
 
 trait Expression extends Bindable {
   def head: Expression
+  def headDepth: Int // how many heads to you need to take to get a SymbolExpression
   def symbolHead: SymbolExpression
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
@@ -18,6 +19,7 @@ trait Expression extends Bindable {
 
 trait RawExpression extends Expression {
   override def head: SymbolExpression
+  override def headDepth = 1
   override def symbolHead = head
 }
 trait LiteralExpression extends RawExpression {
@@ -151,6 +153,7 @@ case class FullFormExpression(head: Expression, arguments: List[Expression]) ext
     }
   }
 
+  override def headDepth = head.headDepth + 1
   override def symbolHead = head match {
     case head: SymbolExpression => head
     case _ => head.symbolHead

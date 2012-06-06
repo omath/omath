@@ -27,9 +27,9 @@ package object symbols {
   val Rule = SymbolExpression("Rule", "System")
   val RuleDelayed = SymbolExpression("RuleDelayed", "System")
 
-  val HoldFirst = SymbolExpression("HoldFirst", "HoldFirst")
-  val HoldRest = SymbolExpression("HoldRest", "HoldRest")
-  val HoldAll = SymbolExpression("HoldAll", "HoldAll") 
+  val HoldFirst = SymbolExpression("HoldFirst", "System")
+  val HoldRest = SymbolExpression("HoldRest", "System")
+  val HoldAll = SymbolExpression("HoldAll", "System") 
   
   val Blank = SymbolExpression("Blank", "System")
   val BlankSequence = SymbolExpression("BlankSequence", "System")

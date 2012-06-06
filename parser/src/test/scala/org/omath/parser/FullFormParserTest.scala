@@ -14,4 +14,8 @@ class FullFormParserTest extends FlatSpec with ShouldMatchers {
   "FullFormParser" should "parse expressions" in {
     FullFormParser("a[b]") should equal(Left(SymbolExpression("a")(SymbolExpression("b"))))
   }
+  
+  "FullFormParser" should "not mess up quoting of strings" in {
+    FullFormParser("\"a\"").left.get.toString should equal("\"a\"")
+  }
 }

@@ -180,11 +180,13 @@ public String toString() {
 	if(getChildren().size()>0)
 		string.append(jjtGetChild(0).toString());
 
+	if(getChildren().size()>1) {
 	for (Node child:children.subList(1, children.size())){
 			string.append(betweenChildren());
 			if (child != null) {
 				string.append(child.toString());
 			}
+	}
 	}
 
 	string.append(postChildren());

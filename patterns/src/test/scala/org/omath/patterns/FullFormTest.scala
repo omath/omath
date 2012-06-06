@@ -15,4 +15,9 @@ class FullFormTest extends PatternTest {
     val pattern2: Pattern = symbols.List()()
     pattern2.bind(symbols.List()()).size should equal(1)
   }
+  
+  "blanks in the head" should "work" in {
+    val pattern: Pattern = symbols.Blank()(symbols.BlankNullSequence())
+    pattern.bind(symbols.List()).size should equal (1)
+  }
 }

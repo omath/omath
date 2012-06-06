@@ -5,17 +5,17 @@ import org.omath.kernel.Kernel
 import java.lang.reflect.Method
 
 case object JavaClassBindable extends Bindable {
-  def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[Class[_]] = {
+  def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
     }
 
-    JavaObjectExpression(clazz)
+    JavaClassExpression(clazz)
   }
 }
 
 case object JavaMethodBindable extends Bindable {
-  def bind(binding: Map[SymbolExpression, Expression]): JavaObjectExpression[Method] = {
+  def bind(binding: Map[SymbolExpression, Expression]): JavaMethodExpression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
       case javaObject: JavaObjectExpression[_] => javaObject.contents match {
@@ -25,7 +25,7 @@ case object JavaMethodBindable extends Bindable {
 
     val methodName = binding('method).asInstanceOf[StringExpression].contents
 
-    JavaObjectExpression(clazz.getMethods.find(_.getName == methodName).get)
+    JavaMethodExpression(clazz.getMethods.find(_.getName == methodName).get)
   }
 }
 
