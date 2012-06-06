@@ -4,14 +4,7 @@ trait Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): Expression
 }
 
-trait ExpressionImplicits extends IntegerExpressionImplicits with SymbolExpressionImplicits {
-  import language.implicitConversions
-  
-  implicit def string2StringExpression(s: String): StringExpression = StringExpression(s)
-  //  implicit def seq2ListExpression(s: Seq[Expression]): Expression = symbols.List(s: _*)
-}
-
-object Bindable extends ExpressionImplicits
+object Bindable extends IntegerExpressionImplicits with RealExpressionImplicits with StringExpressionImplicits with SymbolExpressionImplicits
 
 trait Expression extends Bindable {
   def head: Expression
@@ -83,10 +76,12 @@ case class StringExpression(contents: String) extends LiteralExpression {
   override def toString = "\"" + contents + "\""
   override val head = symbols.String
 }
-object StringExpression {
+
+trait StringExpressionImplicits {
   import language.implicitConversions
-  implicit def string2StringExpression(s: String) = StringExpression(s)
+  implicit def string2StringExpression(s: String) = StringExpression(s)  
 }
+object StringExpression extends StringExpressionImplicits
 
 trait IntegerExpression extends LiteralExpression {
   def toInt: Int
@@ -128,8 +123,15 @@ trait RealExpression extends LiteralExpression {
 
   override def toString = toBigDecimal.toString
 }
+trait RealExpressionImplicits {
+  import language.implicitConversions
+  implicit def apply(i: BigDecimal): RealExpression = BigDecimalExpression(i)
+}
+object RealExpression extends RealExpressionImplicits
+
 private case class BigDecimalExpression(toBigDecimal: BigDecimal) extends RealExpression {
   def toFloat = toBigDecimal.toFloat
+  def toDouble = toBigDecimal.toDouble
 }
 
 // TODO maybe this should just be a trait with an extractor on the companion object
