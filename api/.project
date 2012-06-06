@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>omath.api</name>
+  <name>omath-api</name>
   <buildSpec>
     <buildCommand>
       <name>org.scala-ide.sdt.core.scalabuilder</name>

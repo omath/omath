@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>omath.bootstrap</name>
+  <name>omath-bootstrap</name>
   <buildSpec>
     <buildCommand>
       <name>org.scala-ide.sdt.core.scalabuilder</name>

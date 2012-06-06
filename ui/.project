@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>omath.ui</name>
+  <name>omath-ui</name>
   <buildSpec>
     <buildCommand>
       <name>org.scala-ide.sdt.core.scalabuilder</name>

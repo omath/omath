@@ -8,7 +8,7 @@ import org.omath.parser.Node;
 import org.omath.parser.ParseException;
 import org.omath.parser.SyntaxParserImpl;
 
-public class SyntaxParserTest extends TestCase {
+public class SyntaxParserImplTest extends TestCase {
 
 	static final SyntaxParserImpl parser = new SyntaxParserImpl(new StringReader(""));
 	

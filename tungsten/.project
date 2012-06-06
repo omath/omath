@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>omath.tungsten</name>
+  <name>omath-tungsten</name>
   <buildSpec>
     <buildCommand>
       <name>org.scala-ide.sdt.core.scalabuilder</name>

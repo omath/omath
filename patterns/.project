@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>omath.patterns</name>
+  <name>omath-patterns</name>
   <buildSpec>
     <buildCommand>
       <name>org.scala-ide.sdt.core.scalabuilder</name>
