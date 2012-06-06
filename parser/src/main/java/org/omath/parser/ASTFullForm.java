@@ -9,7 +9,7 @@ public class ASTFullForm extends FullFormNode {
     super(id);
   }
 
-  public ASTFullForm(SyntaxParser p, int id) {
+  public ASTFullForm(SyntaxParserImpl p, int id) {
     super(p, id);
   }
   

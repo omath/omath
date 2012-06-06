@@ -5,14 +5,13 @@ import java.io.StringReader;
 
 import org.omath.parser.ParseException;
 import org.omath.parser.Node;
-import org.omath.parser.SyntaxParser;
 import org.omath.parser.TokenMgrError;
 
-public class SyntaxParser/*@bgen(jjtree)*/implements SyntaxParserTreeConstants, SyntaxParserConstants {/*@bgen(jjtree)*/
+public class SyntaxParserImpl/*@bgen(jjtree)*/implements SyntaxParserTreeConstants, SyntaxParserConstants {/*@bgen(jjtree)*/
   protected JJTSyntaxParserState jjtree = new JJTSyntaxParserState();
         public static Node parseSyntaxString(String input)
                         throws org.omath.parser.ParseException {
-                SyntaxParser parser = new SyntaxParser(new StringReader(input));
+        	SyntaxParserImpl parser = new SyntaxParserImpl(new StringReader(input));
                 try {
                         return parser.totalExpression().jjtGetChild(0);
                 } catch (ParseException e) {
@@ -8502,10 +8501,10 @@ String blankType;
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
-  public SyntaxParser(java.io.InputStream stream) {
+  public SyntaxParserImpl(java.io.InputStream stream) {
      this(stream, null);
   }
-  public SyntaxParser(java.io.InputStream stream, String encoding) {
+  public SyntaxParserImpl(java.io.InputStream stream, String encoding) {
     try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new SyntaxParserTokenManager(jj_input_stream);
     token = new Token();
@@ -8529,7 +8528,7 @@ String blankType;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  public SyntaxParser(java.io.Reader stream) {
+  public SyntaxParserImpl(java.io.Reader stream) {
     jj_input_stream = new SimpleCharStream(stream, 1, 1);
     token_source = new SyntaxParserTokenManager(jj_input_stream);
     token = new Token();
@@ -8550,7 +8549,7 @@ String blankType;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  public SyntaxParser(SyntaxParserTokenManager tm) {
+  public SyntaxParserImpl(SyntaxParserTokenManager tm) {
     token_source = tm;
     token = new Token();
     jj_ntk = -1;

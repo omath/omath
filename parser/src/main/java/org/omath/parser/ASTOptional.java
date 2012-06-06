@@ -10,7 +10,7 @@ public class ASTOptional extends FullFormNode {
     super(id);
   }
 
-  public ASTOptional(SyntaxParser p, int id) {
+  public ASTOptional(SyntaxParserImpl p, int id) {
     super(p, id);
   }
   

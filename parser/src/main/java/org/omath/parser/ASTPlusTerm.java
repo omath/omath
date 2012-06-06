@@ -8,7 +8,7 @@ public class ASTPlusTerm extends FullFormNode {
     setHead("Times");
   }
 
-  public ASTPlusTerm(SyntaxParser p, int id) {
+  public ASTPlusTerm(SyntaxParserImpl p, int id) {
     super(p, id);
   }
 

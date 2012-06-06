@@ -14,7 +14,7 @@ object FullFormParser {
   }
 }
 
-object SyntaxParser2 {
+object SyntaxParser {
   def apply(syntax: String)(implicit symbolizer: String => SymbolExpression): Either[Expression, String] = {
     Syntax2FullFormParser(syntax) match {
       case Left(fullForm) => FullFormParser(fullForm)
@@ -26,7 +26,7 @@ object SyntaxParser2 {
 object Syntax2FullFormParser {
   def apply(syntax: String): Either[String, String] = {
     try {
-      Left(SyntaxParser.parseSyntaxString(syntax).toString)
+      Left(SyntaxParserImpl.parseSyntaxString(syntax).toString)
     } catch {
       case e: Exception => Right(e.getMessage)
     }

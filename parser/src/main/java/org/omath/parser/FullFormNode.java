@@ -14,7 +14,7 @@ public class FullFormNode implements Node {
 	protected Node parent;
 	protected List<Node> children;
 	protected int id;
-	protected SyntaxParser parser;
+	protected SyntaxParserImpl parser;
 	
 	public Node head;
 	public boolean m_reverseChildren =false;
@@ -33,7 +33,7 @@ public class FullFormNode implements Node {
 		headLocation=null;
 	}
 	
-	public FullFormNode(SyntaxParser p, int id) {
+	public FullFormNode(SyntaxParserImpl p, int id) {
 	  this(id);
 	  parser = p;
 	    

@@ -3,7 +3,7 @@ package org.omath.parser;
 import java.io.StringReader;
 import org.omath.parser.ParseException;
 import org.omath.parser.Node;
-import org.omath.parser.SyntaxParser;
+import org.omath.parser.SyntaxParserImpl;
 import org.omath.parser.TokenMgrError;
 
 public class SyntaxParserTokenManager implements SyntaxParserConstants

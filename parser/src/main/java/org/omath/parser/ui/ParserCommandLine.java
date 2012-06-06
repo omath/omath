@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.omath.parser.Node;
-import org.omath.parser.SyntaxParser;
+import org.omath.parser.SyntaxParserImpl;
 
 public final class ParserCommandLine {
 	
@@ -25,7 +25,7 @@ public final class ParserCommandLine {
 		while(true) {
 			System.out.print("(parser) In[" + lineNumber +"] := ");
 			inputString = in.readLine();
-			Node n = SyntaxParser.parseSyntaxString(inputString);
+			Node n = SyntaxParserImpl.parseSyntaxString(inputString);
 			System.out.print("(parser) Out[" + lineNumber +"]:= ");
 			System.out.println(n.toString());
 			

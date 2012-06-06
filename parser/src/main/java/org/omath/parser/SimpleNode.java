@@ -8,7 +8,7 @@ public class SimpleNode implements Node {
   protected Node parent;
   protected Node[] children;
   protected int id;
-  protected SyntaxParser parser;
+  protected SyntaxParserImpl parser;
 
   public Node getHead(){return null;}
   
@@ -16,7 +16,7 @@ public class SimpleNode implements Node {
     id = i;
   }
 
-  public SimpleNode(SyntaxParser p, int i) {
+  public SimpleNode(SyntaxParserImpl p, int i) {
     this(i);
     parser = p;
   }

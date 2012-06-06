@@ -7,7 +7,7 @@ public class ASTInequality extends InequalityNode {
     super(id);
   }
 
-  public ASTInequality(SyntaxParser p, int id) {
+  public ASTInequality(SyntaxParserImpl p, int id) {
     super(p, id);
   }
 

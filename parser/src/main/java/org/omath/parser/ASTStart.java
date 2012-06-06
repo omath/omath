@@ -7,7 +7,7 @@ public class ASTStart extends FullFormNode {
     super(id);
   }
 
-  public ASTStart(SyntaxParser p, int id) {
+  public ASTStart(SyntaxParserImpl p, int id) {
     super(p, id);
   }
 

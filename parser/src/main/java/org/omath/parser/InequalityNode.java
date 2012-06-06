@@ -8,7 +8,7 @@ import java.util.List;
 
 public class InequalityNode extends FullFormNode {
 
-	public InequalityNode(SyntaxParser p, int id) {
+	public InequalityNode(SyntaxParserImpl p, int id) {
 	  super(p, id);
   }
 
