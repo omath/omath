@@ -1,0 +1,18 @@
+package org.omath.patterns
+
+import org.omath.symbols
+import org.omath.SymbolExpression
+
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+
+@RunWith(classOf[JUnitRunner])
+class FullFormTest extends PatternTest {
+
+  "empty arguments" should "not break FullFormExpressionPattern" in {
+    val pattern1: Pattern = symbols.List()
+    pattern1.bind(symbols.List()).size should equal(1)
+    val pattern2: Pattern = symbols.List()()
+    pattern2.bind(symbols.List()()).size should equal(1)
+  }
+}
