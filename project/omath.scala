@@ -39,7 +39,7 @@ object Omath extends Build {
 
     lazy val tungstenCore = Project(id = "omath.tungsten+core",
                            base = file("tungsten+core"),
-                            settings = buildSettings) dependsOn(tungsten, core)
+                            settings = buildSettings) dependsOn(tungstenBootstrap, core)
 
     lazy val ui = Project(id = "omath.ui",
                            base = file("ui"),
