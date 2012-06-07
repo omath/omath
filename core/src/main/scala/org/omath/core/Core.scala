@@ -22,7 +22,10 @@ trait Core extends Kernel {
     for (line <- code.getLines) {
       evaluate(line) match {
         case Success(_) =>
-        case Failure(message) => System.err.println(message)
+        case Failure(message) => {
+          System.err.println("Parse error while processing: " + line)
+          System.err.println(message)
+        }
       }
     }
   }
