@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 
 import org.omath.parser.Syntax2FullFormParser;
 
-import scala.Either;
+import org.omath.util.*;
 
 public final class ParserCommandLine {
 
@@ -23,11 +23,11 @@ public final class ParserCommandLine {
 		while (true) {
 			System.out.print("(parser) In[" + lineNumber + "] := ");
 			inputString = in.readLine();
-			Either<String, String> output = Syntax2FullFormParser.apply(inputString);
-			if (output.isRight()) {
-				System.err.println(output.right().get());
+			Result<String> output = Syntax2FullFormParser.apply(inputString);
+			if (output.isFailure()) {
+				System.err.println(output.getFailureMessage());
 			} else {
-				String outputString = output.left().get();
+				String outputString = output.get();
 				System.out.print("(parser) Out[" + lineNumber + "]:= ");
 				System.out.println(outputString);
 			}

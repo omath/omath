@@ -4,30 +4,24 @@ import org.omath.Expression
 import org.omath.SymbolExpression
 import org.omath.parser.SyntaxParser
 import org.omath.kernel.Kernel
+import org.omath.util._
 import scala.io.Source
 import scala.collection.JavaConversions
 
-sealed trait Result[T]
-case class Success[T](value: T) extends Result[T]
-case class Failure[T](message: String) extends Result[T]
-
 trait Core extends Kernel {
   def evaluate(syntax: String): Result[Expression] = {
-    SyntaxParser(syntax)(symbolizer) match {
-      case Left(expression) => Success(evaluate(expression))
-      case Right(message) => Failure(message)
-    }
+    SyntaxParser(syntax)(symbolizer).map(evaluate)
   }
   def slurp(code: Source) {
-    for (line <- code.getLines) {
-      evaluate(line) match {
-        case Success(_) =>
-        case Failure(message) => {
-          System.err.println("Parse error while processing: " + line)
-          System.err.println(message)
-        }
+    SyntaxParser(code.getLines)(symbolizer).map({
+      case Success(e) => {
+        println("evaluating: " + e)
+        evaluate(e)
       }
-    }
+      case Failure(message) => {
+        System.err.println(message)
+      }
+    }).size // need to force the iterator!
   }
 
   {

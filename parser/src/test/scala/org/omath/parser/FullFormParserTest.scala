@@ -16,6 +16,6 @@ class FullFormParserTest extends FlatSpec with ShouldMatchers {
   }
   
   "FullFormParser" should "not mess up quoting of strings" in {
-    FullFormParser("\"a\"").left.get.toString should equal("\"a\"")
+    FullFormParser("\"a\"").get.toString should equal("\"a\"")
   }
 }

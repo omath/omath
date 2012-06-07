@@ -4,6 +4,8 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FlatSpec
+
+import org.omath.util._
 import org.omath.StringExpression
 
 @RunWith(classOf[JUnitRunner])

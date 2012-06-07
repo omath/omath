@@ -1,5 +1,6 @@
 package org.omath.ui.repl
 
+import org.omath.util._
 import org.omath.SymbolExpression
 import org.omath.core.TungstenCore
 import org.omath.parser.SyntaxParser
@@ -18,8 +19,8 @@ object omath extends App {
   while (true) {
     print("In[" + lineNumber + "] := ");
     SyntaxParser(in.readLine()) match {
-      case Right(error) => System.err.println(error)
-      case Left(parsed) => {
+      case Failure(error) => System.err.println(error)
+      case Success(parsed) => {
         val result = TungstenCore.evaluate(parsed)
         print("Out[" + lineNumber + "]:= ");
         println(result)

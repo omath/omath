@@ -1,6 +1,7 @@
 package org.omath.parser
 
 import org.omath._
+import org.omath.util._
 import scala.util.parsing.combinator._
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.lexical.Scanners
@@ -31,20 +32,69 @@ object FullFormParser extends RegexParsers {
   private def empty = "" ^^ { case _ => symbols.Null }
   private def expression(implicit symbolizer: String => SymbolExpression): Parser[Expression] = whitespace.* ~> (fullForm | literal | empty) <~ whitespace.*
 
-  def apply(fullForm: String)(implicit symbolizer: String => SymbolExpression): Either[Expression, String] = {
+  def apply(fullForm: String)(implicit symbolizer: String => SymbolExpression): Result[Expression] = {
     parseAll(expression, fullForm) match {
-      case Success(e, _) => Left(e)
-      case Failure(msg, _) => Right(msg)
-      case Error(msg, _) => Right(msg)
+      case Success(e, _) => org.omath.util.Success(e)
+      case Failure(msg, _) => org.omath.util.Failure(msg)
+      case Error(msg, _) => org.omath.util.Failure(msg)
     }
   }
 }
 
 object SyntaxParser {
-  def apply(syntax: String)(implicit symbolizer: String => SymbolExpression): Either[Expression, String] = {
-    Syntax2FullFormParser(syntax) match {
-      case Left(fullForm) => FullFormParser(fullForm)
-      case Right(error) => Right(error)
+  def apply(syntax: String)(implicit symbolizer: String => SymbolExpression): Result[Expression] = {
+    Syntax2FullFormParser(syntax).flatMap(FullFormParser(_))
+  }
+  def apply(lines: Iterator[String])(implicit symbolizer: String => SymbolExpression): Iterator[Result[Expression]] = {
+    new Iterator[Result[Expression]] {
+      val cache = scala.collection.mutable.ListBuffer[String]()
+      def parseCache = apply(cache.mkString(" "))
+      var nextOption: Option[Result[Expression]] = produceNextOption
+      @scala.annotation.tailrec
+      private def produceNextOption: Option[Result[Expression]] = {
+        def parseAndClearCache = {
+          val result = parseCache
+          cache.clear
+          result
+        }
+        if (lines.hasNext) {
+          lines.next.trim match {
+            case "" => {
+              // if we reach an empty line, output a Failure
+              Some(parseAndClearCache)
+            }
+            case nextLine => {
+              cache += nextLine
+              parseCache match {
+                case p @ Success(_) => {
+                  // we managed to parse a chunk!
+                  cache.clear
+                  Some(p)
+                }
+                case _ => {
+                  // keep trying 
+                  produceNextOption
+                }
+              }
+            }
+          }
+        } else {
+          // ran out of lines
+          if (cache.nonEmpty) {
+            // if there's something in the cache, output the last Failure
+            Some(parseAndClearCache)
+          } else {
+            // otherwise say we're done
+            None
+          }
+        }
+      }
+      override def hasNext = nextOption.nonEmpty
+      override def next = {
+        val result = nextOption.get
+        nextOption = produceNextOption
+        result
+      }
     }
   }
 }
@@ -70,15 +120,17 @@ object Syntax2FullFormParser {
     }
   }
 
-  def apply(syntax: String): Either[String, String] = {
+  def apply(syntax: String): Result[String] = {
     try {
       stripComments(syntax).trim match {
-        case "" => Left("")
-        case stripped => Left(SyntaxParserImpl.parseSyntaxString(stripped).toString)
+        case "" => Success("")
+        case stripped => Success(SyntaxParserImpl.parseSyntaxString(stripped).toString)
       }
     } catch {
-      //      case e: Exception => Right(e.toString)
-      case e: Exception => throw e
+      case e: Exception => {
+        println("failed to parse: " + syntax)
+        Failure(e.toString)
+      }
     }
   }
 }
