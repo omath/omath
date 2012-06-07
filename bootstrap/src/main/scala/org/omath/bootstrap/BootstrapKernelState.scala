@@ -25,7 +25,8 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
     val object_JavaObject = Pattern('object, Blank(JavaObject))
     val `arguments:_[___]` = Pattern('arguments, Blank()(BlankNullSequence()))
 
-    addDownValues(JavaClass, JavaClass(class_String) :> JavaClassBindable)
+    addDownValues(JavaClass, JavaClass(class_String) :> ClassForNameBindable)
+    addDownValues(JavaClass, JavaClass(object_JavaObject) :> GetClassBindable)
     addDownValues(JavaMethod, JavaMethod(class_String, method_String) :> JavaMethodBindable)
     addDownValues(JavaMethod, JavaMethod(class_JavaClass, method_String) :> JavaMethodBindable)
     addSubValues(JavaMethod, (method_JavaMethod)(object_JavaObject, `arguments:_[___]`) :> MethodInvocationBindable)
