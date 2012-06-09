@@ -3,6 +3,7 @@ package org.omath.patterns
 import org.omath._
 import org.omath.kernel.Evaluation
 
+// TODO PartialBinding is an implementation detail!
 case class PartialBinding(binding: Map[SymbolExpression, Expression], remainingExpressions: Seq[Expression], lastBound: Seq[Expression])
 
 trait Pattern {
@@ -17,7 +18,7 @@ trait Pattern {
       }
     })
   }
-  def bind(expressions: Expression*)(implicit evaluation: Evaluation): Iterator[Map[SymbolExpression, Expression]] = {
+  def matching(expressions: Expression*)(implicit evaluation: Evaluation): Iterator[Map[SymbolExpression, Expression]] = {
     extend(Map.empty[SymbolExpression, Expression])(expressions: _*)
   }
 }

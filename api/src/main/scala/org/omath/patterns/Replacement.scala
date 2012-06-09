@@ -22,7 +22,7 @@ object ReplacementRuleTable {
 
 case class ReplacementRule(pattern: Pattern, result: Bindable) extends Replacement {
   override def apply(x: Expression)(implicit evaluation: Evaluation): Iterator[Expression] = {
-    for (b <- pattern.bind(x)) yield result.bind(b)
+    for (b <- pattern.matching(x)) yield result.bind(b)
   }
   override def asExpression = symbols.RuleDelayed(
 		  pattern match {

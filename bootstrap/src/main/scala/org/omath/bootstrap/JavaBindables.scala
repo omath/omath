@@ -42,11 +42,15 @@ case object JavaMethodBindable extends Bindable {
 
 trait Boxing {
   def box(arguments: Seq[Expression], classes: Seq[Class[_]]): Option[Seq[Object]] = {
-    val options: Seq[Option[Object]] = arguments.zip(classes).map({ p => Converter.fromExpression(p._1, p._2).asInstanceOf[Option[Object]] })
-    if(options.exists(_.isEmpty)) {
+    if (arguments.size != classes.size) {
       None
     } else {
-      Some(options.map(_.get))
+      val options: Seq[Option[Object]] = arguments.zip(classes).map({ p => Converter.fromExpression(p._1, p._2).asInstanceOf[Option[Object]] })
+      if (options.exists(_.isEmpty)) {
+        None
+      } else {
+        Some(options.map(_.get))
+      }
     }
   }
   def unbox(obj: Object): Expression = {
@@ -63,8 +67,8 @@ case object MethodInvocationBindable extends Bindable with Boxing {
     }
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
 
-    unbox(method.invoke(o, box(arguments, method.getParameterTypes).get))
-    
+    unbox(method.invoke(o, box(arguments, method.getParameterTypes).get: _*))
+
   }
 }
 
@@ -78,21 +82,36 @@ case object JavaNewBindable extends Bindable with Boxing {
     }
 
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
-    
-    (for(constructor <- clazz.getConstructors.view;
-     boxedArguments <- box(arguments, constructor.getParameterTypes)
-    ) yield unbox(constructor.newInstance(boxedArguments).asInstanceOf[Object])).head
- 
+
+    (for (
+      constructor <- clazz.getConstructors.view;
+      boxedArguments <- box(arguments, constructor.getParameterTypes)
+    ) yield unbox(constructor.newInstance(boxedArguments: _*).asInstanceOf[Object])).head
+
   }
 }
 
 case class SetDelayedBindable(kernel: Kernel) extends Bindable {
+  private object SubValueAttachesTo {
+    @scala.annotation.tailrec
+    final def unapply(x: FullFormExpression): Option[SymbolExpression] = {
+      import org.omath.symbols.{ Pattern, Blank }
+      x.head match {
+        case s: SymbolExpression => None
+        case Pattern(_, Blank(s: SymbolExpression)) => Some(s)
+        case FullFormExpression(s: SymbolExpression, _) => Some(s)
+        case h: FullFormExpression => unapply(h)
+      }
+    }
+  }
+
   def bind(binding: Map[SymbolExpression, Expression]): SymbolExpression = {
     val lhs = binding('lhs)
     val rhs = binding('rhs)
     lhs match {
       case lhs: SymbolExpression => kernel.kernelState.addOwnValues(lhs, lhs :> rhs)
       case lhs @ FullFormExpression(s: SymbolExpression, _) => kernel.kernelState.addDownValues(s, lhs :> rhs)
+      case SubValueAttachesTo(s) => kernel.kernelState.addSubValues(s, lhs :> rhs)
       case lhs: FullFormExpression => kernel.kernelState.addSubValues(lhs.symbolHead, lhs :> rhs)
     }
 

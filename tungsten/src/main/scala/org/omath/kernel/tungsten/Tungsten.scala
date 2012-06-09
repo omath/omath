@@ -25,10 +25,6 @@ trait AbstractKernel extends Kernel { kernel: EvaluationStrategy =>
     def update(rules: ReplacementRuleTable): _Evaluation = {
       update(rules(current)(this))
     }
-    @Deprecated
-    def updateUsing(rules: Traversable[ReplacementRuleTable]): _Evaluation = {
-      rules.headOption.map(update).getOrElse(this)
-    }
     def updateUsing(rules: Iterator[ReplacementRuleTable]): _Evaluation = {
       if (rules.hasNext) {
         update(rules.next)

@@ -16,7 +16,11 @@ object omath extends App {
   while (true) {
     print("In[" + lineNumber + "] := ");
     TungstenCore.evaluateSyntax(in.readLine()) match {
-      case Failure(error) => System.err.println(error)
+      case Failure(error, None) => System.err.println(error)
+      case Failure(error, Some(exception)) => {
+        if(error != exception.getMessage) System.err.println(exception)
+        System.err.println(exception)
+      }
       case Success(org.omath.symbols.Null) => 
       case Success(result) => {
           print("Out[" + lineNumber + "]:= ");

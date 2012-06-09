@@ -12,14 +12,10 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FlatSpec
 
 @RunWith(classOf[JUnitRunner])
-class EvaluationTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
+class MethodInvocationTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
 
-   "evaluateOneStep" should "not apply a DownValue immediately after an OwnValue" in {
-    """f := g[k]
-       g[k] := 0
-       k := h
-       g[h] := 1
-       f""" should evaluateTo ("1")
+  "method invocation" should "work, and unbox arguments" in {
+    """JavaMethod["java.util.Date", "toString"][JavaNew["java.util.Date", {1234}], {}]""" should evaluateTo("\"" + new java.util.Date(1234).toString + "\"")
   }
 
 }

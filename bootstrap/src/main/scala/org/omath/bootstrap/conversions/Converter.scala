@@ -31,37 +31,48 @@ object Converter extends Logging {
   }
   def toExpressionMatching(x: Any, pattern: Pattern)(implicit evaluation: Evaluation): Option[Expression] = {
     val e = toExpression(x)
-    if(pattern.bind(e).nonEmpty) {
+    if (pattern.matching(e).nonEmpty) {
       Some(e)
     } else {
       None
     }
   }
-  
+
   def fromExpression[T](x: Expression, clazz: Class[T]): Option[T] = {
     info("trying to convert " + x + " to an instance of " + clazz.getName)
     (x, clazz.getName) match {
+      case (x: IntegerExpression, "int") => Some(x.toInt.asInstanceOf[T])
+      case (x: IntegerExpression, "long") => Some(x.toLong.asInstanceOf[T])
       case (x: IntegerExpression, "java.lang.Int") => Some(x.toInt.asInstanceOf[T])
-      // TODO many more
+      case (x: IntegerExpression, "java.lang.Long") => Some(x.toLong.asInstanceOf[T])
+      case (x: IntegerExpression, "org.apfloat.Apint") => Some(x.toApint.asInstanceOf[T])
+      case (x: RealExpression, "java.lang.Float") => Some(x.toFloat.asInstanceOf[T])
+      case (x: RealExpression, "java.lang.Double") => Some(x.toDouble.asInstanceOf[T])
+      case (x: RealExpression, "float") => Some(x.toFloat.asInstanceOf[T])
+      case (x: RealExpression, "double") => Some(x.toDouble.asInstanceOf[T])
+      case (x: RealExpression, "org.apfloat.Apfloat") => Some(x.toApfloat.asInstanceOf[T])
+      case (x: StringExpression, "java.lang.String") => Some(x.contents.asInstanceOf[T])
       case ConvertableToInstance(i) => Some(i)
       case _ => None
     }
   }
-  
-  // TODO provide a way to register conversions, and have ConvertableX try these.
-  
+
+  private var toExpressionFunction: PartialFunction[Any, Expression] = PartialFunction.empty
+  private var toInstanceFunction: PartialFunction[(Expression, String), Any] = PartialFunction.empty
+
+  def registerConversionToExpression(f: PartialFunction[Any, Expression]) {
+    toExpressionFunction = toExpressionFunction.orElse(f)
+  }
+  def registerConversionToInstance(f: PartialFunction[(Expression, String), Any]) {
+    toInstanceFunction = toInstanceFunction.orElse(f)
+  }
+
   private object ConvertableToInstance {
-    def unapply[T](p: (Expression, String)): Option[T] = {
-      val x = p._1
-      val className = p._2
-      None
-    }
+    def unapply[T](p: (Expression, String)): Option[T] = toInstanceFunction.lift(p).map(_.asInstanceOf[T])
   }
-  
+
   private object ConvertableToExpression {
-    def unapply(x: Any): Option[Expression] = {
-      None
-    }
+    def unapply(x: Any): Option[Expression] = toExpressionFunction.lift(x)
   }
-  
+
 }

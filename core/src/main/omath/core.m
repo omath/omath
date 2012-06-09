@@ -33,8 +33,5 @@ $Version := "0.0.1"
     
     JavaMethod[class_, symbol_Symbol] := JavaMethod[class, ToString[symbol]]
 
-(* We haven't climbed out of the box yet: we need to be able to convert between omath and JVM objects. *)
-  (* TODO has to been done back at the bootstrap level? *)
-    
 (* TODO ScalaObject[name_String] for obtaining Scala singletons *)    
 (* TODO? GetExtensionInstance[class_String] for obtaining instances whose constructors require 'infrastructure', e.g. a kernel reference *)

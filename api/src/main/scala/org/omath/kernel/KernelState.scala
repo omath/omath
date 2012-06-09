@@ -69,7 +69,7 @@ trait MutableMapKernelState extends MutableKernelState {
     this
   }
   private def addRules(map: scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable], symbol: SymbolExpression, rules: Seq[ReplacementRule]): this.type = {
-    // FIXME rule specificity, etc.
+    // TODO rule specificity, etc.
     map.put(symbol, ReplacementRuleTable(map(symbol).table ++ rules))
     this
   }

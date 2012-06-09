@@ -11,9 +11,18 @@ object Bindable extends IntegerExpressionImplicits with RealExpressionImplicits 
 
 trait Expression extends Bindable {
   def head: Expression
-  def headDepth: Int // how many heads to you need to take to get a SymbolExpression
+  def headDepth: Int // how many heads do you need to take to get a SymbolExpression
   def symbolHead: SymbolExpression
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
+  
+  def unapplySeq(x: FullFormExpression): Option[Seq[Expression]] = {
+    if(x.head == this) {
+      Some(x.arguments)
+    } else {
+      None
+    }
+  }
+  
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
   

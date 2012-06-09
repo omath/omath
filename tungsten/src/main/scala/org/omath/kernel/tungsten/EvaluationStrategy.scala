@@ -69,75 +69,6 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
   }
 }
 
-trait OwnValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
-  private def findOwnValues(expression: Expression): Option[ReplacementRuleTable] = {
-    expression match {
-      case symbol: SymbolExpression => Some({
-        val ownValues = kernelState.ownValues(symbol)
-        if (ownValues.table.nonEmpty) Logging.info("Found OwnValues for " + symbol + ": " + ownValues)
-        ownValues
-      })
-      case _ => {
-        None
-      }
-    }
-  }
-
-  abstract override def evaluateOneStep(evaluation: _Evaluation) = {
-    val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.updateUsing(findOwnValues(previousStep.current))
-  }
-}
-
-trait DownValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
-  private def findDownValues(expression: Expression): Option[ReplacementRuleTable] = {
-    expression match {
-      case FullFormExpression(symbolicHead: SymbolExpression, arguments) => Some(kernelState.downValues(symbolicHead))
-      case _ => None
-    }
-  }
-
-  abstract override def evaluateOneStep(evaluation: _Evaluation) = {
-    val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.updateUsing(findDownValues(previousStep.current))
-  }
-}
-
-trait SubValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
-  private def findSubValues(expression: Expression): Option[ReplacementRuleTable] = {
-    if (expression.headDepth > 1) {
-      val symbol = expression.symbolHead
-      val subValues = kernelState.subValues(symbol)
-      if (subValues.table.nonEmpty) Logging.info("Found SubValues for " + symbol + ": " + subValues)
-      Some(subValues)
-    } else {
-      None
-    }
-  }
-
-  abstract override def evaluateOneStep(evaluation: _Evaluation) = {
-    val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.updateUsing(findSubValues(previousStep.current))
-  }
-}
-
-trait UpValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
-  private def findUpValues(expression: Expression): Seq[ReplacementRuleTable] = {
-    expression match {
-      case FullFormExpression(_, arguments) => arguments.collect({
-        case s: SymbolExpression => s // TODO is this right? perhaps leave this out?
-        case FullFormExpression(s: SymbolExpression, _) => s
-      }).map(kernelState.upValues(_))
-      case _ => Nil
-    }
-  }
-  
-  abstract override def evaluateOneStep(evaluation: _Evaluation) = {
-    val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.updateUsing(findUpValues(previousStep.current))
-  }
-}
-
 trait ValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
   private def findOwnValues(expression: Expression): Option[ReplacementRuleTable] = {
     expression match {
@@ -201,8 +132,4 @@ trait CompositeEvaluationStrategy
   with SequenceFlattening
   with ArgumentEvaluation
   with ValueEvaluation
-//  with OwnValueEvaluation
-//  with DownValueEvaluation
-//  with SubValueEvaluation
-//  with UpValueEvaluation
   { es: AbstractKernel => }

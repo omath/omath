@@ -12,7 +12,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FlatSpec
 
 @RunWith(classOf[JUnitRunner])
-class SetDelayedTest extends FlatSpec with ShouldMatchers {
+class SetDelayedTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
 
   import org.omath.symbols.{ SetDelayed, Null, List, Pattern, Blank }
 
@@ -38,4 +38,13 @@ class SetDelayedTest extends FlatSpec with ShouldMatchers {
     TungstenBootstrap.evaluate(SymbolExpression('x4)(2)) should equal(List(2, 2))
   }
 
+  "SetDelayed" should "correctly create a SubValue when the head has a typed Blank" in {
+    """f_F[x_] := {x, f}
+       F[1][2]""" should evaluateTo("{2, F[1]}")
+    """g_G[x_][y_] := {g, x, y}
+       G[1][2]""" should evaluateTo("G[1][2]")
+    "G[1][2][3]" should evaluateTo("{G[1], 2, 3}")
+  }
+
 }
+

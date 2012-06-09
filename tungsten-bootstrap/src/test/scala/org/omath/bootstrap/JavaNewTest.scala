@@ -12,14 +12,12 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FlatSpec
 
 @RunWith(classOf[JUnitRunner])
-class EvaluationTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
+class JavaNewTest extends FlatSpec with ShouldMatchers {
 
-   "evaluateOneStep" should "not apply a DownValue immediately after an OwnValue" in {
-    """f := g[k]
-       g[k] := 0
-       k := h
-       g[h] := 1
-       f""" should evaluateTo ("1")
+  "JavaNew" should "successfully instantiate a java.util.Date object" in {
+    TungstenBootstrap.evaluateSyntax("""
+    		JavaNew["java.util.Date", {}]
+        """).get.head should equal(symbols.JavaObject)
   }
 
 }
