@@ -9,6 +9,8 @@ import org.omath.bootstrap.JavaObjectExpression
 import org.omath.kernel.Evaluation
 import org.omath.patterns.Pattern
 import scala.math.BigDecimal.double2bigDecimal
+import org.apfloat.Apint
+import org.apfloat.Apfloat
 
 object Converter extends Logging {
 
@@ -17,10 +19,12 @@ object Converter extends Logging {
       case x: Int => IntegerExpression(x)
       case x: Long => IntegerExpression(x)
       case x: BigInt => IntegerExpression(x)
+      case x: Apint => IntegerExpression(x)
       case x: String => StringExpression(x)
       case x: Float => RealExpression(x)
       case x: Double => RealExpression(x)
       case x: BigDecimal => RealExpression(x)
+      case x: Apfloat => RealExpression(x)
       case ConvertableToExpression(y) => y
       case _ => JavaObjectExpression(x)
     }

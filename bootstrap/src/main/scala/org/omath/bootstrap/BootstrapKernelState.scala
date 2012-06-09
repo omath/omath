@@ -51,7 +51,4 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
 // a mixin for kernels
 trait BootstrapState { kernel: Kernel =>
   override val kernelState = BootstrapKernelState(kernel)
-  // this will be overriden again later.
-  override protected def symbolizer = { s: String => SymbolExpression(s, "System") }
-
 }

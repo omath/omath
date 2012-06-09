@@ -16,6 +16,7 @@ class SetDelayedTest extends FlatSpec with ShouldMatchers {
 
   import org.omath.symbols.{ SetDelayed, Null, List, Pattern, Blank }
 
+  // TODO these could all use the parser, for readability...
   "SetDelayed" should "evaluate to Null" in {
     TungstenBootstrap.evaluate(SetDelayed('x0, 'y0)) should equal(Null)
   }

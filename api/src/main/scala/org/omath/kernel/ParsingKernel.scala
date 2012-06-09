@@ -8,9 +8,9 @@ trait ParsingKernel { kernel: Kernel =>
   def parseSyntax(lines: Iterator[String])(implicit symbolizer: String => SymbolExpression): Iterator[Result[Expression]]
   
   def evaluateSyntax(syntax: String): Result[Expression] = {
-    evaluateLines(Iterator(syntax.trim))
+    evaluateSyntax(Iterator(syntax.trim))
   }
-  def evaluateLines(code: Iterator[String]): Result[Expression] = {
+  def evaluateSyntax(code: Iterator[String]): Result[Expression] = {
     parseSyntax(code.flatMap(_.split('\n')))(symbolizer).map(_.map(evaluate)).reduce({ (x, y) =>
       if (x.isFailure) System.err.println(x.getFailureMessage)
       y
@@ -18,9 +18,9 @@ trait ParsingKernel { kernel: Kernel =>
   }
 
   def slurp(uri: java.net.URI) {
-    evaluateLines(Source.fromURI(uri).getLines)
+    evaluateSyntax(Source.fromURI(uri).getLines)
   }
   def slurp(file: java.io.File) {
-    evaluateLines(Source.fromFile(file).getLines)
+    evaluateSyntax(Source.fromFile(file).getLines)
   }
 }

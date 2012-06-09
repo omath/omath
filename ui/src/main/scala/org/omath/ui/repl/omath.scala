@@ -9,25 +9,20 @@ import java.io.InputStreamReader
 
 object omath extends App {
 
-  // FIXME
-  implicit val symbolizer = { s: String => SymbolExpression(s, "System") }
-
   val in = new BufferedReader(new InputStreamReader(System.in))
 
   var lineNumber = 1;
 
   while (true) {
     print("In[" + lineNumber + "] := ");
-    SyntaxParser(in.readLine()) match {
+    TungstenCore.evaluateSyntax(in.readLine()) match {
       case Failure(error) => System.err.println(error)
-      case Success(parsed) => {
-        val result = TungstenCore.evaluate(parsed)
-        if (result != org.omath.symbols.Null) {
+      case Success(org.omath.symbols.Null) => 
+      case Success(result) => {
           print("Out[" + lineNumber + "]:= ");
-          println(result)
-        }
+          println(result)        
       }
-    }
+    }    
     lineNumber = lineNumber + 1
   }
 

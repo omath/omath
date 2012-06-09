@@ -6,6 +6,10 @@ import scala.util.parsing.combinator._
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.lexical.Scanners
 
+import org.apfloat.Apint
+import org.apfloat.Apfloat
+
+
 object FullFormParser extends RegexParsers {
   override val skipWhitespace = false
 
@@ -14,12 +18,12 @@ object FullFormParser extends RegexParsers {
   private def `,` = ","
   private def whitespace: Parser[String] = " "
   private def symbol(implicit symbolizer: String => SymbolExpression): Parser[SymbolExpression] = """[a-zA-Z\$][a-zA-Z0-9\$]*""".r ^^ { case s => symbolizer(s) }
-  private def integer: Parser[IntegerExpression] = """-?[1-9][0-9]*""".r ^^ { case s => IntegerExpression(BigInt(s)) }
+  private def integer: Parser[IntegerExpression] = """-?[0-9]+""".r ^^ { case s => IntegerExpression(new Apint(s)) }
+  private def decimal: Parser[RealExpression] = """-?([0-9]*\.[0-9]+|[0-9]+\.[0-9]*)""".r ^^ { case s => RealExpression(new Apfloat(s)) }
   // from https://github.com/scala/scala/blob/v2.9.2/src/library/scala/util/parsing/combinator/JavaTokenParsers.scala
-  private def decimal: Parser[RealExpression] = """(\d+(\.\d*)?|\d*\.\d+)""".r ^^ { case s => RealExpression(BigDecimal(s)) }
   private def string: Parser[StringExpression] =
     ("\"" + """([^"\p{Cntrl}\\]|\\[\\/bfnrt]|\\u[a-fA-F0-9]{4})*""" + "\"").r ^^ { case s => StringExpression(s.stripPrefix("\"").stripSuffix("\"")) }
-  private def literal(implicit symbolizer: String => SymbolExpression): Parser[RawExpression] = (symbol | integer | decimal | string)
+  private def literal(implicit symbolizer: String => SymbolExpression): Parser[RawExpression] = (symbol | decimal | integer | string)
   private def fullForm(implicit symbolizer: String => SymbolExpression): Parser[Expression] = {
     (literal ~ (`[` ~ repsep(expression, `,` ~ whitespace.*) ~ `]`).*) ^^ {
       case head ~ argumentLists => {

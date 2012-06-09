@@ -11,7 +11,7 @@ object Omath extends Build {
 
     lazy val api = Project(id = "omath-api",
                            base = file("api"),
-                            settings = buildSettings) dependsOn()
+                            settings = buildSettings ++ Seq(libraryDependencies += apfloat)) dependsOn()
 
     lazy val patterns = Project(id = "omath-patterns",
                            base = file("patterns"),
@@ -92,4 +92,5 @@ object Dependencies {
 	}
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
+        val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
 }

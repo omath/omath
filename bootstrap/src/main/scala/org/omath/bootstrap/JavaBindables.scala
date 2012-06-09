@@ -40,7 +40,21 @@ case object JavaMethodBindable extends Bindable {
   }
 }
 
-case object MethodInvocationBindable extends Bindable {
+trait Boxing {
+  def box(arguments: Seq[Expression], classes: Seq[Class[_]]): Option[Seq[Object]] = {
+    val options: Seq[Option[Object]] = arguments.zip(classes).map({ p => Converter.fromExpression(p._1, p._2).asInstanceOf[Option[Object]] })
+    if(options.exists(_.isEmpty)) {
+      None
+    } else {
+      Some(options.map(_.get))
+    }
+  }
+  def unbox(obj: Object): Expression = {
+    Converter.toExpression(obj)
+  }
+}
+
+case object MethodInvocationBindable extends Bindable with Boxing {
   def bind(binding: Map[SymbolExpression, Expression]): Expression = {
     val method = binding('method).asInstanceOf[JavaMethodExpression].contents
     val o = binding('object) match {
@@ -49,13 +63,12 @@ case object MethodInvocationBindable extends Bindable {
     }
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
 
-    val boxedArguments = arguments.zip(method.getParameterTypes).map({ p => Converter.fromExpression(p._1, p._2).get.asInstanceOf[Object] })
-    val result = method.invoke(o, boxedArguments: _*)
-    Converter.toExpression(result)
+    unbox(method.invoke(o, box(arguments, method.getParameterTypes).get))
+    
   }
 }
 
-case object JavaNewBindable extends Bindable {
+case object JavaNewBindable extends Bindable with Boxing {
   def bind(binding: Map[SymbolExpression, Expression]): Expression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
@@ -65,12 +78,11 @@ case object JavaNewBindable extends Bindable {
     }
 
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
-    // TODO try all the constructors, looking for one that the Converter can manage
-    val constructor = clazz.getConstructor()
-    val boxedArguments = arguments.zip(constructor.getParameterTypes).map({ p => Converter.fromExpression(p._1, p._2).get.asInstanceOf[Object] })
-
-    val result = clazz.getConstructor().newInstance(boxedArguments: _*)
-    Converter.toExpression(result)
+    
+    (for(constructor <- clazz.getConstructors.view;
+     boxedArguments <- box(arguments, constructor.getParameterTypes)
+    ) yield unbox(constructor.newInstance(boxedArguments).asInstanceOf[Object])).head
+ 
   }
 }
 

@@ -1,5 +1,8 @@
 package org.omath
 
+import org.apfloat.Apint
+import org.apfloat.Apfloat
+
 trait Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): Expression
 }
@@ -67,14 +70,16 @@ object SymbolExpression {
 
   class SymbolFormatException(message: String) extends Exception(message)
 }
-//case class GlobalSymbolExpression(override val name: String) extends SymbolExpression {
-//  override val context = Context.global
-//}
-//case class SystemSymbolExpression(override val name: String) extends SymbolExpression {
-//  override val context = Context.system
-//}
 
 case class StringExpression(contents: String) extends LiteralExpression {
+  override def equals(other: Any) = {
+    other match {
+      case other: StringExpression => contents == other.contents
+      case _ => false
+    }
+  }
+  override def hashCode = contents.hashCode
+
   override def toString = "\"" + contents + "\""
   override val head = symbols.String
 }
@@ -88,52 +93,75 @@ object StringExpression extends StringExpressionImplicits
 trait IntegerExpression extends LiteralExpression {
   def toInt: Int
   def toLong: Long
-  def toBigInt: BigInt
+  def toApint: Apint
 
   override val head = symbols.Integer
 
-  override def toString = toBigInt.toString
+  override def toString = toApint.toString
+  override def equals(other: Any) = {
+    other match {
+      case other: IntegerExpression => toApint == other.toApint
+      case _ => false
+    }
+  }
+  override def hashCode = toApint.hashCode
 }
 trait IntegerExpressionImplicits {
   import language.implicitConversions
-  implicit def apply(i: Int): IntegerExpression = IntExpression(i)
-  implicit def apply(i: Long): IntegerExpression = LongExpression(i)
-  implicit def apply(i: BigInt): IntegerExpression = BigIntExpression(i)
+  implicit def apply(i: Int): IntegerExpression = ApintExpression(new Apint(i))
+  implicit def apply(i: Long): IntegerExpression = ApintExpression(new Apint(i))
+  implicit def apply(i: BigInt): IntegerExpression = ApintExpression(new Apint(i.underlying))
+  implicit def apply(i: Apint): IntegerExpression = ApintExpression(i)
 }
 
-private case class IntExpression(toInt: Int) extends IntegerExpression {
-  def toLong = toInt.toLong
-  def toBigInt = BigInt(toInt)
-}
-private case class LongExpression(toLong: Long) extends IntegerExpression {
-  def toInt = toLong.toInt
-  def toBigInt = BigInt(toLong)
-}
-private case class BigIntExpression(toBigInt: BigInt) extends IntegerExpression {
-  def toInt = toBigInt.intValue
-  def toLong = toBigInt.longValue
+//private case class IntExpression(toInt: Int) extends IntegerExpression {
+//  def toLong = toInt.toLong
+//  def toBigInt = BigInt(toInt)
+//}
+//private case class LongExpression(toLong: Long) extends IntegerExpression {
+//  def toInt = toLong.toInt
+//  def toBigInt = BigInt(toLong)
+//}
+//private case class BigIntExpression(toBigInt: BigInt) extends IntegerExpression {
+//  def toInt = toBigInt.intValue
+//  def toLong = toBigInt.longValue
+//}
+
+private case class ApintExpression(toApint: Apint) extends IntegerExpression {
+  def toInt = toApint.intValue
+  def toLong = toApint.longValue
 }
 
-object IntegerExpression extends IntegerExpressionImplicits
+object IntegerExpression extends IntegerExpressionImplicits 
 
 trait RealExpression extends LiteralExpression {
   def toFloat: Float
   def toDouble: Double
-  def toBigDecimal: BigDecimal
+  def toApfloat: Apfloat
 
   override val head = symbols.Real
 
-  override def toString = toBigDecimal.toString
+  override def toString = toApfloat.toString
+  override def equals(other: Any) = {
+    other match {
+      case other: RealExpression => toApfloat == other.toApfloat
+      case _ => false
+    }
+  }
+  override def hashCode = toApfloat.hashCode
 }
 trait RealExpressionImplicits {
   import language.implicitConversions
-  implicit def apply(i: BigDecimal): RealExpression = BigDecimalExpression(i)
+  implicit def apply(i: Float): RealExpression = ApfloatExpression(new Apfloat(i))
+  implicit def apply(i: Double): RealExpression = ApfloatExpression(new Apfloat(i))
+  implicit def apply(i: BigDecimal): RealExpression = ApfloatExpression(new Apfloat(i.toString))
+  implicit def apply(i: Apfloat): RealExpression = ApfloatExpression(i)
 }
 object RealExpression extends RealExpressionImplicits
 
-private case class BigDecimalExpression(toBigDecimal: BigDecimal) extends RealExpression {
-  def toFloat = toBigDecimal.toFloat
-  def toDouble = toBigDecimal.toDouble
+private case class ApfloatExpression(toApfloat: Apfloat) extends RealExpression {
+  def toFloat = toApfloat.floatValue
+  def toDouble = toApfloat.doubleValue
 }
 
 // TODO maybe this should just be a trait with an extractor on the companion object

@@ -14,6 +14,6 @@ trait Kernel {
   def kernelState: KernelState
   def evaluate(expression: Expression): Expression
 
-  protected def symbolizer: String => SymbolExpression
-
+  // this will be overriden later, but is needing for unit testing
+  protected def symbolizer = { s: String => SymbolExpression(s, "System") }
 }

@@ -5185,8 +5185,8 @@ boolean typed=false;
     jjtree.closeNodeScope(jjtn001, true);
   }
     }
- {if (true) return typed;}
-    throw new Error("Missing return statement in function");
+ return typed;
+//    throw new Error("Missing return statement in function");
   }
 
   final public String blank() throws ParseException {
@@ -5209,8 +5209,8 @@ String blankType;
       jj_consume_token(-1);
       throw new ParseException();
     }
-                 {if (true) return blankType;}
-    throw new Error("Missing return statement in function");
+                 return blankType;
+//    throw new Error("Missing return statement in function");
   }
 
   final public void rawExpression() throws ParseException {

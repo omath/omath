@@ -9,7 +9,6 @@ import scala.collection.JavaConversions
 trait Core extends ParsingKernel { kernel: Kernel =>
     // FIXME look at $Context and $ContextPath
   override protected def symbolizer = { s: String => SymbolExpression(s, "System") }
-
   
   {
     import JavaConversions._

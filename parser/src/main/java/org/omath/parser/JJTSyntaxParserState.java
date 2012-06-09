@@ -3,16 +3,16 @@
 package org.omath.parser;
 
 class JJTSyntaxParserState {
-  private java.util.Stack nodes;
-  private java.util.Stack marks;
+  private java.util.Stack<Node> nodes;
+  private java.util.Stack<Integer> marks;
 
   private int sp;		// number of nodes on stack
   private int mk;		// current mark
   private boolean node_created;
 
   JJTSyntaxParserState() {
-    nodes = new java.util.Stack();
-    marks = new java.util.Stack();
+    nodes = new java.util.Stack<Node>();
+    marks = new java.util.Stack<Integer>();
     sp = 0;
     mk = 0;
   }

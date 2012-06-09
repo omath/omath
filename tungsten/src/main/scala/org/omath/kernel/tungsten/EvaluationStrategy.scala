@@ -70,7 +70,7 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
 }
 
 trait OwnValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
-  private def findOwnValues(expression: Expression) = {
+  private def findOwnValues(expression: Expression): Option[ReplacementRuleTable] = {
     expression match {
       case symbol: SymbolExpression => Some({
         val ownValues = kernelState.ownValues(symbol)
@@ -85,12 +85,12 @@ trait OwnValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
 
   abstract override def evaluateOneStep(evaluation: _Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.update(findOwnValues(previousStep.current))
+    previousStep.updateUsing(findOwnValues(previousStep.current))
   }
 }
 
 trait DownValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
-  private def findDownValues(expression: Expression) = {
+  private def findDownValues(expression: Expression): Option[ReplacementRuleTable] = {
     expression match {
       case FullFormExpression(symbolicHead: SymbolExpression, arguments) => Some(kernelState.downValues(symbolicHead))
       case _ => None
@@ -99,7 +99,7 @@ trait DownValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
 
   abstract override def evaluateOneStep(evaluation: _Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.update(findDownValues(previousStep.current))
+    previousStep.updateUsing(findDownValues(previousStep.current))
   }
 }
 
@@ -117,7 +117,7 @@ trait SubValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
 
   abstract override def evaluateOneStep(evaluation: _Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.update(findSubValues(previousStep.current))
+    previousStep.updateUsing(findSubValues(previousStep.current))
   }
 }
 
@@ -131,19 +131,78 @@ trait UpValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
       case _ => Nil
     }
   }
-
+  
   abstract override def evaluateOneStep(evaluation: _Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
-    previousStep.update(findUpValues(previousStep.current))
+    previousStep.updateUsing(findUpValues(previousStep.current))
   }
 }
+
+trait ValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
+  private def findOwnValues(expression: Expression): Option[ReplacementRuleTable] = {
+    expression match {
+      case symbol: SymbolExpression => Some({
+        val ownValues = kernelState.ownValues(symbol)
+        if (ownValues.table.nonEmpty) Logging.info("Found OwnValues for " + symbol + ": " + ownValues)
+        ownValues
+      })
+      case _ => {
+        None
+      }
+    }
+  }
+  private def findUpValues(expression: Expression): Seq[ReplacementRuleTable] = {
+    expression match {
+      case FullFormExpression(_, arguments) => arguments.collect({
+        case s: SymbolExpression => s // TODO is this right? perhaps leave this out?
+        case FullFormExpression(s: SymbolExpression, _) => s
+      }).map(kernelState.upValues(_))
+      case _ => Nil
+    }
+  }
+  private def findDownValues(expression: Expression): Option[ReplacementRuleTable] = {
+    expression match {
+      case FullFormExpression(symbolicHead: SymbolExpression, arguments) => Some(kernelState.downValues(symbolicHead))
+      case _ => None
+    }
+  }
+  private def findSubValues(expression: Expression): Option[ReplacementRuleTable] = {
+    if (expression.headDepth > 1) {
+      val symbol = expression.symbolHead
+      val subValues = kernelState.subValues(symbol)
+      if (subValues.table.nonEmpty) Logging.info("Found SubValues for " + symbol + ": " + subValues)
+      Some(subValues)
+    } else {
+      None
+    }
+  }
+
+  private def constructIterator[A](g: (() => Traversable[A])*) = {
+    g.iterator.map(_()).flatten
+  }
+  
+  abstract override def evaluateOneStep(evaluation: _Evaluation) = {
+    val previousStep = super.evaluateOneStep(evaluation)
+    val c = previousStep.current
+    // TODO is this the right order?
+    previousStep.updateUsing(constructIterator(
+        () => findOwnValues(c),
+        () => findDownValues(c),
+        () => findSubValues(c),
+        () => findUpValues(c)
+        ))
+  }
+}
+
 
 trait CompositeEvaluationStrategy
   extends TrivialEvaluationStrategy
   with HeadEvaluation
   with SequenceFlattening
   with ArgumentEvaluation
-  with OwnValueEvaluation
-  with DownValueEvaluation
-  with SubValueEvaluation
-  with UpValueEvaluation { es: AbstractKernel => }
+  with ValueEvaluation
+//  with OwnValueEvaluation
+//  with DownValueEvaluation
+//  with SubValueEvaluation
+//  with UpValueEvaluation
+  { es: AbstractKernel => }
