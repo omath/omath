@@ -22,8 +22,10 @@ object omath extends App {
       case Failure(error) => System.err.println(error)
       case Success(parsed) => {
         val result = TungstenCore.evaluate(parsed)
-        print("Out[" + lineNumber + "]:= ");
-        println(result)
+        if (result != org.omath.symbols.Null) {
+          print("Out[" + lineNumber + "]:= ");
+          println(result)
+        }
       }
     }
     lineNumber = lineNumber + 1

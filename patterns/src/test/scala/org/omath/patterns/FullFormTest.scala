@@ -15,9 +15,15 @@ class FullFormTest extends PatternTest {
     val pattern2: Pattern = symbols.List()()
     pattern2.bind(symbols.List()()).size should equal(1)
   }
-  
+
+  "h[_]" should "match h[2]" in {
+    val h: SymbolExpression = 'h
+    val pattern: Pattern = h(symbols.Blank())
+    pattern.bind(h(2)).size should equal(1)
+  }
+
   "blanks in the head" should "work" in {
     val pattern: Pattern = symbols.Blank()(symbols.BlankNullSequence())
-    pattern.bind(symbols.List()).size should equal (1)
+    pattern.bind(symbols.List()).size should equal(1)
   }
 }

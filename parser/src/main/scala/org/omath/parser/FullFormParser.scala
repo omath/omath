@@ -29,11 +29,13 @@ object FullFormParser extends RegexParsers {
       }
     }
   }
-  private def empty = "" ^^ { case _ => symbols.Null }
-  private def expression(implicit symbolizer: String => SymbolExpression): Parser[Expression] = whitespace.* ~> (fullForm | literal | empty) <~ whitespace.*
+  private def expression(implicit symbolizer: String => SymbolExpression): Parser[Expression] = fullForm | literal
+    private def empty = "" ^^ { case _ => symbols.Null }
 
+  private def entireExpression(implicit symbolizer: String => SymbolExpression): Parser[Expression] = whitespace.* ~> (expression | empty) <~ whitespace.*
+  
   def apply(fullForm: String)(implicit symbolizer: String => SymbolExpression): Result[Expression] = {
-    parseAll(expression, fullForm) match {
+    parseAll(entireExpression, fullForm) match {
       case Success(e, _) => org.omath.util.Success(e)
       case Failure(msg, _) => org.omath.util.Failure(msg)
       case Error(msg, _) => org.omath.util.Failure(msg)
@@ -128,7 +130,6 @@ object Syntax2FullFormParser {
       }
     } catch {
       case e: Exception => {
-        println("failed to parse: " + syntax)
         Failure(e.toString)
       }
     }
