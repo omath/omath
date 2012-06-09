@@ -26,14 +26,17 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
     val `arguments:_[___]` = Pattern('arguments, Blank()(BlankNullSequence()))
     val `object:Null` = Pattern('object, Null)
 
+    val javaNewBindable = JavaNewBindable(kernel)
+    val methodInvocationBindable = MethodInvocationBindable(kernel)
+    
     addDownValues(JavaClass, JavaClass(class_String) :> ClassForNameBindable)
     addDownValues(JavaClass, JavaClass(object_JavaObject) :> GetClassBindable)
     addDownValues(JavaMethod, JavaMethod(class_String, method_String) :> JavaMethodBindable)
     addDownValues(JavaMethod, JavaMethod(class_JavaClass, method_String) :> JavaMethodBindable)
-    addSubValues(JavaMethod, (method_JavaMethod)(object_JavaObject, `arguments:_[___]`) :> MethodInvocationBindable)
-    addSubValues(JavaMethod, (method_JavaMethod)(`object:Null`, `arguments:_[___]`) :> MethodInvocationBindable)
-    addDownValues(JavaNew, JavaNew(class_String, `arguments:_[___]`) :> JavaNewBindable)
-    addDownValues(JavaNew, JavaNew(class_JavaClass, `arguments:_[___]`) :> JavaNewBindable)
+    addSubValues(JavaMethod, (method_JavaMethod)(object_JavaObject, `arguments:_[___]`) :> methodInvocationBindable)
+    addSubValues(JavaMethod, (method_JavaMethod)(`object:Null`, `arguments:_[___]`) :> methodInvocationBindable)
+    addDownValues(JavaNew, JavaNew(class_String, `arguments:_[___]`) :> javaNewBindable)
+    addDownValues(JavaNew, JavaNew(class_JavaClass, `arguments:_[___]`) :> javaNewBindable)
 
     val setDelayed = SetDelayedBindable(kernel)
 

@@ -9,10 +9,14 @@ import org.omath.StringExpression
 import org.omath.SymbolExpression
 
 @RunWith(classOf[JUnitRunner])
-class TungstenCoreTest extends FlatSpec with ShouldMatchers {
+class TungstenCoreTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
 
-  "TungstenCore" should "correctly evaluate $Version, set in core.m" in {
-    TungstenCore.evaluateSyntax("$Version") should equal(Success(StringExpression("0.0.1")))
+  "$Version" should "correctly evaluate, after being set in core.m" in {
+    "$Version" should evaluateTo ("\"0.0.1\"")
+  }
+  
+  "compact method invocation syntax" should "be available" in {
+    """JavaNew["java.util.Date", {1234}]["toString"[]]""" should evaluateTo ("\"" + new java.util.Date(1234).toString + "\"")
   }
 }
 

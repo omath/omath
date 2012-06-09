@@ -4,9 +4,10 @@ import org.omath._
 import org.omath.kernel.Kernel
 import java.lang.reflect.Method
 import org.omath.bootstrap.conversions.Converter
+import org.omath.kernel.Evaluation
 
-case object ClassForNameBindable extends Bindable {
-  def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
+case object ClassForNameBindable extends PassiveBindable {
+  override def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
     }
@@ -15,8 +16,8 @@ case object ClassForNameBindable extends Bindable {
   }
 }
 
-case object GetClassBindable extends Bindable {
-  def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
+case object GetClassBindable extends PassiveBindable {
+  override def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
     val clazz: Class[_] = binding('object) match {
       case obj: JavaObjectExpression[_] => obj.contents.getClass
     }
@@ -25,8 +26,8 @@ case object GetClassBindable extends Bindable {
   }
 }
 
-case object JavaMethodBindable extends Bindable {
-  def bind(binding: Map[SymbolExpression, Expression]): JavaMethodExpression = {
+case object JavaMethodBindable extends PassiveBindable {
+  override def bind(binding: Map[SymbolExpression, Expression]): JavaMethodExpression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
       case javaObject: JavaObjectExpression[_] => javaObject.contents match {
@@ -41,7 +42,8 @@ case object JavaMethodBindable extends Bindable {
 }
 
 trait Boxing {
-  def box(arguments: Seq[Expression], classes: Seq[Class[_]]): Option[Seq[Object]] = {
+  // TODO provided implicit arguments automatically!
+  def box(arguments: Seq[Expression], classes: Seq[Class[_]])(implicit evaluation: Evaluation, kernel: Kernel): Option[Seq[Object]] = {
     if (arguments.size != classes.size) {
       None
     } else {
@@ -58,8 +60,8 @@ trait Boxing {
   }
 }
 
-case object MethodInvocationBindable extends Bindable with Boxing {
-  def bind(binding: Map[SymbolExpression, Expression]): Expression = {
+case class MethodInvocationBindable(kernel: Kernel) extends Bindable with Boxing {
+  override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = {
     val method = binding('method).asInstanceOf[JavaMethodExpression].contents
     val o = binding('object) match {
       case org.omath.symbols.Null => null
@@ -67,13 +69,13 @@ case object MethodInvocationBindable extends Bindable with Boxing {
     }
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
 
-    unbox(method.invoke(o, box(arguments, method.getParameterTypes).get: _*))
+    unbox(method.invoke(o, box(arguments, method.getParameterTypes)(evaluation, kernel).get: _*))
 
   }
 }
 
-case object JavaNewBindable extends Bindable with Boxing {
-  def bind(binding: Map[SymbolExpression, Expression]): Expression = {
+case class JavaNewBindable(kernel: Kernel) extends Bindable with Boxing {
+  override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
       case javaObject: JavaObjectExpression[_] => javaObject.contents match {
@@ -85,13 +87,13 @@ case object JavaNewBindable extends Bindable with Boxing {
 
     (for (
       constructor <- clazz.getConstructors.view;
-      boxedArguments <- box(arguments, constructor.getParameterTypes)
+      boxedArguments <- box(arguments, constructor.getParameterTypes)(evaluation, kernel)
     ) yield unbox(constructor.newInstance(boxedArguments: _*).asInstanceOf[Object])).head
 
   }
 }
 
-case class SetDelayedBindable(kernel: Kernel) extends Bindable {
+case class SetDelayedBindable(kernel: Kernel) extends PassiveBindable {
   private object SubValueAttachesTo {
     @scala.annotation.tailrec
     final def unapply(x: FullFormExpression): Option[SymbolExpression] = {
@@ -105,7 +107,7 @@ case class SetDelayedBindable(kernel: Kernel) extends Bindable {
     }
   }
 
-  def bind(binding: Map[SymbolExpression, Expression]): SymbolExpression = {
+  override def bind(binding: Map[SymbolExpression, Expression]): SymbolExpression = {
     val lhs = binding('lhs)
     val rhs = binding('rhs)
     lhs match {

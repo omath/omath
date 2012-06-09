@@ -27,11 +27,36 @@ $Version := "0.0.1"
     (object_JavaObject)[method_, head_[arguments___]] := JavaMethod[JavaClass[object], method][object, head[arguments]]
   
   (* TODO calling static methods *)
+  (* TODO? get field values *)
   
   (* And then allow just writing symbols for methods. *)
   (* Note that ToString isn't defined at this point, so you can't rely on this rule for a little while longer. *)
     
     JavaMethod[class_, symbol_Symbol] := JavaMethod[class, ToString[symbol]]
 
-(* TODO ScalaObject[name_String] for obtaining Scala singletons *)    
+  (* Obtaining a reference to a Scala singleton object *)
+    ScalaObject[name_String] := JavaNew["org.omath.bootstrap.SingletonHelper", {name}]["apply"[]]
+
 (* TODO? GetExtensionInstance[class_String] for obtaining instances whose constructors require 'infrastructure', e.g. a kernel reference *)
+
+(* TODO --- below this line is broken stuff being merged from init.t *)
+
+Section["Set, SetDelayed, SetAttributes"]
+"Install SetAttributes and Set."
+	"SetAttributes"
+		SetAttributes[s_Symbol, attr_Symbol] := ScalaObject["org.omath.core.set.SetAttributes"]["setAttributes"[s, attr]]
+		SetAttributes[s_Symbol, {attr__Symbol}] := ScalaObject["org.omath.core.set.SetAttributes"]["setAttributesList"[s, {attr}]]
+		SetAttributes[symbols:{___Symbol}, attr:(_Symbol)|({___Symbol})] := (SetAttributes[#, attr] & /@ symbols; Null)
+	
+	"Some important attributes"
+		SetAttributes[Hold, HoldAll]
+		SetAttributes[RuleDelayed, HoldRest]
+	
+	"Set"
+		SetAttributes[Set, HoldFirst]
+		Set[lhs_, rhs_] := ScalaObject["org.omath.core.set.Set"]["set", Hold[lhs, rhs]]
+		"Note how we hold arguments when delegating to Java."
+
+		Set[Part[s_Symbol, parts___], rhs_] := ScalaObject["org.omath.core.set.Set"]["setPart", Hold[s, {parts}, rhs]]
+		Set[lhs_List, rhs_List] := ScalaObject["org.omath.core.set.Set"]["setList", Hold[lhs, rhs]]
+

@@ -14,7 +14,7 @@ import org.scalatest.FlatSpec
 @RunWith(classOf[JUnitRunner])
 class MethodInvocationTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
 
-  "method invocation" should "work, and unbox arguments" in {
+  "method invocation" should "work, unbox arguments and boxing return values" in {
     """JavaMethod["java.util.Date", "toString"][JavaNew["java.util.Date", {1234}], {}]""" should evaluateTo("\"" + new java.util.Date(1234).toString + "\"")
   }
 

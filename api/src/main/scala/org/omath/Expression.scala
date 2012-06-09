@@ -2,19 +2,24 @@ package org.omath
 
 import org.apfloat.Apint
 import org.apfloat.Apfloat
+import org.omath.kernel.Evaluation
 
 trait Bindable {
+  def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression
+}
+trait PassiveBindable extends Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): Expression
+  final override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = bind(binding)
 }
 
 object Bindable extends IntegerExpressionImplicits with RealExpressionImplicits with StringExpressionImplicits with SymbolExpressionImplicits
 
-trait Expression extends Bindable {
+trait Expression extends PassiveBindable {
   def head: Expression
   def headDepth: Int // how many heads do you need to take to get a SymbolExpression
   def symbolHead: SymbolExpression
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
-  
+    
   def unapplySeq(x: FullFormExpression): Option[Seq[Expression]] = {
     if(x.head == this) {
       Some(x.arguments)
@@ -24,8 +29,8 @@ trait Expression extends Bindable {
   }
   
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
-  final def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
-  
+  final override def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
+
   def :>(bindable: Bindable) = patterns.ReplacementRule(this, bindable)
 }
 
