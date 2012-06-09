@@ -137,7 +137,7 @@ private case class BigDecimalExpression(toBigDecimal: BigDecimal) extends RealEx
 }
 
 // TODO maybe this should just be a trait with an extractor on the companion object
-case class FullFormExpression(head: Expression, arguments: List[Expression]) extends Expression {
+case class FullFormExpression(head: Expression, arguments: Seq[Expression]) extends Expression {
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = {
     head.bindOption(binding) match {
       case None => {

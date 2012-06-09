@@ -24,13 +24,14 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
     val method_JavaMethod = Pattern('method, Blank(JavaMethod))
     val object_JavaObject = Pattern('object, Blank(JavaObject))
     val `arguments:_[___]` = Pattern('arguments, Blank()(BlankNullSequence()))
+    val `object:Null` = Pattern('object, Null)
 
     addDownValues(JavaClass, JavaClass(class_String) :> ClassForNameBindable)
     addDownValues(JavaClass, JavaClass(object_JavaObject) :> GetClassBindable)
     addDownValues(JavaMethod, JavaMethod(class_String, method_String) :> JavaMethodBindable)
     addDownValues(JavaMethod, JavaMethod(class_JavaClass, method_String) :> JavaMethodBindable)
     addSubValues(JavaMethod, (method_JavaMethod)(object_JavaObject, `arguments:_[___]`) :> MethodInvocationBindable)
-    addSubValues(JavaMethod, (method_JavaMethod)(Null, `arguments:_[___]`) :> StaticMethodInvocationBindable)
+    addSubValues(JavaMethod, (method_JavaMethod)(`object:Null`, `arguments:_[___]`) :> MethodInvocationBindable)
     addDownValues(JavaNew, JavaNew(class_String, `arguments:_[___]`) :> JavaNewBindable)
     addDownValues(JavaNew, JavaNew(class_JavaClass, `arguments:_[___]`) :> JavaNewBindable)
 
@@ -50,4 +51,7 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
 // a mixin for kernels
 trait BootstrapState { kernel: Kernel =>
   override val kernelState = BootstrapKernelState(kernel)
+  // this will be overriden again later.
+  override protected def symbolizer = { s: String => SymbolExpression(s, "System") }
+
 }

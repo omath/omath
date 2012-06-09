@@ -22,10 +22,10 @@ trait KernelState {
 
 trait EmptyKernelState extends KernelState {
   override def attributes(symbol: SymbolExpression) = Set.empty
-  override def ownValues(symbol: SymbolExpression) = ReplacementRuleTable()
-  override def downValues(symbol: SymbolExpression) = ReplacementRuleTable()
-  override def subValues(symbol: SymbolExpression) = ReplacementRuleTable()
-  override def upValues(symbol: SymbolExpression) = ReplacementRuleTable()
+  override def ownValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
+  override def downValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
+  override def subValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
+  override def upValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
 
   override def addAttributes(symbol: SymbolExpression, attributes: SymbolExpression*) = ???
   override def addDownValues(symbol: SymbolExpression, rules: ReplacementRule*) = ???
@@ -47,7 +47,7 @@ trait MutableKernelState extends KernelState {
 }
 
 trait MutableMapKernelState extends MutableKernelState {
-  def emptyValueMap = scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable]().withDefaultValue(ReplacementRuleTable())
+  def emptyValueMap = scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable]().withDefaultValue(ReplacementRuleTable(Nil))
 
   private val attributesMap = scala.collection.mutable.Map[SymbolExpression, Set[SymbolExpression]]().withDefaultValue(Set())
   private val ownValuesMap = emptyValueMap
@@ -70,7 +70,7 @@ trait MutableMapKernelState extends MutableKernelState {
   }
   private def addRules(map: scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable], symbol: SymbolExpression, rules: Seq[ReplacementRule]): this.type = {
     // FIXME rule specificity, etc.
-    map.put(symbol, ReplacementRuleTable((map(symbol).table ++ rules):_*))
+    map.put(symbol, ReplacementRuleTable(map(symbol).table ++ rules))
     this
   }
   

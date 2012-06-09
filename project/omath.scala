@@ -23,11 +23,11 @@ object Omath extends Build {
 
     lazy val bootstrap = Project(id = "omath-bootstrap",
                            base = file("bootstrap"),
-                            settings = buildSettings) dependsOn(api)
+                            settings = buildSettings ++ Seq(libraryDependencies += toolkit.base)) dependsOn(api)
 
     lazy val tungstenBootstrap = Project(id = "omath-tungsten-bootstrap",
                            base = file("tungsten-bootstrap"),
-                            settings = buildSettings) dependsOn(tungsten, bootstrap)
+                            settings = buildSettings) dependsOn(tungsten, bootstrap, parser)
 
     lazy val parser = Project(id = "omath-parser",
                            base = file("parser"),
@@ -35,7 +35,7 @@ object Omath extends Build {
 
     lazy val core = Project(id = "omath-core",
                            base = file("core"),
-                            settings = buildSettings ++ Seq(libraryDependencies += toolkit.base)) dependsOn(bootstrap, parser)
+                            settings = buildSettings) dependsOn(bootstrap)
 
     lazy val tungstenCore = Project(id = "omath-tungsten-core",
                            base = file("tungsten-core"),
