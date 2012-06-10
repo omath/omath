@@ -18,8 +18,9 @@ object omath extends App {
     TungstenCore.evaluateSyntax(in.readLine()) match {
       case Failure(error, None) => System.err.println(error)
       case Failure(error, Some(exception)) => {
-        if(error != exception.getMessage) System.err.println(exception)
+        if(error != exception.getMessage) System.err.println(error)
         System.err.println(exception)
+        throw exception
       }
       case Success(org.omath.symbols.Null) => 
       case Success(result) => {

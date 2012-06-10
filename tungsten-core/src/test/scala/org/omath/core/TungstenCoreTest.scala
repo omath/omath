@@ -18,5 +18,6 @@ class TungstenCoreTest extends FlatSpec with ShouldMatchers with EvaluationMatch
   "compact method invocation syntax" should "be available" in {
     """JavaNew["java.util.Date", {1234}]["toString"[]]""" should evaluateTo ("\"" + new java.util.Date(1234).toString + "\"")
   }
+  
 }
 

@@ -134,7 +134,7 @@ object Syntax2FullFormParser {
       }
     } catch {
       case e: Exception => {
-        Failure(e.toString)
+        Failure(e.toString, Some(e))
       }
     }
   }

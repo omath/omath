@@ -28,7 +28,7 @@ private case class BlankSequence(head: Option[SymbolExpression]) extends Express
     } else {
       val range = head match {
         case None => (1 to a.remainingExpressions.size).iterator
-        case Some(h) => (1 to a.remainingExpressions.size).iterator.takeWhile(i => a.remainingExpressions(i).head == h)
+        case Some(h) => (1 to a.remainingExpressions.size).iterator.takeWhile(i => a.remainingExpressions(i - 1).head == h)
       }
       for (i <- range) yield PartialBinding(a.binding, a.remainingExpressions.drop(i), a.remainingExpressions.take(i))
     }
@@ -41,7 +41,7 @@ private case class BlankNullSequence(head: Option[SymbolExpression]) extends Exp
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     val range = head match {
       case None => (0 to a.remainingExpressions.size).iterator
-      case Some(h) => (0 to a.remainingExpressions.size).iterator.takeWhile(i => a.remainingExpressions(i).head == h)
+      case Some(h) => (0 to a.remainingExpressions.size).iterator.takeWhile(i => i == 0 || a.remainingExpressions(i - 1).head == h)
     }
     for (i <- range) yield PartialBinding(a.binding, a.remainingExpressions.drop(i), a.remainingExpressions.take(i))
   }

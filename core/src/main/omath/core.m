@@ -44,13 +44,16 @@ $Version := "0.0.1"
 Section["Set, SetDelayed, SetAttributes"]
 "Install SetAttributes and Set."
 	"SetAttributes"
-		SetAttributes[s_Symbol, attr_Symbol] := ScalaObject["org.omath.core.set.SetAttributes"]["setAttributes"[s, attr]]
-		SetAttributes[s_Symbol, {attr__Symbol}] := ScalaObject["org.omath.core.set.SetAttributes"]["setAttributesList"[s, {attr}]]
-		SetAttributes[symbols:{___Symbol}, attr:(_Symbol)|({___Symbol})] := (SetAttributes[#, attr] & /@ symbols; Null)
+		SetAttributes[symbols_, attribute_Symbol] := SetAttributes[symbols, {attribute}]
+		SetAttributes[symbol_Symbol, attributes_] := SetAttributes[{symbol}, attributes]
+		SetAttributes[symbols:{__Symbol}, attributes:{__Symbol}] := ScalaObject["org.omath.core.attributes.SetAttributes"]["apply"[symbols, attributes]]
 	
 	"Some important attributes"
 		SetAttributes[Hold, HoldAll]
 		SetAttributes[RuleDelayed, HoldRest]
+	
+	"Attributes"
+		Attributes[symbol_Symbol] := ScalaObject["org.omath.core.attributes.Attributes"]["apply"[symbol]]
 	
 	"Set"
 		SetAttributes[Set, HoldFirst]

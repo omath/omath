@@ -15,6 +15,7 @@ package object symbols {
   
   val List = SymbolExpression("List", "System")
   val Null = SymbolExpression("Null", "System")
+  val $Failed = SymbolExpression("$Failed", "System")
   
   val String = SymbolExpression("String", "System")
   val Symbol = SymbolExpression("Symbol", "System")

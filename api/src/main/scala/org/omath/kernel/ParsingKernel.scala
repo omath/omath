@@ -12,7 +12,12 @@ trait ParsingKernel { kernel: Kernel =>
   }
   def evaluateSyntax(code: Iterator[String]): Result[Expression] = {
     parseSyntax(code.flatMap(_.split('\n')))(symbolizer).map(_.map(evaluate)).reduce({ (x, y) =>
-      if (x.isFailure) System.err.println(x.getFailureMessage)
+      x match {
+        case x: Failure[_] => {
+          System.err.println(x)
+        }
+        case _: Success[_] => 
+      }
       y
     })
   }

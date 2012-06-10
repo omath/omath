@@ -35,6 +35,13 @@ class BlankTest extends PatternTest {
     pattern.matching(2, 'x).size should equal(1)
     pattern.matching().size should equal(0)
   }
+  "BlankSequence[Integer]" should "match any nonempty sequence of Integers" in {
+    val pattern: Pattern = symbols.BlankSequence(symbols.Integer)
+    pattern.matching(2).size should equal(1)
+    pattern.matching(2, 2).size should equal(1)
+    pattern.matching(2, 'x).size should equal(0)
+    pattern.matching().size should equal(0)
+  }
 
   "BlankNullSequence" should "match any  sequence" in {
     val pattern: Pattern = symbols.BlankNullSequence()

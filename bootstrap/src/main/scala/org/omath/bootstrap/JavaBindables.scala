@@ -5,6 +5,8 @@ import org.omath.kernel.Kernel
 import java.lang.reflect.Method
 import org.omath.bootstrap.conversions.Converter
 import org.omath.kernel.Evaluation
+import java.lang.reflect.Type
+import net.tqft.toolkit.Logging
 
 case object ClassForNameBindable extends PassiveBindable {
   override def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
@@ -41,13 +43,25 @@ case object JavaMethodBindable extends PassiveBindable {
   }
 }
 
-trait Boxing {
-  // TODO provided implicit arguments automatically!
-  def box(arguments: Seq[Expression], classes: Seq[Class[_]])(implicit evaluation: Evaluation, kernel: Kernel): Option[Seq[Object]] = {
-    if (arguments.size != classes.size) {
+trait Boxing extends Logging {
+  def box(arguments: Seq[Expression], types: Seq[Type])(implicit evaluation: Evaluation, kernel: Kernel): Option[Seq[Object]] = {
+    if (arguments.size > types.size) {
       None
+    } else if(arguments.size < types.size) {
+      // try to provide some arguments 'implicitly'
+      types.last.toString match {
+        case "interface org.omath.kernel.Kernel" => {
+          info("providing an implicit kernel instance while boxing arguments")
+          box(arguments, types.dropRight(1)).map(_ :+ kernel)
+        }
+        case "interface org.omath.kernel.Evaluation" => {
+          info("providing an implicit evaluation instance while boxing arguments")
+          box(arguments, types.dropRight(1)).map(_ :+ evaluation)
+        }
+        case _ => None
+      }
     } else {
-      val options: Seq[Option[Object]] = arguments.zip(classes).map({ p => Converter.fromExpression(p._1, p._2).asInstanceOf[Option[Object]] })
+      val options: Seq[Option[Object]] = arguments.zip(types).map({ p => Converter.fromExpression(p._1, p._2) })
       if (options.exists(_.isEmpty)) {
         None
       } else {
@@ -69,7 +83,17 @@ case class MethodInvocationBindable(kernel: Kernel) extends Bindable with Boxing
     }
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
 
-    unbox(method.invoke(o, box(arguments, method.getParameterTypes)(evaluation, kernel).get: _*))
+    box(arguments, method.getGenericParameterTypes)(evaluation, kernel) match {
+      case Some(boxedArguments) => unbox(method.invoke(o, boxedArguments: _*))
+      case None => {
+        // TODO report that the arguments couldn't be coerced via the evaluation instance?
+        System.err.println("The arguments " + arguments + " could not be coerced to match the signature of " + method + ": ")
+        System.err.println(method.getGenericParameterTypes.map(_.toString).mkString("{", ", ", "}"))
+        org.omath.symbols.$Failed
+      }
+    }
+    
+    
 
   }
 }
@@ -87,8 +111,17 @@ case class JavaNewBindable(kernel: Kernel) extends Bindable with Boxing {
 
     (for (
       constructor <- clazz.getConstructors.view;
-      boxedArguments <- box(arguments, constructor.getParameterTypes)(evaluation, kernel)
-    ) yield unbox(constructor.newInstance(boxedArguments: _*).asInstanceOf[Object])).head
+      boxedArguments <- box(arguments, constructor.getGenericParameterTypes)(evaluation, kernel)
+    ) yield unbox(constructor.newInstance(boxedArguments: _*).asInstanceOf[Object])).headOption match {
+      case Some(result) => result
+      case None => {
+        // TODO report that no constructor was found via the evaluation instance?
+        System.err.println("No constructor found on " + clazz + " suitable for arguments " + arguments + ", available were: ")
+        for(constructor <- clazz.getConstructors) System.err.println(constructor.getGenericParameterTypes.map(_.toString).mkString("{", ", ", "}"))
+        org.omath.symbols.$Failed
+      }
+        
+    }
 
   }
 }

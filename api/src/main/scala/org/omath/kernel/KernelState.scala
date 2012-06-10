@@ -5,7 +5,7 @@ import org.omath.patterns.ReplacementRule
 import org.omath.patterns.ReplacementRuleTable
 
 trait KernelState {
-  def attributes(symbol: SymbolExpression): Set[SymbolExpression]
+  def attributes(symbol: SymbolExpression): Seq[SymbolExpression]
   def ownValues(symbol: SymbolExpression): ReplacementRuleTable
   def downValues(symbol: SymbolExpression): ReplacementRuleTable
   def subValues(symbol: SymbolExpression): ReplacementRuleTable
@@ -21,7 +21,7 @@ trait KernelState {
 // TODO move all the following to a .state subpackage?
 
 trait EmptyKernelState extends KernelState {
-  override def attributes(symbol: SymbolExpression) = Set.empty
+  override def attributes(symbol: SymbolExpression) = Seq.empty
   override def ownValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
   override def downValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
   override def subValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
@@ -49,7 +49,7 @@ trait MutableKernelState extends KernelState {
 trait MutableMapKernelState extends MutableKernelState {
   def emptyValueMap = scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable]().withDefaultValue(ReplacementRuleTable(Nil))
 
-  private val attributesMap = scala.collection.mutable.Map[SymbolExpression, Set[SymbolExpression]]().withDefaultValue(Set())
+  private val attributesMap = scala.collection.mutable.Map[SymbolExpression, Seq[SymbolExpression]]().withDefaultValue(Seq.empty)
   private val ownValuesMap = emptyValueMap
   private val downValuesMap = emptyValueMap
   private val subValuesMap = emptyValueMap
@@ -63,8 +63,8 @@ trait MutableMapKernelState extends MutableKernelState {
 
   override def addAttributes(symbol: SymbolExpression, attributes: SymbolExpression*) = {
     attributesMap.get(symbol) match {
-      case None => attributesMap.put(symbol, attributes.toSet)
-      case Some(oldAttributes) => attributesMap.put(symbol, oldAttributes ++ attributes)
+      case None => attributesMap.put(symbol, attributes)
+      case Some(oldAttributes) => attributesMap.put(symbol, (oldAttributes ++ attributes).distinct)
     }
     this
   }

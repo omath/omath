@@ -49,9 +49,9 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
     previousStep.update(
       previousStep.current match {
         case FullFormExpression(head, arguments) => {
-          val attributes: Set[SymbolExpression] = head match {
+          val attributes: Seq[SymbolExpression] = head match {
             case head: SymbolExpression => kernelState.attributes(head)
-            case _ => Set.empty
+            case _ => Seq.empty
           }
           val holdFirst = attributes.contains(symbols.HoldFirst) || attributes.contains(symbols.HoldAll)
           val holdRest = attributes.contains(symbols.HoldRest) || attributes.contains(symbols.HoldAll)
