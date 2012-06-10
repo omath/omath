@@ -17,6 +17,9 @@ package object symbols {
   val Null = SymbolExpression("Null", "System")
   val $Failed = SymbolExpression("$Failed", "System")
   
+  val True = SymbolExpression("True", "System")
+  val False = SymbolExpression("False", "System")
+  
   val String = SymbolExpression("String", "System")
   val Symbol = SymbolExpression("Symbol", "System")
   val Integer = SymbolExpression("Integer", "System")
@@ -28,9 +31,12 @@ package object symbols {
   val Rule = SymbolExpression("Rule", "System")
   val RuleDelayed = SymbolExpression("RuleDelayed", "System")
 
+  val Hold = SymbolExpression("Hold", "System")
   val HoldFirst = SymbolExpression("HoldFirst", "System")
   val HoldRest = SymbolExpression("HoldRest", "System")
   val HoldAll = SymbolExpression("HoldAll", "System") 
+  val HoldComplete = SymbolExpression("HoldComplete", "System") 
+  val HoldPattern = SymbolExpression("HoldPattern", "System") 
   
   val Blank = SymbolExpression("Blank", "System")
   val BlankSequence = SymbolExpression("BlankSequence", "System")
@@ -38,5 +44,6 @@ package object symbols {
   val Pattern = SymbolExpression("Pattern", "System")
   val Alternatives = SymbolExpression("Alternatives", "System")
 
-  val HoldPattern = SymbolExpression("HoldPattern", "System")
+  val MatchQ = SymbolExpression("MatchQ", "System")
+  val SameQ = SymbolExpression("SameQ", "System")
 }

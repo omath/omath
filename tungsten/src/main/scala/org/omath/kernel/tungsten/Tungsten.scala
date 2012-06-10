@@ -6,8 +6,8 @@ import org.omath.kernel.Kernel;
 import org.omath.patterns._
 
 trait AbstractKernel extends Kernel { kernel: EvaluationStrategy =>
-  override def evaluate(expression: Expression): Expression = _Evaluation(Nil).evaluate(expression)
-
+	override def newEvaluation: Evaluation = _Evaluation(Nil) 
+  
   private[kernel] case class _Evaluation(stack: List[Expression]) extends Evaluation {
     def evaluate(expression: Expression): Expression = {
       _Evaluation(expression :: stack).fixedPoint.current

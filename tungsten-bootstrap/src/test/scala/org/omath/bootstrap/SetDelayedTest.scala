@@ -45,6 +45,12 @@ class SetDelayedTest extends FlatSpec with ShouldMatchers with EvaluationMatcher
        G[1][2]""" should evaluateTo("G[1][2]")
     "G[1][2][3]" should evaluateTo("{G[1], 2, 3}")
   }
+  
+  "SetDelayed" should "overwrite old values" in {
+    """hh[x_] := {x, x}
+       hh[x_] := {x, x, x}
+       hh[1]""" should evaluateTo("{1, 1, 1}")
+  }
 
 }
 

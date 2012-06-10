@@ -16,6 +16,8 @@ object Converter extends Logging {
     x match {
       case x: Expression => x
       case null => symbols.Null
+      case true => org.omath.symbols.True
+      case false => org.omath.symbols.False
       case x: Int => IntegerExpression(x)
       case x: Long => IntegerExpression(x)
       case x: BigInt => IntegerExpression(x)

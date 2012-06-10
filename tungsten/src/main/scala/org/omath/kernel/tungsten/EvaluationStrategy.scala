@@ -25,6 +25,7 @@ trait HeadEvaluation extends EvaluationStrategy { es: AbstractKernel =>
   }
 }
 
+// FIXME I think this is meant to be achieved by an UpValue on Sequence!
 trait SequenceFlattening extends EvaluationStrategy { es: AbstractKernel =>
   abstract override def evaluateOneStep(evaluation: _Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
@@ -55,7 +56,7 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
           }
           val holdFirst = attributes.contains(symbols.HoldFirst) || attributes.contains(symbols.HoldAll)
           val holdRest = attributes.contains(symbols.HoldRest) || attributes.contains(symbols.HoldAll)
-          // TODO evaluate Evaluate (and maybe JavaClass, etc?) anyway
+          // TODO evaluate Evaluate (and maybe JavaClass, etc?) anyway // NB maybe that's meant to be achieved via UpValues??
           // TODO if nothing changes, return the original Expression
           Some(FullFormExpression(head, arguments match {
             case Nil => arguments

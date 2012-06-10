@@ -1,7 +1,7 @@
 package org.omath.bootstrap
 
-class SingletonHelper(name: String) {
-	def apply(): Any = {
+class SingletonHelper() {
+	def apply(name: String): Any = {
 	  Class.forName(name + "$").getDeclaredField("MODULE$").get(null)
 	}
 }

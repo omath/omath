@@ -19,15 +19,15 @@ trait Expression extends PassiveBindable {
   def headDepth: Int // how many heads do you need to take to get a SymbolExpression
   def symbolHead: SymbolExpression
   def apply(arguments: Expression*): Expression = FullFormExpression(this, arguments.toList)
-    
+
   def unapplySeq(x: FullFormExpression): Option[Seq[Expression]] = {
-    if(x.head == this) {
+    if (x.head == this) {
       Some(x.arguments)
     } else {
       None
     }
   }
-  
+
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final override def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
 
@@ -100,7 +100,7 @@ case class StringExpression(contents: String) extends LiteralExpression {
 
 trait StringExpressionImplicits {
   import language.implicitConversions
-  implicit def string2StringExpression(s: String) = StringExpression(s)  
+  implicit def string2StringExpression(s: String) = StringExpression(s)
 }
 object StringExpression extends StringExpressionImplicits
 
@@ -146,7 +146,7 @@ private case class ApintExpression(toApint: Apint) extends IntegerExpression {
   def toLong = toApint.longValue
 }
 
-object IntegerExpression extends IntegerExpressionImplicits 
+object IntegerExpression extends IntegerExpressionImplicits
 
 trait RealExpression extends LiteralExpression {
   def toFloat: Float
@@ -180,18 +180,26 @@ private case class ApfloatExpression(toApfloat: Apfloat) extends RealExpression 
 
 // TODO maybe this should just be a trait with an extractor on the companion object
 case class FullFormExpression(head: Expression, arguments: Seq[Expression]) extends Expression {
+  private def bindArguments(binding: Map[SymbolExpression, Expression], arguments: Seq[Expression]): Option[Seq[Expression]] = {
+    val boundArguments = arguments.map(_.bindOption(binding))
+    if (boundArguments.forall(_.isEmpty)) {
+      None
+    } else {
+      // TODO this could be optimized quite a bit; no need to construct intermediate zips, in particular.
+      Some(boundArguments.zip(arguments).flatMap({
+        case (Some(FullFormExpression(symbols.Sequence, elements)), _) => elements
+        case (Some(element), _) => Seq(element)
+        case (None, a) => Seq(a)
+      }))
+    }
+  }
+
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = {
-    head.bindOption(binding) match {
-      case None => {
-        // TODO this could be optimized quite a bit; no need to construct intermediate zips, in particular.
-        val boundArguments = arguments.map(_.bindOption(binding))
-        if (boundArguments.foldLeft(true)(_ && _.isEmpty)) {
-          None
-        } else {
-          Some(head.apply(boundArguments.zip(arguments).map({ case (b, a) => b.getOrElse(a) }): _*))
-        }
-      }
-      case Some(newHead) => Some(newHead.apply(arguments.map(_.bind(binding)): _*))
+    (head.bindOption(binding), bindArguments(binding, arguments)) match {
+      case (None, None) => None
+      case (None, Some(newArguments)) => Some(head(newArguments:_*))
+      case (Some(newHead), None) => Some(newHead(arguments:_*))
+      case (Some(newHead), Some(newArguments)) => Some(newHead(newArguments:_*))
     }
   }
 
@@ -200,7 +208,7 @@ case class FullFormExpression(head: Expression, arguments: Seq[Expression]) exte
     case head: SymbolExpression => head
     case _ => head.symbolHead
   }
-  
+
   override def toString = head.toString + arguments.mkString("[", ", ", "]")
 }
 
