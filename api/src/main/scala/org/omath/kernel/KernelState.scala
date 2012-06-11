@@ -3,6 +3,7 @@ package org.omath.kernel
 import org.omath.SymbolExpression
 import org.omath.patterns.ReplacementRule
 import org.omath.patterns.ReplacementRuleTable
+import org.omath.Context
 
 trait KernelState {
   def attributes(symbol: SymbolExpression): Seq[SymbolExpression]
@@ -10,6 +11,7 @@ trait KernelState {
   def downValues(symbol: SymbolExpression): ReplacementRuleTable
   def subValues(symbol: SymbolExpression): ReplacementRuleTable
   def upValues(symbol: SymbolExpression): ReplacementRuleTable
+  def symbols: Map[Context, Seq[SymbolExpression]]
 
   def addAttributes(symbol: SymbolExpression, attributes: SymbolExpression*): KernelState
   def addOwnValues(symbol: SymbolExpression, rules: ReplacementRule*): KernelState
@@ -26,6 +28,7 @@ trait EmptyKernelState extends KernelState {
   override def downValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
   override def subValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
   override def upValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)
+  override def symbols = Map.empty
 
   override def addAttributes(symbol: SymbolExpression, attributes: SymbolExpression*) = ???
   override def addDownValues(symbol: SymbolExpression, rules: ReplacementRule*) = ???
@@ -55,13 +58,24 @@ trait MutableMapKernelState extends MutableKernelState {
   private val subValuesMap = emptyValueMap
   private val upValuesMap = emptyValueMap
 
+  private val symbolsMap = scala.collection.mutable.Map[Context, Seq[SymbolExpression]]()
+
   override def attributes(symbol: SymbolExpression) = attributesMap(symbol)
   override def ownValues(symbol: SymbolExpression) = ownValuesMap(symbol)
   override def downValues(symbol: SymbolExpression) = downValuesMap(symbol)
   override def subValues(symbol: SymbolExpression) = subValuesMap(symbol)
   override def upValues(symbol: SymbolExpression) = upValuesMap(symbol)
 
+  override def symbols = symbolsMap.toMap.withDefaultValue(Seq.empty)
+  private def recordSymbol(symbol: SymbolExpression) {
+    symbols(symbol.context) match {
+      case s if s.contains(symbol) =>
+      case s => symbolsMap.put(symbol.context, symbol +: s)
+    }
+  }
+
   override def addAttributes(symbol: SymbolExpression, attributes: SymbolExpression*) = {
+    recordSymbol(symbol)
     attributesMap.get(symbol) match {
       case None => attributesMap.put(symbol, attributes)
       case Some(oldAttributes) => attributesMap.put(symbol, (oldAttributes ++ attributes).distinct)
@@ -69,10 +83,11 @@ trait MutableMapKernelState extends MutableKernelState {
     this
   }
   private def addRules(map: scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable], symbol: SymbolExpression, rules: Seq[ReplacementRule]): this.type = {
+    recordSymbol(symbol)
     map.put(symbol, map(symbol) ++ rules)
     this
   }
-  
+
   override def addOwnValues(symbol: SymbolExpression, rules: ReplacementRule*) = {
     addRules(ownValuesMap, symbol, rules)
   }

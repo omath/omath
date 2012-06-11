@@ -7,6 +7,7 @@ import org.omath.bootstrap.conversions.Converter
 import org.omath.kernel.Evaluation
 import java.lang.reflect.Type
 import net.tqft.toolkit.Logging
+import org.omath.kernel.ParsingKernel
 
 case object ClassForNameBindable extends PassiveBindable {
   override def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
@@ -44,13 +45,17 @@ case object JavaMethodBindable extends PassiveBindable {
 }
 
 trait Boxing extends Logging {
-  def box(arguments: Seq[Expression], types: Seq[Type])(implicit evaluation: Evaluation, kernel: Kernel): Option[Seq[Object]] = {
+  def box(arguments: Seq[Expression], types: Seq[Type])(implicit evaluation: Evaluation, kernel: ParsingKernel): Option[Seq[Object]] = {
     if (arguments.size > types.size) {
       None
     } else if(arguments.size < types.size) {
       // try to provide some arguments 'implicitly'
       types.last.toString match {
         case "interface org.omath.kernel.Kernel" => {
+          info("providing an implicit kernel instance while boxing arguments")
+          box(arguments, types.dropRight(1)).map(_ :+ kernel)
+        }
+        case "interface org.omath.kernel.ParsingKernel" => {
           info("providing an implicit kernel instance while boxing arguments")
           box(arguments, types.dropRight(1)).map(_ :+ kernel)
         }
@@ -74,7 +79,7 @@ trait Boxing extends Logging {
   }
 }
 
-case class MethodInvocationBindable(kernel: Kernel) extends Bindable with Boxing {
+case class MethodInvocationBindable(kernel: ParsingKernel) extends Bindable with Boxing {
   override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = {
     val method = binding('method).asInstanceOf[JavaMethodExpression].contents
     val o = binding('object) match {
@@ -98,7 +103,7 @@ case class MethodInvocationBindable(kernel: Kernel) extends Bindable with Boxing
   }
 }
 
-case class JavaNewBindable(kernel: Kernel) extends Bindable with Boxing {
+case class JavaNewBindable(kernel: ParsingKernel) extends Bindable with Boxing {
   override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)

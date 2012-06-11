@@ -5,6 +5,6 @@ import org.omath.kernel.Kernel
 
 object OwnValues {
 	def apply(s: SymbolExpression)(implicit kernel: Kernel) = {
-	  kernel.kernelState.ownValues(s).table.map(_.asExpression)
+	  kernel.kernelState.ownValues(s)
 	}
 }

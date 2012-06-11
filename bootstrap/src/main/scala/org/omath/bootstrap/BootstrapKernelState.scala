@@ -12,7 +12,7 @@ object Bootstrap {
   }
 }
 
-case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
+case class BootstrapKernelState(kernel: ParsingKernel) extends MutableMapKernelState {
   import org.omath.symbols.{ Pattern, Blank, BlankNullSequence, String, Null }
   import org.omath.bootstrap.symbols.{ JavaClass, JavaMethod, JavaObject, JavaNew }
 
@@ -52,6 +52,6 @@ case class BootstrapKernelState(kernel: Kernel) extends MutableMapKernelState {
 }
 
 // a mixin for kernels
-trait BootstrapState { kernel: Kernel =>
+trait BootstrapState { kernel: ParsingKernel =>
   override val kernelState = BootstrapKernelState(kernel)
 }

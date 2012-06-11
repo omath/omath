@@ -4,7 +4,7 @@ import org.omath._
 import org.omath.util._
 import scala.io.Source
 
-trait ParsingKernel { kernel: Kernel =>
+trait ParsingKernel extends Kernel { kernel =>
   def parseSyntax(lines: Iterator[String])(implicit symbolizer: String => SymbolExpression): Iterator[Result[Expression]]
   
   def evaluateSyntax(syntax: String): Result[Expression] = {

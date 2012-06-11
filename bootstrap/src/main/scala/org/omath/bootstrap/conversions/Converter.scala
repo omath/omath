@@ -9,6 +9,8 @@ import scala.math.BigDecimal.double2bigDecimal
 import org.apfloat.Apint
 import org.apfloat.Apfloat
 import java.lang.reflect.Type
+import org.omath.patterns.ReplacementRuleTable
+import org.omath.patterns.ReplacementRule
 
 object Converter extends Logging {
 
@@ -28,6 +30,9 @@ object Converter extends Logging {
       case x: BigDecimal => RealExpression(x)
       case x: Apfloat => RealExpression(x)
       case x: Seq[_] => org.omath.symbols.List(x.map(toExpression): _*)
+      case x: ReplacementRuleTable => toExpression(x.table)
+      case x: ReplacementRule => x.asExpression
+      case x: Context => StringExpression(x.toString)
       case ConvertableToExpression(y) => y
       case _ => JavaObjectExpression(x)
     }
@@ -64,6 +69,7 @@ object Converter extends Logging {
       case (x: RealExpression, "java.lang.Double") => Some(x.toDouble)
       case (x: RealExpression, "org.apfloat.Apfloat") => Some(x.toApfloat)
       case (x: StringExpression, "java.lang.String") => Some(x.contents)
+      case (x: StringExpression, "org.omath.Context") => Some(Context(x.contents))
       case (FullFormExpression(org.omath.symbols.List, arguments), SeqPattern(innerType)) => {
         arguments.map(fromExpression(_, innerType)) match {
           case options if options.forall(_.nonEmpty) => Some(options.map(_.get))
