@@ -7,6 +7,13 @@ import java.lang.reflect.Method
 class JavaObjectExpression[T](val contents: T) extends LiteralExpression {
   override def toString = "JavaObject[\"" + contents.getClass.getCanonicalName + "\", " + contents.hashCode + "]"
   override val head = bootstrap.symbols.JavaObject
+  override val hashCode = contents.hashCode + 1
+  override def equals(other: Any) = {
+    other match {
+      case other: JavaObjectExpression[_] => other.contents == contents
+      case _ => false
+    }
+  }
 }
 object JavaObjectExpression {
   def apply[T](contents: T) = new JavaObjectExpression[T](contents)

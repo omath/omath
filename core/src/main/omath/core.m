@@ -55,10 +55,9 @@ Get["Core/Kernel.m"]
 Get["Core/FlowControl.m"]
 Get["Core/Strings.m"]
 	
-(* TODO ScalaEval produces objects which break serialization, unsuprisingly ... *) 
+(* TODO ScalaEval produces objects which break serialization, unsuprisingly ... *)
 square = ScalaEval["{x:Int => x*x}"]
 square[7]
-*)	
 	
 	
 (* TODO --- below this line is broken stuff being merged from init.t *)

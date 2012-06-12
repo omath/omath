@@ -88,8 +88,8 @@ object Resolvers {
 
 object Dependencies {
 	object toolkit {
-		val base = "net.tqft" %% "toolkit.base" % "0.1.6"
-		val eval = "net.tqft" %% "toolkit.eval" % "0.1.6"
+		val base = "net.tqft" %% "toolkit-base" % "0.1.7"
+		val eval = "net.tqft" %% "toolkit-eval" % "0.1.7"
 	}
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"

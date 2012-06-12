@@ -84,6 +84,9 @@ object Converter extends Logging {
           case _ => None
         }
       }
+      case (x: JavaObjectExpression[_], `type`) if Class.forName(`type`).isAssignableFrom(x.contents.getClass) => {
+        Some(x.contents)
+      }
       case ConvertableToInstance(i) => Some(i)
       case _ => None
     }).map({ a =>
