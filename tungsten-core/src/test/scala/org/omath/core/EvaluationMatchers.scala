@@ -4,13 +4,16 @@ import org.scalatest.matchers.MatchResult
 import org.scalatest.matchers.Matcher
 import org.omath.Expression
 import org.omath.patterns.Pattern
+import org.omath.kernel.Kernel
 
 trait EvaluationMatchers {
+  implicit val t = TungstenCore
+
   // FIXME evaluateTo should not evaluate the right hand side
-  class StringEvaluationMatcher(right: String) extends Matcher[String] {
+  class StringEvaluationMatcher(right: String)(implicit kernel: Kernel) extends Matcher[String] {
     def apply(left: String) = {
-      val leftEvaluation = TungstenCore.evaluateSyntax(left)
-      val rightEvaluation = TungstenCore.evaluateSyntax(right)
+      val leftEvaluation = kernel.evaluateSyntax(left)
+      val rightEvaluation = kernel.evaluateSyntax(right)
       MatchResult(
         leftEvaluation == rightEvaluation,
         left + " evaluated to " + leftEvaluation.get.toString + " instead of " + rightEvaluation.get.toString + ".",
@@ -18,27 +21,27 @@ trait EvaluationMatchers {
     }
   }
   // FIXME here too
-  class ExpressionEvaluationMatcher(right: Expression) extends Matcher[Expression] {
+  class ExpressionEvaluationMatcher(right: Expression)(implicit kernel: Kernel) extends Matcher[Expression] {
     def apply(left: Expression) = {
-      val leftEvaluation = TungstenCore.evaluate(left)
-      val rightEvaluation = TungstenCore.evaluate(right)
+      val leftEvaluation = kernel.evaluate(left)
+      val rightEvaluation = kernel.evaluate(right)
       MatchResult(
         leftEvaluation == rightEvaluation,
         left + " evaluated to " + leftEvaluation + " instead of " + rightEvaluation + ".",
         "The expressions evaluate to the same result.")
     }
   }
-  class ExpressionEvaluationPatternMatcher(right: Pattern) extends Matcher[Expression] {
+  class ExpressionEvaluationPatternMatcher(right: Pattern)(implicit kernel: Kernel) extends Matcher[Expression] {
     def apply(left: Expression) = {
-      val evaluation = TungstenCore.evaluate(left)
+      val evaluation = kernel.evaluate(left)
       MatchResult(
-        right.matching(evaluation)(TungstenCore.newEvaluation).hasNext,
+        right.matching(evaluation)(kernel.newEvaluation).hasNext,
         left + " evaluated to " + evaluation + " which does not match " + right + ".",
         "The expression evaluates to something matching the pattern.")
     }
   }
 
-  def evaluateTo(s: String) = new StringEvaluationMatcher(s)
-  def evaluateTo(e: Expression) = new ExpressionEvaluationMatcher(e)
-  def satisfy(p: Pattern) = new ExpressionEvaluationPatternMatcher(p)
+  def evaluateTo(s: String)(implicit kernel: Kernel) = new StringEvaluationMatcher(s)
+  def evaluateTo(e: Expression)(implicit kernel: Kernel) = new ExpressionEvaluationMatcher(e)
+  def satisfy(p: Pattern)(implicit kernel: Kernel) = new ExpressionEvaluationPatternMatcher(p)
 }

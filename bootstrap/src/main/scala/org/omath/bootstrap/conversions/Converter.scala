@@ -51,7 +51,15 @@ object Converter extends Logging {
   def fromExpression(x: Expression, `type`: Type): Option[Object] = fromExpression(x, `type`.toString.stripPrefix("class ").stripPrefix("interface "))
 
   def fromExpression(x: Expression, `type`: String): Option[Object] = {
-    info("trying to convert " + x + " to an instance of " + `type`)
+    def short(s: String) = {
+      if(s.size > 200) {
+        s.take(200) + "..."
+      } else {
+        s
+      }
+    }
+    
+    info("trying to convert " + short(x.toString) + " to an instance of " + `type`)
     ((x, `type`) match {
       case (x: SymbolExpression, "org.omath.SymbolExpression") => Some(x)
       case (x: IntegerExpression, "org.omath.IntegerExpression") => Some(x)
@@ -94,6 +102,8 @@ object Converter extends Logging {
     toInstanceFunction = toInstanceFunction.orElse(f)
   }
 
+  registerConversionToInstance({ case (x: JavaObjectExpression[_], "org.omath.bootstrap.JavaObjectExpression<?>") => x })
+  
   private object ConvertableToInstance {
     def unapply[T](p: (Expression, String)): Option[T] = toInstanceFunction.lift(p).map(_.asInstanceOf[T])
   }

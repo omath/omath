@@ -37,12 +37,15 @@ $Version := "0.0.1"
   (* Obtaining a reference to a Scala singleton object *)
     ScalaObject[name_String] := JavaNew["org.omath.bootstrap.SingletonHelper", {}]["apply"[name]]
 	AsJavaObject[expression_] := ScalaObject["org.omath.core.javaObjects.AsJavaObject"]["apply"[expression]]
+	Serialize[object_JavaObject] := ScalaObject["org.omath.core.javaObjects.Serialize"]["apply"[object]]
+	Deserialize[base64_String] := ScalaObject["org.omath.core.javaObjects.Deserialize"]["apply"[base64]]
+	ScalaEval[code_String] := ScalaObject["org.omath.core.eval.ScalaEval"]["apply"[code]]
+	ScalaFunction[function_String][arguments___] := ScalaEval[function]["apply"[arguments]]
+	   (* TODO need a cached version of ScalaEval, but this is waiting on pattern specificity! *)
 
 "IO"
 	Get[path_String] := ScalaObject["org.omath.core.io.Get"]["apply"[path]]
 	Print[text___String] := ScalaObject["org.omath.core.io.Print"]["apply"[{text}]]
-
-"Some further Java interactions."
 
 Get["Core/Attributes.m"]
 Get["Core/Contexts.m"]
@@ -51,6 +54,12 @@ Get["Core/Evaluation.m"]
 Get["Core/Kernel.m"]
 Get["Core/FlowControl.m"]
 Get["Core/Strings.m"]
+	
+(* TODO ScalaEval produces objects which break serialization, unsuprisingly ... *) 
+square = ScalaEval["{x:Int => x*x}"]
+square[7]
+*)	
+	
 	
 (* TODO --- below this line is broken stuff being merged from init.t *)
 		Set[Part[s_Symbol, parts___], rhs_] := ScalaObject["org.omath.core.set.Set"]["setPart", Hold[s, {parts}, rhs]]

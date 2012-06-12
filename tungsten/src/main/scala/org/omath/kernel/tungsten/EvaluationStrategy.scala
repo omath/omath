@@ -44,7 +44,7 @@ trait SequenceFlattening extends EvaluationStrategy { es: AbstractKernel =>
   }
 }
 
-trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
+trait ArgumentEvaluation extends EvaluationStrategy { es: Kernel with AbstractKernel =>
   abstract override def evaluateOneStep(evaluation: _Evaluation) = {
     val previousStep = super.evaluateOneStep(evaluation)
     previousStep.update(
@@ -70,7 +70,7 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: AbstractKernel =>
   }
 }
 
-trait ValueEvaluation extends EvaluationStrategy { es: AbstractKernel =>
+trait ValueEvaluation extends EvaluationStrategy { es: Kernel with AbstractKernel =>
   private def findOwnValues(expression: Expression): Option[ReplacementRuleTable] = {
     expression match {
       case symbol: SymbolExpression => Some({
@@ -133,4 +133,4 @@ trait CompositeEvaluationStrategy
   with SequenceFlattening
   with ArgumentEvaluation
   with ValueEvaluation
-  { es: AbstractKernel => }
+  { es: Kernel with AbstractKernel => }

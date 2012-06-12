@@ -6,7 +6,7 @@ import org.omath.kernel.Evaluation
 // TODO PartialBinding is an implementation detail!
 case class PartialBinding(binding: Map[SymbolExpression, Expression], remainingExpressions: Seq[Expression], lastBound: Seq[Expression])
 
-trait Pattern {
+trait Pattern extends Serializable {
   def pure: Boolean
 
   def extend(partialBinding: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding]

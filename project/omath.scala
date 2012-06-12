@@ -35,7 +35,7 @@ object Omath extends Build {
 
     lazy val core = Project(id = "omath-core",
                            base = file("core"),
-                            settings = buildSettings) dependsOn(bootstrap)
+                            settings = buildSettings ++ Seq(libraryDependencies ++= Seq(commons.codec, toolkit.eval, toolkit.base))) dependsOn(bootstrap)
 
     lazy val tungstenCore = Project(id = "omath-tungsten-core",
                            base = file("tungsten-core"),
@@ -89,8 +89,12 @@ object Resolvers {
 object Dependencies {
 	object toolkit {
 		val base = "net.tqft" %% "toolkit.base" % "0.1.6"
+		val eval = "net.tqft" %% "toolkit.eval" % "0.1.6"
 	}
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
         val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
+	object commons {
+		val codec = "commons-codec" % "commons-codec" % "1.6"
+	}
 }

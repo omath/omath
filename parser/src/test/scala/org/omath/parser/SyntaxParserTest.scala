@@ -13,6 +13,6 @@ class SyntaxParserTest extends FlatSpec with ShouldMatchers {
   implicit val symbolizer = { s: String => SymbolExpression(s) }
   
   "SyntaxParser" should "parse expressions" in {
-    SyntaxParser("a + b") should equal(Success(SymbolExpression("Plus")(SymbolExpression("a"), SymbolExpression("b"))))
+    SyntaxParserImplementation.parseSyntax("a + b") should equal(Success(SymbolExpression("Plus")(SymbolExpression("a"), SymbolExpression("b"))))
   }
 }

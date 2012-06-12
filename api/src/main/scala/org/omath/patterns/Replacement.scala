@@ -40,4 +40,5 @@ case class ReplacementRuleTable(table: Seq[ReplacementRule]) extends Replacement
 object ReplacementRuleTable {
   import language.implicitConversions
   implicit def singletonTable(rule: ReplacementRule) = ReplacementRuleTable(Seq(rule))
+  val empty = ReplacementRuleTable(Seq.empty)
 }

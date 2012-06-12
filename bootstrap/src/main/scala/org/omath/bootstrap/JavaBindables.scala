@@ -7,7 +7,6 @@ import org.omath.bootstrap.conversions.Converter
 import org.omath.kernel.Evaluation
 import java.lang.reflect.Type
 import net.tqft.toolkit.Logging
-import org.omath.kernel.ParsingKernel
 
 case object ClassForNameBindable extends PassiveBindable {
   override def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
@@ -45,23 +44,19 @@ case object JavaMethodBindable extends PassiveBindable {
 }
 
 trait Boxing extends Logging {
-  def box(arguments: Seq[Expression], types: Seq[Type])(implicit evaluation: Evaluation, kernel: ParsingKernel): Option[Seq[Object]] = {
+  def box(arguments: Seq[Expression], types: Seq[Type])(implicit evaluation: Evaluation): Option[Seq[Object]] = {
     if (arguments.size > types.size) {
       None
     } else if(arguments.size < types.size) {
       // try to provide some arguments 'implicitly'
       types.last.toString match {
-        case "interface org.omath.kernel.Kernel" => {
-          info("providing an implicit kernel instance while boxing arguments")
-          box(arguments, types.dropRight(1)).map(_ :+ kernel)
-        }
-        case "interface org.omath.kernel.ParsingKernel" => {
-          info("providing an implicit kernel instance while boxing arguments")
-          box(arguments, types.dropRight(1)).map(_ :+ kernel)
-        }
         case "interface org.omath.kernel.Evaluation" => {
           info("providing an implicit evaluation instance while boxing arguments")
           box(arguments, types.dropRight(1)).map(_ :+ evaluation)
+        }
+        case "interface org.omath.kernel.Kernel" => {
+          info("providing an implicit kernel instance while boxing arguments")
+          box(arguments, types.dropRight(1)).map(_ :+ evaluation.kernel)
         }
         case _ => None
       }
@@ -79,7 +74,7 @@ trait Boxing extends Logging {
   }
 }
 
-case class MethodInvocationBindable(kernel: ParsingKernel) extends Bindable with Boxing {
+case object MethodInvocationBindable extends Bindable with Boxing {
   override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = {
     val method = binding('method).asInstanceOf[JavaMethodExpression].contents
     val o = binding('object) match {
@@ -88,7 +83,7 @@ case class MethodInvocationBindable(kernel: ParsingKernel) extends Bindable with
     }
     val arguments = binding('arguments).asInstanceOf[FullFormExpression].arguments
 
-    box(arguments, method.getGenericParameterTypes)(evaluation, kernel) match {
+    box(arguments, method.getGenericParameterTypes)(evaluation) match {
       case Some(boxedArguments) => unbox(method.invoke(o, boxedArguments: _*))
       case None => {
         // TODO report that the arguments couldn't be coerced via the evaluation instance?
@@ -103,7 +98,7 @@ case class MethodInvocationBindable(kernel: ParsingKernel) extends Bindable with
   }
 }
 
-case class JavaNewBindable(kernel: ParsingKernel) extends Bindable with Boxing {
+case object JavaNewBindable extends Bindable with Boxing {
   override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = {
     val clazz: Class[_] = binding('class) match {
       case name: StringExpression => Class.forName(name.contents)
@@ -116,7 +111,7 @@ case class JavaNewBindable(kernel: ParsingKernel) extends Bindable with Boxing {
 
     (for (
       constructor <- clazz.getConstructors.view;
-      boxedArguments <- box(arguments, constructor.getGenericParameterTypes)(evaluation, kernel)
+      boxedArguments <- box(arguments, constructor.getGenericParameterTypes)(evaluation)
     ) yield unbox(constructor.newInstance(boxedArguments: _*).asInstanceOf[Object])).headOption match {
       case Some(result) => result
       case None => {
@@ -131,7 +126,7 @@ case class JavaNewBindable(kernel: ParsingKernel) extends Bindable with Boxing {
   }
 }
 
-case class SetDelayedBindable(kernel: Kernel) extends PassiveBindable {
+case object SetDelayedBindable extends Bindable {
   private object SubValueAttachesTo {
     @scala.annotation.tailrec
     final def unapply(x: FullFormExpression): Option[SymbolExpression] = {
@@ -145,14 +140,15 @@ case class SetDelayedBindable(kernel: Kernel) extends PassiveBindable {
     }
   }
 
-  override def bind(binding: Map[SymbolExpression, Expression]): SymbolExpression = {
+  override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): SymbolExpression = {
     val lhs = binding('lhs)
     val rhs = binding('rhs)
+    val state = evaluation.kernel.kernelState
     lhs match {
-      case lhs: SymbolExpression => kernel.kernelState.addOwnValues(lhs, lhs :> rhs)
-      case lhs @ FullFormExpression(s: SymbolExpression, _) => kernel.kernelState.addDownValues(s, lhs :> rhs)
-      case SubValueAttachesTo(s) => kernel.kernelState.addSubValues(s, lhs :> rhs)
-      case lhs: FullFormExpression => kernel.kernelState.addSubValues(lhs.symbolHead, lhs :> rhs)
+      case lhs: SymbolExpression => state.addOwnValues(lhs, lhs :> rhs)
+      case lhs @ FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, lhs :> rhs)
+      case SubValueAttachesTo(s) => state.addSubValues(s, lhs :> rhs)
+      case lhs: FullFormExpression => state.addSubValues(lhs.symbolHead, lhs :> rhs)
     }
 
     org.omath.symbols.Null

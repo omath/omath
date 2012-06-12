@@ -26,6 +26,8 @@
 		CreateUnitTest[True, "should be fixed by evaluation.", MatchQ[True, HoldPattern[True]]]
 
     	"We should catch up, and write some unit tests for stuff that happened earlier."
+    	CreateUnitTest[ScalaEval, "should evaluate raw scala code.", ScalaEval["1 + 1"] === 2]
+    	CreateUnitTest[ScalaFunction, "should compile a function written in scala and apply it to arguments.", ScalaFunction["{ x:Int => x*x }"][7] === 49]
 		CreateUnitTest[Get, "should slurp other files.", Get["GetTest.m"]; $GetTest]
     	CreateUnitTest[Attributes, "should show attributes on a symbol.", Attributes[SetDelayed] === {HoldAll}]
 		CreateUnitTest[Context, "should return the context of a Symbol.", Context[Context] === "System`"]

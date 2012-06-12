@@ -3,6 +3,7 @@ package org.omath.bootstrap
 import org.omath._
 import java.lang.reflect.Method
 
+// can't be a case class only because we want subtypes below...
 class JavaObjectExpression[T](val contents: T) extends LiteralExpression {
   override def toString = "JavaObject[\"" + contents.getClass.getCanonicalName + "\", " + contents.hashCode + "]"
   override val head = bootstrap.symbols.JavaObject

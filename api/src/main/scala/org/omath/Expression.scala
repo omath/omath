@@ -4,7 +4,7 @@ import org.apfloat.Apint
 import org.apfloat.Apfloat
 import org.omath.kernel.Evaluation
 
-trait Bindable {
+trait Bindable extends Serializable {
   def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression
 }
 trait PassiveBindable extends Bindable {
@@ -72,17 +72,18 @@ object SymbolExpression {
   def apply(name: String, context: String): SymbolExpression = apply(name, Context(context.split('`')))
   def apply(name: String, context: Seq[String]): SymbolExpression = apply(name, Context(context.flatMap(_.split('`'))))
 
-  private case class SymbolExpression_(name: String, context: Context) extends SymbolExpression {
+  class SymbolFormatException(message: String) extends Exception(message)
+
+  case class SymbolExpression_(name: String, context: Context) extends SymbolExpression {
     try {
       require(name.nonEmpty)
       require(name.head.isLetter || name.head == '$')
       for (c <- name) require(c.isLetterOrDigit || c == '$')
     } catch {
-      case e => throw new SymbolFormatException("'" + name + "' is not a valid omath symbol name.")
+      case e => throw new SymbolExpression.SymbolFormatException("'" + name + "' is not a valid omath symbol name.")
     }
   }
 
-  class SymbolFormatException(message: String) extends Exception(message)
 }
 
 case class StringExpression(contents: String) extends LiteralExpression {
@@ -127,19 +128,6 @@ trait IntegerExpressionImplicits {
   implicit def apply(i: BigInt): IntegerExpression = ApintExpression(new Apint(i.underlying))
   implicit def apply(i: Apint): IntegerExpression = ApintExpression(i)
 }
-
-//private case class IntExpression(toInt: Int) extends IntegerExpression {
-//  def toLong = toInt.toLong
-//  def toBigInt = BigInt(toInt)
-//}
-//private case class LongExpression(toLong: Long) extends IntegerExpression {
-//  def toInt = toLong.toInt
-//  def toBigInt = BigInt(toLong)
-//}
-//private case class BigIntExpression(toBigInt: BigInt) extends IntegerExpression {
-//  def toInt = toBigInt.intValue
-//  def toLong = toBigInt.longValue
-//}
 
 private case class ApintExpression(toApint: Apint) extends IntegerExpression {
   def toInt = toApint.intValue
@@ -197,9 +185,9 @@ case class FullFormExpression(head: Expression, arguments: Seq[Expression]) exte
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = {
     (head.bindOption(binding), bindArguments(binding, arguments)) match {
       case (None, None) => None
-      case (None, Some(newArguments)) => Some(head(newArguments:_*))
-      case (Some(newHead), None) => Some(newHead(arguments:_*))
-      case (Some(newHead), Some(newArguments)) => Some(newHead(newArguments:_*))
+      case (None, Some(newArguments)) => Some(head(newArguments: _*))
+      case (Some(newHead), None) => Some(newHead(arguments: _*))
+      case (Some(newHead), Some(newArguments)) => Some(newHead(newArguments: _*))
     }
   }
 

@@ -13,5 +13,6 @@ trait PatternTest extends FlatSpec with ShouldMatchers {
   implicit object MockEvaluation extends Evaluation {
     override def stack = Nil
     override def evaluate(expression: Expression) = ???
+    override def kernel = ???
   }  
 }

@@ -49,10 +49,10 @@ trait MutableKernelState extends KernelState {
   override def addUpValues(symbol: SymbolExpression, rules: ReplacementRule*): this.type
 }
 
-trait MutableMapKernelState extends MutableKernelState {
-  def emptyValueMap = scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable]().withDefaultValue(ReplacementRuleTable(Nil))
+trait MutableMapKernelState extends MutableKernelState with Serializable {
+  def emptyValueMap = scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable]()
 
-  private val attributesMap = scala.collection.mutable.Map[SymbolExpression, Seq[SymbolExpression]]().withDefaultValue(Seq.empty)
+  private val attributesMap = scala.collection.mutable.Map[SymbolExpression, Seq[SymbolExpression]]()
   private val ownValuesMap = emptyValueMap
   private val downValuesMap = emptyValueMap
   private val subValuesMap = emptyValueMap
@@ -60,11 +60,12 @@ trait MutableMapKernelState extends MutableKernelState {
 
   private val symbolsMap = scala.collection.mutable.Map[Context, Seq[SymbolExpression]]()
 
-  override def attributes(symbol: SymbolExpression) = attributesMap(symbol)
-  override def ownValues(symbol: SymbolExpression) = ownValuesMap(symbol)
-  override def downValues(symbol: SymbolExpression) = downValuesMap(symbol)
-  override def subValues(symbol: SymbolExpression) = subValuesMap(symbol)
-  override def upValues(symbol: SymbolExpression) = upValuesMap(symbol)
+  // scala.collection.mutable.Map#withDefault isn't serializable until M4.
+  override def attributes(symbol: SymbolExpression) = attributesMap.getOrElse(symbol, Seq.empty)
+  override def ownValues(symbol: SymbolExpression) = ownValuesMap.getOrElse(symbol, ReplacementRuleTable.empty)
+  override def downValues(symbol: SymbolExpression) = downValuesMap.getOrElse(symbol, ReplacementRuleTable.empty)
+  override def subValues(symbol: SymbolExpression) = subValuesMap.getOrElse(symbol, ReplacementRuleTable.empty)
+  override def upValues(symbol: SymbolExpression) = upValuesMap.getOrElse(symbol, ReplacementRuleTable.empty)
 
   override def symbols = symbolsMap.toMap.withDefaultValue(Seq.empty)
   private def recordSymbol(symbol: SymbolExpression) {
@@ -84,7 +85,7 @@ trait MutableMapKernelState extends MutableKernelState {
   }
   private def addRules(map: scala.collection.mutable.Map[SymbolExpression, ReplacementRuleTable], symbol: SymbolExpression, rules: Seq[ReplacementRule]): this.type = {
     recordSymbol(symbol)
-    map.put(symbol, map(symbol) ++ rules)
+    map.put(symbol, map.getOrElse(symbol, ReplacementRuleTable.empty) ++ rules)
     this
   }
 

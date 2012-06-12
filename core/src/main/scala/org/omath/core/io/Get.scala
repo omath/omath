@@ -1,9 +1,9 @@
 package org.omath.core.io
 
-import org.omath.kernel.ParsingKernel
+import org.omath.kernel.Kernel
 
 object Get {
-  def apply(path: String)(implicit kernel: ParsingKernel) {
+  def apply(path: String)(implicit kernel: Kernel) {
     if (path.startsWith("file:/") || path.startsWith("http:/") || path.startsWith("https:/")) {
       kernel.slurp(new java.net.URI(path))
     } else {
