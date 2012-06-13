@@ -5,3 +5,4 @@ resolvers += Resolver.url("scalasbt",
 
 // addSbtPlugin("com.jsuereth" % "xsbt-gpg-plugin" % "0.5")
 
+ addSbtPlugin("de.djini" % "xsbt-webstart" % "0.0.5")

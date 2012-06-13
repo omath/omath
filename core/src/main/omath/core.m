@@ -42,7 +42,7 @@ $Version := "0.0.1"
 	ScalaEval[code_String] := ScalaObject["org.omath.core.eval.ScalaEval"]["apply"[code]]
 	ScalaFunction[function_String][arguments___] := ScalaEval[function]["apply"[arguments]]
 	   (* TODO need a cached version of ScalaEval, but this is waiting on pattern specificity! *)
-	   
+	   	   
 "IO"
 	Get[path_String] := ScalaObject["org.omath.core.io.Get"]["apply"[path]]
 	Print[text___String] := ScalaObject["org.omath.core.io.Print"]["apply"[{text}]]
@@ -54,6 +54,7 @@ Get["Core/Evaluation.m"]
 Get["Core/Kernel.m"]
 Get["Core/FlowControl.m"]
 Get["Core/Strings.m"]
+Get["Core/Functional.m"]
 	
 (* To ensure that we properly test serializability of the kernel, we need to create a new class via ScalaEval and save a reference to it. *)
 	square = ScalaEval["{ x: Int => x*x }"]

@@ -15,6 +15,7 @@ trait Eval {
   protected val settings = {
     val s = new Settings
 
+    // see https://gist.github.com/404272
     s.embeddedDefaults[Eval]
 
     // What a hack! Really I should understand what goes wrong in each situation, and detect that directly.

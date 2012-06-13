@@ -98,3 +98,4 @@ object Dependencies {
 		val codec = "commons-codec" % "commons-codec" % "1.6"
 	}
 }
+
