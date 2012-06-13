@@ -9,6 +9,7 @@ import org.omath.StringExpression
 import net.tqft.toolkit.Logging
 import org.omath.core.io.$Path
 import org.omath.parser.SyntaxParser
+import org.omath.core.eval.ScalaEval
 
 trait Core extends Kernel with Logging { kernel: SyntaxParser =>
   private[this] var beforeContexts = true
@@ -55,6 +56,11 @@ trait Core extends Kernel with Logging { kernel: SyntaxParser =>
     }
   }
 
+  {
+    import scala.concurrent.future
+    future { ScalaEval }
+  }
+  
   {
     val `Core.m` = $Path().head + "Core.m"
     slurp(new java.net.URI(`Core.m`))

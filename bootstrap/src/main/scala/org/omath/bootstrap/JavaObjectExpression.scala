@@ -5,7 +5,7 @@ import java.lang.reflect.Method
 
 // can't be a case class only because we want subtypes below...
 class JavaObjectExpression[T](val contents: T) extends LiteralExpression {
-  override def toString = "JavaObject[\"" + contents.getClass.getCanonicalName + "\", " + contents.hashCode + "]"
+  override def toString = "JavaObject[\"" + contents.getClass.getName + "\", " + contents.hashCode + "]"
   override val head = bootstrap.symbols.JavaObject
   override val hashCode = contents.hashCode + 1
   override def equals(other: Any) = {

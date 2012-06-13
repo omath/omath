@@ -10,3 +10,5 @@
 		CreateUnitTest[OwnValues, "of $Version should be a List containing a single :> with rhs a String.", MatchQ[OwnValues[$Version], {_ :> _String}]]
 
 	KernelReference[] := ScalaObject["org.omath.core.kernel.KernelReference"]["apply"[]]
+	
+	KernelReference[] := ScalaFunction["{ kernel: Kernel => kernel }"][]	

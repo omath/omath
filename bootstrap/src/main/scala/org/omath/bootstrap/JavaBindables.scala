@@ -7,6 +7,7 @@ import org.omath.bootstrap.conversions.Converter
 import org.omath.kernel.Evaluation
 import java.lang.reflect.Type
 import net.tqft.toolkit.Logging
+import scala.collection.mutable.ListBuffer
 
 case object ClassForNameBindable extends PassiveBindable {
   override def bind(binding: Map[SymbolExpression, Expression]): JavaClassExpression = {
@@ -55,6 +56,28 @@ trait Boxing extends Logging {
           box(arguments, types.dropRight(1)).map(_ :+ evaluation)
         }
         case "interface org.omath.kernel.Kernel" => {
+//          if(types.last.asInstanceOf[Class[_]] != evaluation.kernel.getClass) {
+//            val thatKernel = types.last.asInstanceOf[Class[_]]
+//            val thisKernel = evaluation.kernel.getClass
+//            if(!thatKernel.isAssignableFrom(thisKernel)) {
+//              def up(c: Class[_]): List[Class[_]] = {
+//                if(c == null) {
+//                  Nil
+//                } else {
+//                  c :: c.getInterfaces.toList.flatMap(i => up(i.asInstanceOf[Class[Any]])).toList ::: up(c.getSuperclass)
+//                }
+//              }
+//             val stuff = up(thisKernel).toIndexedSeq
+//             val thisKernel2 = stuff.find(_.getName == "org.omath.kernel.Kernel").get
+//            
+//             println(thatKernel)
+//             println(thisKernel2)
+//             println(thatKernel.getClassLoader.getClass)
+//             println(thisKernel2.getClassLoader.getClass)
+//             
+//              require(false)
+//            }
+//          }
           info("providing an implicit kernel instance while boxing arguments")
           box(arguments, types.dropRight(1)).map(_ :+ evaluation.kernel)
         }
