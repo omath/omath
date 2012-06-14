@@ -26,9 +26,9 @@ trait Eval {
     s
   }
 
-  val pis = new PipedInputStream
-  val reader = new BufferedReader(new InputStreamReader(pis))
-  def newConsoleLines = {
+  private val pis = new PipedInputStream
+  private val reader = new BufferedReader(new InputStreamReader(pis))
+  private def newConsoleLines = {
     val output = new ListBuffer[String]
     while (reader.ready) {
       output += reader.readLine()
@@ -65,15 +65,15 @@ trait Eval {
 object Eval extends Eval
 
 object ScalaEval extends Logging {
-  info("Initializing the scala compiler...")
-
-  Eval("import org.omath._")
-  Eval("import org.omath.kernel._")
-  Eval("import org.omath.parser._")
-  Eval("import org.omath.patterns._")
-
-  require(Eval("org.omath.SymbolExpression").nonEmpty)
-  info("... scala compiler ready!")
+//  info("Initializing the scala compiler...")
+//
+//  Eval("import org.omath._")
+//  Eval("import org.omath.kernel._")
+//  Eval("import org.omath.parser._")
+//  Eval("import org.omath.patterns._")
+//
+//  require(Eval("org.omath.SymbolExpression").nonEmpty)
+//  info("... scala compiler ready!")
 
   def apply(code: String): Any = {
     info("evaluating '" + code + "' using the Scala REPL")

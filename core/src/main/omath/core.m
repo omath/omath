@@ -21,12 +21,13 @@ $Version := "0.0.1"
   (* First, allow the usual syntax so we don't need to explicitly write JavaMethod. *)
   
     (object_JavaObject)[method_[arguments___]] := JavaMethod[JavaClass[object], method][object, {arguments}]
+    (class_JavaClass)[method_[arguments___]] := JavaMethod[class, method][Null, {arguments}]
   
   (* Next an alternative syntax, which is often useful with head -> Hold. *)
    
     (object_JavaObject)[method_, head_[arguments___]] := JavaMethod[JavaClass[object], method][object, head[arguments]]
-  
-  (* TODO calling static methods *)
+    (class_JavaClass)[method_, head_[arguments___]] := JavaMethod[class, method][Null, head[arguments]]
+
   (* TODO? get field values *)
   
   (* And then allow just writing symbols for methods. *)
@@ -42,6 +43,7 @@ $Version := "0.0.1"
 	ScalaEval[code_String] := ScalaObject["org.omath.core.eval.ScalaEval"]["apply"[code]]
 	ScalaFunction[function_String][arguments___] := ScalaEval[function]["apply"[arguments]]
 	   (* TODO need a cached version of ScalaEval, but this is waiting on pattern specificity! *)
+	AddToClassPath[path_String] := ScalaObject["org.omath.bootstrap.ClassLoaders"]["registerURL"[path]]
 	   	   
 "IO"
 	Get[path_String] := ScalaObject["org.omath.core.io.Get"]["apply"[path]]
@@ -55,9 +57,10 @@ Get["Core/Kernel.m"]
 Get["Core/FlowControl.m"]
 Get["Core/Strings.m"]
 Get["Core/Functional.m"]
+Get["Core/Groovy.m"]	
 	
 (* To ensure that we properly test serializability of the kernel, we need to create a new class via ScalaEval and save a reference to it. *)
-	square = ScalaEval["{ x: Int => x*x }"]
+(*	scalaSquare = ScalaEval["{ x: Int => x*x }"] *)
 	
 	
 (* TODO --- below this line is broken stuff being merged from init.t *)

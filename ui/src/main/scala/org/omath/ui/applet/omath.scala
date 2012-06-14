@@ -12,10 +12,10 @@ class omath extends Applet {
   implicit def any2PrivilegedAction[T](x: => T) = new PrivilegedAction[T] {
     override def run = x
   }
-  def doPrivileged[T](x: => T): T = AccessController.doPrivileged(x)
+  def privileged[T](x: => T): T = AccessController.doPrivileged(x)
 
   def evaluateSyntax(syntax: String) = {
-    doPrivileged {
+    privileged {
       TungstenCore.evaluateSyntax(syntax).get.toString
     }
   }

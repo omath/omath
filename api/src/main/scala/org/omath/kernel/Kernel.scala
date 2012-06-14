@@ -19,15 +19,19 @@ trait Kernel { kernel: SyntaxParser =>
     evaluateSyntax(Iterator(syntax.trim))
   }
   def evaluateSyntax(code: Iterator[String]): Result[Expression] = {
-    parseSyntax(code.flatMap(_.split('\n')))(symbolizer).map(_.map(evaluate)).reduce({ (x, y) =>
-      x match {
-        case x: Failure[_] => {
-          System.err.println(x)
+    if (code.hasNext) {
+      parseSyntax(code.flatMap(_.split('\n')))(symbolizer).map(_.map(evaluate)).reduce({ (x, y) =>
+        x match {
+          case x: Failure[_] => {
+            System.err.println(x)
+          }
+          case _: Success[_] =>
         }
-        case _: Success[_] =>
-      }
-      y
-    })
+        y
+      })
+    } else {
+      Success(org.omath.symbols.Null)
+    }
   }
 
   def slurp(uri: java.net.URI) {

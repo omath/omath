@@ -16,21 +16,6 @@ object Deserialize {
     out.readObject
   }
 
-  class MagicObjectInputStream(delegate: ObjectInputStream) extends ObjectInputStream(delegate) {
-    override protected def resolveClass(desc: ObjectStreamClass): Class[_] = {
-      if (readBoolean) {
-        val bytesLength = readInt
-        val bytes = new Array[Byte](bytesLength)
-        readFully(bytes)
-        ByteClassLoader.hint(desc.getName, bytes)
-        ByteClassLoader.loadClass(desc.getName)
-      } else {
-        super.resolveClass(desc)
-      }
-    }
-
-  }
-
   // unused at the moment ...
   // from https://github.com/NetLogo/NetLogo/blob/master/src/main/org/nlogo/util/ClassLoaderObjectInputStream.scala
   case class ClassLoaderObjectInputStream(classLoader: ClassLoader,
@@ -43,18 +28,3 @@ object Deserialize {
   }
 }
 
-object ByteClassLoader extends ClassLoader {
-  private val store = scala.collection.mutable.Map[String, Array[Byte]]()
-
-  def hint(name: String, bytes: Array[Byte]) = {
-    store.put(name, bytes)
-  }
-  def classBytes(name: String) = store(name)
-  
-  override protected def findClass(name: String): Class[_] = {
-	  store.get(name) match {
-	    case None => null
-	    case Some(bytes) => defineClass(name, bytes, 0, bytes.length);
-	  }
-  }
-}

@@ -6,9 +6,12 @@ import org.omath.core.TungstenCore
 import org.omath.parser.SyntaxParser
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import org.omath.core.io.$Path
 
 object omath extends App {
 
+  TungstenCore.slurp(new java.net.URI($Path().head + "scratch.m"))
+  
   val in = new BufferedReader(new InputStreamReader(System.in))
 
   var lineNumber = 1;

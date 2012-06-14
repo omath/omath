@@ -2,6 +2,9 @@ package org.omath.bootstrap
 
 class SingletonHelper() {
 	def apply(name: String): Any = {
-	  Class.forName(name + "$").getDeclaredField("MODULE$").get(null)
+	  ClassLoaders.lookupClass(name + "$") match {
+	    case Some(clazz) => clazz.getDeclaredField("MODULE$").get(null)
+	    case None => throw new ClassNotFoundException(name + "$")
+	  }
 	}
 }
