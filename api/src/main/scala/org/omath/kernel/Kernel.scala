@@ -34,8 +34,8 @@ trait Kernel { kernel: SyntaxParser =>
     }
   }
 
-  def slurp(uri: java.net.URI) {
-    evaluateSyntax(Source.fromURI(uri).getLines)
+  def slurp(url: java.net.URL) {
+    evaluateSyntax(Source.fromURL(url).getLines)
   }
   def slurp(file: java.io.File) {
     evaluateSyntax(Source.fromFile(file).getLines)

@@ -37,6 +37,9 @@ $Version := "0.0.1"
 
   (* Obtaining a reference to a Scala singleton object *)
     ScalaObject[name_String] := JavaNew["org.omath.bootstrap.SingletonHelper", {}]["apply"[name]]
+    
+    
+  (* Stuff that needs homes *)
 	AsJavaObject[expression_] := ScalaObject["org.omath.core.javaObjects.AsJavaObject"]["apply"[expression]]
 	Serialize[object_JavaObject] := ScalaObject["org.omath.core.javaObjects.Serialize"]["apply"[object]]
 	Deserialize[base64_String] := ScalaObject["org.omath.core.javaObjects.Deserialize"]["apply"[base64]]
@@ -44,6 +47,7 @@ $Version := "0.0.1"
 	ScalaFunction[function_String][arguments___] := ScalaEval[function]["apply"[arguments]]
 	   (* TODO need a cached version of ScalaEval, but this is waiting on pattern specificity! *)
 	AddToClassPath[path_String] := ScalaObject["org.omath.bootstrap.ClassLoaders"]["registerURL"[path]]
+	Exit[] := ScalaObject["org.omath.core.kernel.Exit"]["apply"[]]
 	   	   
 "IO"
 	Get[path_String] := ScalaObject["org.omath.core.io.Get"]["apply"[path]]

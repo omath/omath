@@ -65,17 +65,27 @@ trait Eval {
 object Eval extends Eval
 
 object ScalaEval extends Logging {
-//  info("Initializing the scala compiler...")
-//
-//  Eval("import org.omath._")
-//  Eval("import org.omath.kernel._")
-//  Eval("import org.omath.parser._")
-//  Eval("import org.omath.patterns._")
-//
-//  require(Eval("org.omath.SymbolExpression").nonEmpty)
-//  info("... scala compiler ready!")
+  try {
+	  init
+  } catch {
+    case e => e.printStackTrace
+  }
+  
+  lazy val init = {
+    info("Initializing the scala compiler...")
+
+    Eval("import org.omath._")
+    Eval("import org.omath.kernel._")
+    Eval("import org.omath.parser._")
+    Eval("import org.omath.patterns._")
+
+    require(Eval("org.omath.SymbolExpression").nonEmpty)
+    info("... scala compiler ready!")
+  }
 
   def apply(code: String): Any = {
+    init
+    
     info("evaluating '" + code + "' using the Scala REPL")
     val (result, output) = Eval.evalWithNameAndOutput(code)
     result match {

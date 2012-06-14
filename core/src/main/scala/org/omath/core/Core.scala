@@ -10,6 +10,7 @@ import net.tqft.toolkit.Logging
 import org.omath.core.io.$Path
 import org.omath.parser.SyntaxParser
 import org.omath.core.eval.ScalaEval
+import org.omath.core.io.Get
 
 trait Core extends Kernel with Logging { kernel: SyntaxParser =>
   private[this] var beforeContexts = true
@@ -62,8 +63,7 @@ trait Core extends Kernel with Logging { kernel: SyntaxParser =>
   }
   
   {
-    val `Core.m` = $Path().head + "Core.m"
-    slurp(new java.net.URI(`Core.m`))
+    Get("Core.m")(this)
   }
 }
 

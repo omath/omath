@@ -10,6 +10,8 @@ import net.tqft.toolkit.Logging
 import scala.collection.mutable.ListBuffer
 import java.net.URLClassLoader
 import java.net.URL
+import java.net.URI
+import scala.collection.JavaConversions
 
 case object ClassLoaders {
   private val primaryClassLoader = getClass.getClassLoader
@@ -17,11 +19,15 @@ case object ClassLoaders {
   def registerClassLoader(classLoader: ClassLoader) {
     loaders += classLoader
   }
-  def registerURL(url: String) { 
+  def registerURL(url: String) {
     registerClassLoader(new URLClassLoader(Array[URL](new URL(url)), primaryClassLoader))
   }
   def lookupClass(name: String): Option[Class[_]] = {
     loaders.view.map(cl => try { Some(cl.loadClass(name)) } catch { case _ => None }).find(_.nonEmpty).map(_.get)
+  }
+  def getResources(resource: String): Iterator[URL] = {
+    import JavaConversions._
+    loaders.iterator.flatMap({ c => val i: Iterator[URL] = c.getResources(resource); i })
   }
 }
 
@@ -128,7 +134,7 @@ case object MethodInvocationBindable extends Bindable with Boxing {
       case Some(boxedArguments) => unbox(try {
         method.invoke(o, boxedArguments: _*)
       } catch {
-        case e: IllegalAccessException => 
+        case e: IllegalAccessException =>
           // try harder this time!
           info("IllegalAccessException during method invocation; hacking...")
           method.setAccessible(true)

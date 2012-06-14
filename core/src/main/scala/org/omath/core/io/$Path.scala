@@ -1,13 +1,19 @@
 package org.omath.core.io
 
 import scala.collection.JavaConversions
+import net.tqft.toolkit.Logging
+import org.omath.bootstrap.ClassLoaders
 
-object $Path {
-  // FIXME this needs to be much more robust!
-  def apply(): Seq[String] = {
-    import JavaConversions._
-    val resources: Iterator[_root_.java.net.URL] = this.getClass.getClassLoader.getResources("")
-    val coreClasses = resources.map(_.toString).filter(_.contains("/core/")).next
-    Seq(coreClasses.take(coreClasses.indexOf("/core/") + 6) + "src/main/omath/")
+object $Path extends Logging {
+  lazy val guess = {
+    (for (
+      pathURI <- ClassLoaders.getResources("");
+      path = pathURI.toString;
+      if (path.contains("/core/"))
+    ) yield {
+      path.take(path.indexOf("/core/") + 6) + "src/main/omath/"
+    }).toSeq.distinct
   }
+
+  def apply(): Seq[String] = guess
 }

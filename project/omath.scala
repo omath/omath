@@ -43,7 +43,7 @@ object Omath extends Build {
 
     lazy val ui = Project(id = "omath-ui",
                            base = file("ui"),
-                            settings = buildSettings) dependsOn(tungstenCore)
+                            settings = buildSettings ++ OneJar.settings) dependsOn(tungstenCore)
 
 
 }
@@ -72,8 +72,15 @@ object BuildSettings {
         }
         ("org.scalatest" % ("scalatest_" + scalatestScalaVersion) % scalatestVersion % "test" )
     },
-    libraryDependencies ++= Seq(junit, slf4j)
+    libraryDependencies ++= Seq(junit, slf4j),
+    exportJars := true,
+    unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" }
   )
+}
+
+object OneJar {
+    import com.github.retronym.SbtOneJar._
+    val settings = oneJarSettings ++ Seq(exportJars := true, mainClass in oneJar := Some("org.omath.ui.repl.omath"))
 }
 
 object Resolvers {
