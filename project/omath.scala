@@ -43,7 +43,7 @@ object Omath extends Build {
 
     lazy val ui = Project(id = "omath-ui",
                            base = file("ui"),
-                            settings = buildSettings ++ OneJar.settings) dependsOn(tungstenCore)
+                            settings = buildSettings ++ OneJar.settings /* ++ Seq(libraryDependencies += bowler) */) dependsOn(tungstenCore)
 
 
 }
@@ -55,22 +55,24 @@ object BuildSettings {
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1"
   val buildScalaVersion = "2.10.0-M3"
+  val buildCrossScalaVersions = Seq("2.9.2", "2.10.0-M3")
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
     version      := buildVersion,
     scalaVersion := buildScalaVersion,
-    scalacOptions += "-feature",
+    crossScalaVersions := buildCrossScalaVersions,
+//    scalacOptions += "-feature",
     scalacOptions += "-unchecked",
 //    scalacOptions += "-Xprint:typer",
     publishTo    := Some(Resolver.sftp("toolkit.tqft.net Maven repository", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa"))),
     resolvers    := sonatypeResolvers ++ tqftResolvers,
-    libraryDependencies += {
-        val (scalatestVersion, scalatestScalaVersion) = buildScalaVersion match {
+    libraryDependencies <<= (scalaVersion, libraryDependencies) { (sv, deps) =>
+        val (scalatestVersion, scalatestScalaVersion) = sv match {
                 case sv if sv.startsWith("2.9") => ("1.8", "2.9.0")
                 case sv if sv.startsWith("2.10") => ("1.8-SNAPSHOT", "2.10.0-M3")
         }
-        ("org.scalatest" % ("scalatest_" + scalatestScalaVersion) % scalatestVersion % "test" )
+        deps :+ ("org.scalatest" % ("scalatest_" + scalatestScalaVersion) % scalatestVersion % "test" )
     },
     libraryDependencies ++= Seq(junit, slf4j),
     exportJars := true,
@@ -101,6 +103,7 @@ object Dependencies {
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
         val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
+	val bowler = "org.bowlerframework" % "core_2.9.1" % "0.6"
 	object commons {
 		val codec = "commons-codec" % "commons-codec" % "1.6"
 	}
