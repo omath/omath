@@ -9,6 +9,7 @@ object Context {
   val global = Context(List("Global"))
   val system = Context(List("System"))
 
+  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def apply(name: String): Context = {
     apply(name.stripSuffix("`").split('`').toList)

@@ -7,6 +7,7 @@ import java.security.AccessController
 import java.security.PrivilegedAction
 
 class omath extends Applet {
+  import org.omath.util.Scala29Compatibility.language
   import language.implicitConversions
 
   implicit def any2PrivilegedAction[T](x: => T) = new PrivilegedAction[T] {

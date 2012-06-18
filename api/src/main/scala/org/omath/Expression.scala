@@ -63,6 +63,7 @@ trait SymbolExpression extends RawExpression {
 }
 
 protected trait SymbolExpressionImplicits {
+  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def scalaSymbol2Expression(s: Symbol): SymbolExpression = SymbolExpression(s)
 }
@@ -100,6 +101,7 @@ case class StringExpression(contents: String) extends LiteralExpression {
 }
 
 trait StringExpressionImplicits {
+  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def string2StringExpression(s: String) = StringExpression(s)
 }
@@ -122,6 +124,7 @@ trait IntegerExpression extends LiteralExpression {
   override def hashCode = toApint.hashCode
 }
 trait IntegerExpressionImplicits {
+  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def apply(i: Int): IntegerExpression = ApintExpression(new Apint(i))
   implicit def apply(i: Long): IntegerExpression = ApintExpression(new Apint(i))
@@ -153,6 +156,7 @@ trait RealExpression extends LiteralExpression {
   override def hashCode = toApfloat.hashCode
 }
 trait RealExpressionImplicits {
+  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def apply(i: Float): RealExpression = ApfloatExpression(new Apfloat(i))
   implicit def apply(i: Double): RealExpression = ApfloatExpression(new Apfloat(i))

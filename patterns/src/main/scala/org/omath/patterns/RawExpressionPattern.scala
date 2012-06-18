@@ -2,6 +2,7 @@ package org.omath.patterns
 
 import org.omath._
 import org.omath.kernel.Evaluation
+import org.omath.util.Scala29Compatibility.+:
 
 private case class RawExpressionPattern(override val expression: RawExpression) extends ExpressionPattern {
   override def pure = true

@@ -69,11 +69,16 @@ object BuildSettings {
     resolvers    := sonatypeResolvers ++ tqftResolvers,
     libraryDependencies <<= (scalaVersion, libraryDependencies) { (sv, deps) =>
         val (scalatestVersion, scalatestScalaVersion) = sv match {
-                case sv if sv.startsWith("2.9") => ("1.8", "2.9.0")
-                case sv if sv.startsWith("2.10") => ("1.8-SNAPSHOT", "2.10.0-M3")
+                case sv if sv.startsWith("2.9.") => ("1.8", "2.9.0")
+                case sv if sv.startsWith("2.10.") => ("1.8-SNAPSHOT", "2.10.0-M3")
         }
         deps :+ ("org.scalatest" % ("scalatest_" + scalatestScalaVersion) % scalatestVersion % "test" )
     },
+    unmanagedSourceDirectories in Compile <++= (baseDirectory, scalaVersion)((bd, sv) => 
+      if (sv startsWith "2.9.") Seq(bd / "src" / "main" / "scala-2.9")
+      else if (sv startsWith "2.10.") Seq(bd / "src" / "main" / "scala-2.10")
+      else Nil
+    ),
     libraryDependencies ++= Seq(junit, slf4j),
     exportJars := true,
     unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" }

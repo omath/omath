@@ -95,8 +95,8 @@ object Converter extends Logging {
     })
   }
 
-  private var toExpressionFunction: PartialFunction[Any, Expression] = PartialFunction.empty
-  private var toInstanceFunction: PartialFunction[(Expression, String), Any] = PartialFunction.empty
+  private var toExpressionFunction: PartialFunction[Any, Expression] = Map.empty // PartialFunction.empty isn't available in Scala 2.9
+  private var toInstanceFunction: PartialFunction[(Expression, String), Any] = Map.empty
 
   def registerConversionToExpression(f: PartialFunction[Any, Expression]) {
     toExpressionFunction = toExpressionFunction.orElse(f)

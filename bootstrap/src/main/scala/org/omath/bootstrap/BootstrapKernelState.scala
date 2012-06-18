@@ -6,12 +6,6 @@ import org.omath.kernel.KernelState;
 import org.omath.kernel.MutableMapKernelState;
 import org.omath.kernel._
 
-object Bootstrap {
-  def apply(kernelState: KernelState): KernelState = {
-    ???
-  }
-}
-
 class BootstrapKernelState extends MutableMapKernelState {
   import org.omath.symbols.{ Pattern, Blank, BlankNullSequence, String, Null }
   import org.omath.bootstrap.symbols.{ JavaClass, JavaMethod, JavaObject, JavaNew }

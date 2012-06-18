@@ -8,15 +8,15 @@ object PatternBuilder {
   def apply(e: Expression): ExpressionPattern = {
     e match {
       case e: RawExpression => RawExpressionPattern(e)
-      case FullFormExpression(symbols.Blank, Nil) => Blank(None)
-      case FullFormExpression(symbols.Blank, (head: SymbolExpression) +: Nil) => Blank(Some(head))
-      case FullFormExpression(symbols.BlankSequence, Nil) => BlankSequence(None)
-      case FullFormExpression(symbols.BlankSequence, (head: SymbolExpression) +: Nil) => BlankSequence(Some(head))
-      case FullFormExpression(symbols.BlankNullSequence, Nil) => BlankNullSequence(None)
-      case FullFormExpression(symbols.BlankNullSequence, (head: SymbolExpression) +: Nil) => BlankNullSequence(Some(head))
-      case e @ FullFormExpression(symbols.Pattern, (n: SymbolExpression) +: x +: Nil) => NamedPattern(e)
+      case FullFormExpression(symbols.Blank, Seq()) => Blank(None)
+      case FullFormExpression(symbols.Blank, Seq(head: SymbolExpression)) => Blank(Some(head))
+      case FullFormExpression(symbols.BlankSequence, Seq()) => BlankSequence(None)
+      case FullFormExpression(symbols.BlankSequence, Seq(head: SymbolExpression)) => BlankSequence(Some(head))
+      case FullFormExpression(symbols.BlankNullSequence, Seq()) => BlankNullSequence(None)
+      case FullFormExpression(symbols.BlankNullSequence, Seq(head: SymbolExpression)) => BlankNullSequence(Some(head))
+      case e @ FullFormExpression(symbols.Pattern, Seq(n: SymbolExpression, x)) => NamedPattern(e)
       case FullFormExpression(symbols.Pattern, _) => throw new PatternException(e)
-      case FullFormExpression(symbols.HoldPattern, p +: Nil) => HoldPattern(apply(p))
+      case FullFormExpression(symbols.HoldPattern, Seq(p)) => HoldPattern(apply(p))
       case FullFormExpression(symbols.HoldPattern, _) => throw new PatternException(e)
       case e @ FullFormExpression(symbols.Alternatives, arguments) => AlternativesPattern(e, arguments.map(apply):_*)
       // TODO a lot more here!

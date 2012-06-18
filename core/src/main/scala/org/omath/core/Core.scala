@@ -58,8 +58,7 @@ trait Core extends Kernel with Logging { kernel: SyntaxParser =>
   }
 
   {
-    import scala.concurrent.future
-    future { ScalaEval }
+    org.omath.util.Scala29Compatibility.future { ScalaEval }
   }
   
   {

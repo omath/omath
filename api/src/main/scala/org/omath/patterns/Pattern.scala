@@ -26,6 +26,7 @@ trait Pattern extends Serializable {
 object Pattern {
   var patternBuilder: Expression => ExpressionPattern = { _ => throw new Exception("The patternBuilder field of the Pattern object must be initialized before Expressions can be converted into Patterns. Probably you forgot to mention the PatternBuilder object in the patterns subproject.") }
 
+  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def expression2Pattern(e: Expression): ExpressionPattern = patternBuilder(e)
 
