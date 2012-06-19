@@ -56,8 +56,8 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1"
-//  val buildScalaVersion = "2.9.2"
-  val buildScalaVersion = "2.10.0-M3"
+  val buildScalaVersion = "2.9.2"
+//  val buildScalaVersion = "2.10.0-M3"
   val buildCrossScalaVersions = Seq("2.9.2", "2.10.0-M3")
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
