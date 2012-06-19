@@ -9,4 +9,4 @@
 		SetAttributes[RuleDelayed, HoldRest]
 	
 	"Attributes"
-		Attributes[symbol_Symbol] := ScalaFunction["{ (symbol: SymbolExpression, kernel: Kernel) => kernel.kernelState.attributes(symbol) }"][symbol]
+		Attributes[symbol_Symbol] := ScalaObject["org.omath.core.attributes.Attributes"]["apply"[symbol]]

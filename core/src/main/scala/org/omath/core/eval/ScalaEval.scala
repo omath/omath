@@ -12,11 +12,13 @@ import java.io.PipedOutputStream
 
 trait Eval extends Logging {
 
-  protected val settings = {
+  def defaultsManifest: Manifest[_]
+
+  protected lazy val settings = {
     val s = new Settings
 
     // see https://gist.github.com/404272
-    s.embeddedDefaults[Eval]
+    s.embeddedDefaults(defaultsManifest)
 
     // What a hack! Really I should understand what goes wrong in each situation, and detect that directly.
     if (!classOf[Eval].getClassLoader.getClass.getName.startsWith("sbt")) {
@@ -36,10 +38,6 @@ trait Eval extends Logging {
     val result = output.mkString("\n")
     info("ScalaEval output: " + result)
     result
-  }
-
-  class TweakedIMain2(settings: Settings, writer: PrintWriter) extends tools.nsc.interpreter.IMain(settings, writer) {
-    def lastResult = valueOfTerm(mostRecentVar).get
   }
 
   private lazy val interpreter = {
@@ -74,9 +72,13 @@ trait Eval extends Logging {
 
 }
 
-object Eval extends Eval
+trait ScalaEval extends Logging { scalaEval =>
 
-object ScalaEval extends Logging {
+  def defaultsManifest: Manifest[_]
+  object Eval extends Eval {
+    override def defaultsManifest = scalaEval.defaultsManifest
+  }
+
   try {
     init
   } catch {
@@ -113,4 +115,8 @@ object ScalaEval extends Logging {
       }
     }
   }
+}
+
+object ScalaEval extends ScalaEval {
+  lazy val defaultsManifest = implicitly[Manifest[ScalaEval]]
 }

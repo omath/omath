@@ -11,3 +11,4 @@ object CompilerCompatibility {
     def lastResult = lastRequest.lineRep.call("$result")
   }
 }
+

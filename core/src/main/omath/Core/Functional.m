@@ -14,6 +14,6 @@
 		Map[_, x_String] := x
 		Map[_, x_Real] := x
 		Map[_, x_Integer] := x
-		Map[f_, head_[leaves___]] := head @@ ScalaFunction["{ (f: Expression, leaves: Seq[Expression]) => leaves.map(f(_)) }"][f, {leaves}]
+        Map[f_, head_[leaves___]] := head @@ ScalaObject["org.omath.core.functional.Map"]["apply"[f, {leaves}]]
 			CreateUnitTest[Map, "should apply a function to each argument of an expression.", f /@ g[a,b] === g[f[a],f[b]]]
 			CreateUnitTest[Map, "should leave literals alone.", f /@ 3 === 3]

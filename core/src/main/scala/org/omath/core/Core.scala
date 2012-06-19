@@ -62,7 +62,7 @@ trait Core extends Kernel with Logging { kernel: SyntaxParser =>
   
   {
     ClassLoaders.registerClassLoader(this.getClass.getClassLoader)
-    org.omath.util.Scala29Compatibility.future { ScalaEval }
+//    org.omath.util.Scala29Compatibility.future { ScalaEval }
     Get("Core.m")(this)
   }
 }
