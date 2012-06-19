@@ -10,3 +10,5 @@ libraryDependencies <+= sbtVersion(v => "com.github.siasia" %% "xsbt-web-plugin"
 addSbtPlugin("de.djini" % "xsbt-webstart" % "0.0.5")
 
 addSbtPlugin("com.github.retronym" % "sbt-onejar" % "0.7")
+
+addSbtPlugin("com.typesafe.startscript" % "xsbt-start-script-plugin" % "0.3.0")
