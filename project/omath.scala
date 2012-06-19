@@ -43,7 +43,7 @@ object Omath extends Build {
 
     lazy val ui = Project(id = "omath-ui",
                            base = file("ui"),
-                            settings = buildSettings ++ OneJar.settings /* ++ Seq(libraryDependencies += bowler) */) dependsOn(tungstenCore)
+                            settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies ++= Seq(jline/*, bowler*/))) dependsOn(tungstenCore)
 
 
 }
@@ -109,6 +109,7 @@ object Dependencies {
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
         val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
 	val bowler = "org.bowlerframework" % "core_2.9.1" % "0.6"
+	val jline = "jline" % "jline" % "1.0"
 	object commons {
 		val codec = "commons-codec" % "commons-codec" % "1.6"
 	}
