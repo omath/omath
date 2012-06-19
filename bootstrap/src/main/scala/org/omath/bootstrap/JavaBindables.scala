@@ -34,7 +34,7 @@ case object ClassLoaders extends Logging {
     if (!loaders.contains(classLoader)) {
       loaders += classLoader
       info("registering new ClassLoader: " + classLoader)
-      info("""... getResources("") now returns: """ + getResources("").toList)
+//      info("""... getResources("") now returns: """ + getResources("").toList)
     } else {
       info("ClassLoader " + classLoader + " already registered.")
     }

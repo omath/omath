@@ -11,7 +11,7 @@ import org.omath.SymbolExpression
 @RunWith(classOf[JUnitRunner])
 class TungstenCoreTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
 
-  "$Version" should "correctly evaluate, after being set in core.m" in {
+  "$Version" should "correctly evaluate, after being set in Core.m" in {
     "$Version" should evaluateTo ("\"0.0.1\"")
   }
   

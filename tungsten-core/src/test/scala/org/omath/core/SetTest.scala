@@ -18,8 +18,8 @@ class SetTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
   }
 
   "Set" should "evaluate its right hand side immediately" in {
-    """x=2
-       g[x_]={x,x,x}
+    """y=2
+       g[y_]={y,y,y}
        g[3]""" should evaluateTo("List[2, 2, 2]")
   }  
 }

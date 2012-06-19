@@ -10,7 +10,7 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.io.PipedOutputStream
 
-trait Eval {
+trait Eval extends Logging {
 
   protected val settings = {
     val s = new Settings
@@ -33,10 +33,19 @@ trait Eval {
     while (reader.ready) {
       output += reader.readLine()
     }
-    output.mkString("\n")
+    val result = output.mkString("\n")
+    info("ScalaEval output: " + result)
+    result
   }
 
-  private lazy val interpreter = new IMain(settings, new PrintWriter(new PipedOutputStream(pis)))
+  class TweakedIMain2(settings: Settings, writer: PrintWriter) extends tools.nsc.interpreter.IMain(settings, writer) {
+    def lastResult = valueOfTerm(mostRecentVar).get
+  }
+
+  private lazy val interpreter = {
+    import org.omath.util.CompilerCompatibility.TweakedIMain
+    new TweakedIMain(settings, new PrintWriter(new PipedOutputStream(pis)))
+  }
   private lazy val _history = new ListBuffer[(String, Option[(String, Any)], String)]
 
   def history = _history.toList
@@ -46,17 +55,20 @@ trait Eval {
 
   private def extractOutput = interpreter.mostRecentVar match {
     case name if Some(name) == lastOutputName || name == "" => /* nothing new */ None
-    case name => Some((name, interpreter.valueOfTerm(name).get))
+    case name => Some((name, /*interpreter.valueOfTerm(name).get*/ interpreter.lastResult))
   }
 
   def apply(command: String): Option[Any] = eval(command)
 
   def evalWithNameAndOutput(command: String) = {
-    interpreter.interpret(command)
-    val output = extractOutput
-    val consoleLines = newConsoleLines
-    _history += ((command, output, consoleLines))
-    (output, consoleLines)
+    synchronized {
+      info("ScalaEval'ing: " + command)
+      interpreter.interpret(command)
+      val output = extractOutput
+      val consoleLines = newConsoleLines
+      _history += ((command, output, consoleLines))
+      (output, consoleLines)
+    }
   }
   def eval(command: String): Option[Any] = evalWithNameAndOutput(command)._1 map { _._2 }
 
@@ -66,11 +78,11 @@ object Eval extends Eval
 
 object ScalaEval extends Logging {
   try {
-	  init
+    init
   } catch {
     case e => e.printStackTrace
   }
-  
+
   lazy val init = {
     info("Initializing the scala compiler...")
 
@@ -85,7 +97,7 @@ object ScalaEval extends Logging {
 
   def apply(code: String): Any = {
     init
-    
+
     info("evaluating '" + code + "' using the Scala REPL")
     val (result, output) = Eval.evalWithNameAndOutput(code)
     result match {
