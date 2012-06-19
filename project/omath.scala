@@ -43,7 +43,7 @@ object Omath extends Build {
 
     lazy val ui = Project(id = "omath-ui",
                            base = file("ui"),
-                            settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies += jline) ++ bowlerWebapp) dependsOn(tungstenCore)
+                            settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies += jline) ++ bowlerWebapp ++ heroku) dependsOn(tungstenCore)
 
 
 }
@@ -83,6 +83,8 @@ object BuildSettings {
     exportJars := true,
     unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" }
   )
+
+  val heroku = com.typesafe.startscript.StartScriptPlugin.startScriptForClassesSettings
 }
 
 object OneJar {
