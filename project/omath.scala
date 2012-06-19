@@ -51,6 +51,7 @@ object Omath extends Build {
 object BuildSettings {
   import Resolvers._
   import Dependencies._
+  import com.typesafe.startscript.StartScriptPlugin
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1"
@@ -81,10 +82,11 @@ object BuildSettings {
     }),
     libraryDependencies ++= Seq(junit, slf4j),
     exportJars := true,
-    unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" }
+    unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" },
+    StartScriptPlugin.stage in Compile := Unit 			// fake 'stage' task in the aggregate project, per https://github.com/typesafehub/xsbt-start-script-plugin
   )
 
-  val heroku = com.typesafe.startscript.StartScriptPlugin.startScriptForClassesSettings
+  val heroku = StartScriptPlugin.startScriptForClassesSettings
 }
 
 object OneJar {
