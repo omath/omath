@@ -4,6 +4,7 @@ import Keys._
 object Omath extends Build {
     import BuildSettings._
     import Dependencies._
+    import com.typesafe.startscript.StartScriptPlugin
 
     lazy val root = Project(id = "omath",
                             base = file("."),
@@ -83,7 +84,8 @@ object BuildSettings {
     libraryDependencies ++= Seq(junit, slf4j),
     exportJars := true,
     unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" },
-    StartScriptPlugin.stage in Compile := Unit 			// fake 'stage' task in the aggregate project, per https://github.com/typesafehub/xsbt-start-script-plugin
+    StartScriptPlugin.stage in Compile := Unit, 			// fake 'stage' task in the aggregate project, per https://github.com/typesafehub/xsbt-start-script-plugin
+    mainClass in Compile := Some("org.omath.ui.rest.Web")
   )
 
   val heroku = StartScriptPlugin.startScriptForClassesSettings
