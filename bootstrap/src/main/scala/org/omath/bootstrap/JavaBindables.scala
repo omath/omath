@@ -13,9 +13,14 @@ import java.net.URL
 import java.net.URI
 import scala.collection.JavaConversions
 
-case object ClassLoaders {
-  private val primaryClassLoader = getClass.getClassLoader
-  private val loaders = scala.collection.mutable.ListBuffer[ClassLoader](primaryClassLoader)
+case object ClassLoaders extends Logging {
+  private lazy val primaryClassLoader = {
+    val cl = getClass.getClassLoader
+    info("... primary ClassLoader: " + cl)
+    cl
+  }
+  def primaryClassLoaderChain = Iterator.iterate(primaryClassLoader)(_.getParent).takeWhile(_ != null).toList
+  private lazy val loaders = scala.collection.mutable.ListBuffer[ClassLoader]() ++= primaryClassLoaderChain
   def registerClassLoader(classLoader: ClassLoader) {
     loaders += classLoader
   }
@@ -29,6 +34,9 @@ case object ClassLoaders {
     import JavaConversions._
     loaders.iterator.flatMap({ c => val i: Iterator[URL] = c.getResources(resource); i })
   }
+  
+//  info("Initializing ClassLoaders.")
+//  info("""... getResources("") returns: """ + getResources("").toList)
 }
 
 case object ClassForNameBindable extends PassiveBindable {

@@ -16,6 +16,8 @@ object Web extends App {
   val context = new WebAppContext()
   context.setServer(server)
   context.setContextPath("/")
+  
+  // we might be run from various locations, so first work out where the webapp resides...
   val warLocation = Seq("src/main/webapp/", "ui/src/main/webapp").find(p => new File(p).exists).get
   context.setWar(warLocation)
 

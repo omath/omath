@@ -56,8 +56,8 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1"
-  val buildScalaVersion = "2.9.2"
-//  val buildScalaVersion = "2.10.0-M3"
+//  val buildScalaVersion = "2.9.2"
+  val buildScalaVersion = "2.10.0-M3"
   val buildCrossScalaVersions = Seq("2.9.2", "2.10.0-M3")
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
@@ -77,9 +77,9 @@ object BuildSettings {
         }
         "org.scalatest" % ("scalatest_" + scalatestScalaVersion) % scalatestVersion % "test"
     },
-    unmanagedSourceDirectories in Compile <++= (baseDirectory, scalaVersion)((bd, sv) => sv match {
-      case sv if sv startsWith "2.9." => Seq(bd / "src" / "main" / "scala-2.9")
-      case sv if sv startsWith "2.10." => Seq(bd / "src" / "main" / "scala-2.10")
+    unmanagedSourceDirectories in Compile <+= (baseDirectory, scalaVersion)((bd, sv) => sv match {
+      case sv if sv startsWith "2.9." => bd / "src" / "main" / "scala-2.9"
+      case sv if sv startsWith "2.10." => bd / "src" / "main" / "scala-2.10"
     }),
     libraryDependencies ++= Seq(junit, slf4j),
     exportJars := true,
@@ -119,7 +119,7 @@ object Dependencies {
 	val servlet = "javax.servlet" % "servlet-api" % "2.5" % "provided"
 	val includeBowlerIn29 = libraryDependencies <++= (scalaVersion) {
 	      	case sv if sv startsWith "2.9." => Seq(bowler, jetty, servlet)
-      		case sv if sv startsWith "2.10." => Seq()
+      		case sv if sv startsWith "2.10." => Seq(jetty, servlet)
 	}
 	val bowlerWebapp = Seq(includeBowlerIn29) ++ com.github.siasia.WebPlugin.webSettings
 	val jline = "jline" % "jline" % "1.0"
