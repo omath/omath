@@ -5,6 +5,7 @@ import org.omath.kernel.Evaluation
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FlatSpec
+import org.omath.util.Scala29Compatibility.???
 
 trait PatternTest extends FlatSpec with ShouldMatchers {
   // mention PatternBuilder, so it registers itself with the Pattern companion object

@@ -43,7 +43,7 @@ object Omath extends Build {
 
     lazy val ui = Project(id = "omath-ui",
                            base = file("ui"),
-                            settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies ++= Seq(jline/*, bowler*/))) dependsOn(tungstenCore)
+                            settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies += jline) ++ bowlerWebapp) dependsOn(tungstenCore)
 
 
 }
@@ -54,7 +54,8 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1"
-  val buildScalaVersion = "2.10.0-M3"
+  val buildScalaVersion = "2.9.2"
+//  val buildScalaVersion = "2.10.0-M3"
   val buildCrossScalaVersions = Seq("2.9.2", "2.10.0-M3")
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
@@ -67,18 +68,17 @@ object BuildSettings {
 //    scalacOptions += "-Xprint:typer",
     publishTo    := Some(Resolver.sftp("toolkit.tqft.net Maven repository", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa"))),
     resolvers    := sonatypeResolvers ++ tqftResolvers,
-    libraryDependencies <<= (scalaVersion, libraryDependencies) { (sv, deps) =>
+    libraryDependencies <+= (scalaVersion) { sv =>
         val (scalatestVersion, scalatestScalaVersion) = sv match {
                 case sv if sv.startsWith("2.9.") => ("1.8", "2.9.0")
                 case sv if sv.startsWith("2.10.") => ("1.8-SNAPSHOT", "2.10.0-M3")
         }
-        deps :+ ("org.scalatest" % ("scalatest_" + scalatestScalaVersion) % scalatestVersion % "test" )
+        "org.scalatest" % ("scalatest_" + scalatestScalaVersion) % scalatestVersion % "test"
     },
-    unmanagedSourceDirectories in Compile <++= (baseDirectory, scalaVersion)((bd, sv) => 
-      if (sv startsWith "2.9.") Seq(bd / "src" / "main" / "scala-2.9")
-      else if (sv startsWith "2.10.") Seq(bd / "src" / "main" / "scala-2.10")
-      else Nil
-    ),
+    unmanagedSourceDirectories in Compile <++= (baseDirectory, scalaVersion)((bd, sv) => sv match {
+      case sv if sv startsWith "2.9." => Seq(bd / "src" / "main" / "scala-2.9")
+      case sv if sv startsWith "2.10." => Seq(bd / "src" / "main" / "scala-2.10")
+    }),
     libraryDependencies ++= Seq(junit, slf4j),
     exportJars := true,
     unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" }
@@ -109,6 +109,13 @@ object Dependencies {
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
         val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
 	val bowler = "org.bowlerframework" % "core_2.9.1" % "0.6"
+	val jetty = "org.mortbay.jetty" % "jetty" % "6.1.26" % "container, compile"
+	val servlet = "javax.servlet" % "servlet-api" % "2.5" % "provided"
+	val includeBowlerIn29 = libraryDependencies <++= (scalaVersion) {
+	      	case sv if sv startsWith "2.9." => Seq(bowler, jetty, servlet)
+      		case sv if sv startsWith "2.10." => Seq()
+	}
+	val bowlerWebapp = Seq(includeBowlerIn29) ++ com.github.siasia.WebPlugin.webSettings
 	val jline = "jline" % "jline" % "1.0"
 	object commons {
 		val codec = "commons-codec" % "commons-codec" % "1.6"
