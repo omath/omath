@@ -17,12 +17,27 @@ case object ClassLoaders extends Logging {
   private lazy val primaryClassLoader = {
     val cl = getClass.getClassLoader
     info("... primary ClassLoader: " + cl)
+    cl match {
+      case cl: URLClassLoader => {
+        info("... is a URLClassLoader with URLs:")
+        for(url <- cl.getURLs) info("...  " + url)
+      }
+      case _ => {
+        info("... does not appear to be a URLClassLoader.")
+      }
+    }
     cl
   }
   def primaryClassLoaderChain = Iterator.iterate(primaryClassLoader)(_.getParent).takeWhile(_ != null).toList
-  private lazy val loaders = scala.collection.mutable.ListBuffer[ClassLoader]() ++= primaryClassLoaderChain
+  private lazy val loaders = scala.collection.mutable.ListBuffer[ClassLoader]() += primaryClassLoader
   def registerClassLoader(classLoader: ClassLoader) {
-    loaders += classLoader
+    if (!loaders.contains(classLoader)) {
+      loaders += classLoader
+      info("registering new ClassLoader: " + classLoader)
+      info("""... getResources("") now returns: """ + getResources("").toList)
+    } else {
+      info("ClassLoader " + classLoader + " already registered.")
+    }
   }
   def registerURL(url: String) {
     registerClassLoader(new URLClassLoader(Array[URL](new URL(url)), primaryClassLoader))
@@ -34,9 +49,9 @@ case object ClassLoaders extends Logging {
     import JavaConversions._
     loaders.iterator.flatMap({ c => val i: Iterator[URL] = c.getResources(resource); i })
   }
-  
-//  info("Initializing ClassLoaders.")
-//  info("""... getResources("") returns: """ + getResources("").toList)
+
+  info("Initializing ClassLoaders.")
+  info("""... getResources("") returns: """ + getResources("").toList)
 }
 
 case object ClassForNameBindable extends PassiveBindable {

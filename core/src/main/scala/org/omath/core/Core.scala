@@ -11,6 +11,7 @@ import org.omath.core.io.$Path
 import org.omath.parser.SyntaxParser
 import org.omath.core.eval.ScalaEval
 import org.omath.core.io.Get
+import org.omath.bootstrap.ClassLoaders
 
 trait Core extends Kernel with Logging { kernel: SyntaxParser =>
   private[this] var beforeContexts = true
@@ -57,11 +58,11 @@ trait Core extends Kernel with Logging { kernel: SyntaxParser =>
     }
   }
 
-  {
-    org.omath.util.Scala29Compatibility.future { ScalaEval }
-  }
+  
   
   {
+    ClassLoaders.registerClassLoader(this.getClass.getClassLoader)
+    org.omath.util.Scala29Compatibility.future { ScalaEval }
     Get("Core.m")(this)
   }
 }
