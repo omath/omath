@@ -1,1 +1,1 @@
-web: target/start org.omath.ui.rest.Web
+web: ui/target/start org.omath.ui.rest.Web
