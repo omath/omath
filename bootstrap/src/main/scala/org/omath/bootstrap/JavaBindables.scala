@@ -34,7 +34,6 @@ case object ClassLoaders extends Logging {
     if (!loaders.contains(classLoader)) {
       loaders += classLoader
       info("registering new ClassLoader: " + classLoader)
-//      info("""... getResources("") now returns: """ + getResources("").toList)
     } else {
       info("ClassLoader " + classLoader + " already registered.")
     }
@@ -45,13 +44,15 @@ case object ClassLoaders extends Logging {
   def lookupClass(name: String): Option[Class[_]] = {
     loaders.view.map(cl => try { Some(cl.loadClass(name)) } catch { case _ => None }).find(_.nonEmpty).map(_.get)
   }
-  def getResources(resource: String): Iterator[URL] = {
+  def getResources(resource: String): Seq[URL] = {
     import JavaConversions._
-    loaders.iterator.flatMap({ c => val i: Iterator[URL] = c.getResources(resource); i })
+    info("ClassLoaders looking for resource: " + resource)
+    val result = loaders.flatMap({ c => val i: Iterator[URL] = c.getResources(resource); i })
+    info("... found: " + result.mkString(" "))
+    result
   }
 
-  info("Initializing ClassLoaders.")
-  info("""... getResources("") returns: """ + getResources("").toList)
+  info("Initializing ClassLoaders...")
 }
 
 case object ClassForNameBindable extends PassiveBindable {
