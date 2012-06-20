@@ -44,10 +44,17 @@ case object ClassLoaders extends Logging {
   def lookupClass(name: String): Option[Class[_]] = {
     loaders.view.map(cl => try { Some(cl.loadClass(name)) } catch { case _ => None }).find(_.nonEmpty).map(_.get)
   }
-  def getResources(resource: String): Seq[URL] = {
+  def getResources2(resource: String): Seq[URL] = {
     import JavaConversions._
     info("ClassLoaders looking for resource: " + resource)
     val result = loaders.flatMap({ c => val i: Iterator[URL] = c.getResources(resource); i })
+    info("... found: " + result.mkString(" "))
+    result
+  }
+  def getResources(resource: String): Seq[URL] = {
+    import JavaConversions._
+    info("ClassLoaders looking for resource: " + resource)
+    val result = loaders.flatMap({ c => Option(c.getResource(resource)) })
     info("... found: " + result.mkString(" "))
     result
   }
