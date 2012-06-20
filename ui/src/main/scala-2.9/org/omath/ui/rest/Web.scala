@@ -8,20 +8,28 @@ import scala.util.Properties
 import java.io.File
 
 object Web extends App {
-  val server = new Server
-  val scc = new SelectChannelConnector
-  scc.setPort(Properties.envOrElse("PORT", "8080").toInt)
-  server.setConnectors(Array(scc))
+  def run {
+    val server = new Server
+    val scc = new SelectChannelConnector
+    scc.setPort(Properties.envOrElse("PORT", "8080").toInt)
+    server.setConnectors(Array(scc))
 
-  val context = new WebAppContext()
-  context.setServer(server)
-  context.setContextPath("/")
-  
-  // we might be run from various locations, so first work out where the webapp resides...
-  val warLocation = Seq("src/main/webapp/", "ui/src/main/webapp").find(p => new File(p).exists).get
-  context.setWar(warLocation)
+    val context = new WebAppContext()
+    context.setServer(server)
+    context.setContextPath("/")
 
-  server.addHandler(context)
+    // we might be run from various locations, so first work out where the webapp resides...
+    Seq("src/main/webapp/", "ui/src/main/webapp").find(p => new File(p).exists) match {
+      case Some(warLocation) => context.setWar(warLocation)
+      case None => {
+        context.setResourceBase(Web.getClass.getClassLoader.getResource("webapp").toExternalForm())
+      }
+    }
 
-  server.start()
+    server.addHandler(context)
+
+    server.start()
+  }
+
+  run
 }

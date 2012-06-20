@@ -2,7 +2,7 @@
 
 # TODO this should really be done in sbt
 
-rm -rf ui/target/scala-2.10.0-M3/webstart/
+rm -rf ui/target/scala-2.9.2/webstart/
 ./sbt omath-ui/webstart
-rsync -e ssh --partial --progress -avz ui/target/scala-2.10.0-M3/webstart/* scottmorrison@omath.org:omath.org/webstart/
+rsync -e ssh --partial --progress -avz ui/target/scala-2.9.2/webstart/* scottmorrison@omath.org:omath.org/webstart/
 rsync -e ssh --partial --progress -avz ui/src/main/html/* scottmorrison@omath.org:omath.org/webstart/

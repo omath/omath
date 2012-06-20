@@ -13,7 +13,7 @@ seq(WebStartPlugin.allSettings:_*)
     )
 
     webstartJnlpConf    := Seq(JnlpConf(
-        mainClass       = "org.omath.ui.repl.omath",
+        mainClass       = "org.omath.ui.rest.WebStart",
         fileName        = "omath.jnlp",
         codeBase        = "http://omath.org/webstart/",
         title           = "omath.org",
