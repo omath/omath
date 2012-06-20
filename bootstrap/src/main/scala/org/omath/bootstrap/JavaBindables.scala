@@ -32,7 +32,13 @@ case object ClassLoaders extends Logging {
   private def initialClassLoaders = {
     primaryClassLoader :: (primaryClassLoader match {
       case cl: URLClassLoader => {
-        for (url <- cl.getURLs.toList if url.toString.contains("omath-core")) yield new URLClassLoader(Array(url), cl)
+        for (url <- cl.getURLs.toList if url.toString.contains("omath-core")) yield {
+          import JavaConversions._
+          for (e <- new java.util.jar.JarFile(new java.io.File(url.toURI)).entries) {
+            println(e)
+          }
+          new URLClassLoader(Array(url), cl)
+        }
       }
       case _ => Nil
     })
