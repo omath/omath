@@ -20,7 +20,7 @@ case object ClassLoaders extends Logging {
     cl match {
       case cl: URLClassLoader => {
         info("... is a URLClassLoader with URLs:")
-        for(url <- cl.getURLs) info("...  " + url)
+        for (url <- cl.getURLs) info("...  " + url)
       }
       case _ => {
         info("... does not appear to be a URLClassLoader.")
@@ -28,8 +28,16 @@ case object ClassLoaders extends Logging {
     }
     cl
   }
-  def primaryClassLoaderChain = Iterator.iterate(primaryClassLoader)(_.getParent).takeWhile(_ != null).toList
-  private lazy val loaders = scala.collection.mutable.ListBuffer[ClassLoader]() += primaryClassLoader
+  private lazy val primaryClassLoaderChain = Iterator.iterate(primaryClassLoader)(_.getParent).takeWhile(_ != null).toList
+  private def initialClassLoaders = {
+    primaryClassLoader :: (primaryClassLoader match {
+      case cl: URLClassLoader => {
+        for (url <- cl.getURLs.toList if url.toString.contains("omath-core")) yield new URLClassLoader(Array(url), cl)
+      }
+      case _ => Nil
+    })
+  }
+  private lazy val loaders = scala.collection.mutable.ListBuffer[ClassLoader]() ++= initialClassLoaders
   def registerClassLoader(classLoader: ClassLoader) {
     if (!loaders.contains(classLoader)) {
       loaders += classLoader
@@ -43,13 +51,6 @@ case object ClassLoaders extends Logging {
   }
   def lookupClass(name: String): Option[Class[_]] = {
     loaders.view.map(cl => try { Some(cl.loadClass(name)) } catch { case _ => None }).find(_.nonEmpty).map(_.get)
-  }
-  def getResources2(resource: String): Seq[URL] = {
-    import JavaConversions._
-    info("ClassLoaders looking for resource: " + resource)
-    val result = loaders.flatMap({ c => val i: Iterator[URL] = c.getResources(resource); i })
-    info("... found: " + result.mkString(" "))
-    result
   }
   def getResources(resource: String): Seq[URL] = {
     import JavaConversions._
