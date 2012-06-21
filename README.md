@@ -6,7 +6,6 @@ We're writing a computer algebra system called **omath** which should be able to
 
 Checkout a copy of the git repository, then run
 
-    ./fix-sbt
     ./sbt "omath-ui/run-main org.omath.ui.repl.omath"
 
 to get a text-mode interface.
