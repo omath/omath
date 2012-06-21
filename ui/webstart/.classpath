@@ -1,0 +1,40 @@
+<classpath>
+  <classpathentry output="target/scala-2.9.2/classes" path="src/main/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/classes" path="src/main/java" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/classes" path="src/main/scala-2.9" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/test-classes" path="src/test/scala" kind="src"></classpathentry>
+  <classpathentry output="target/scala-2.9.2/test-classes" path="src/test/java" kind="src"></classpathentry>
+  <classpathentry path="org.scala-ide.sdt.launching.SCALA_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.slf4j/slf4j-log4j12/jars/slf4j-log4j12-1.6.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/log4j/log4j/bundles/log4j-1.2.16.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.apfloat/apfloat/jars/apfloat-1.6.3.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/net.tqft/toolkit-base_2.9.2/jars/toolkit-base_2.9.2-0.1.7.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/commons-codec/commons-codec/jars/commons-codec-1.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/net.tqft/toolkit-eval_2.9.2/jars/toolkit-eval_2.9.2-0.1.7.jar" kind="lib"></classpathentry>
+  <classpathentry path="org.scala-ide.sdt.launching.SCALA_COMPILER_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.bowlerframework/core_2.9.1/jars/core_2.9.1-0.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/joda-time/joda-time/jars/joda-time-1.6.2.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/net.liftweb/lift-json_2.9.1/jars/lift-json_2.9.1-2.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/com.thoughtworks.paranamer/paranamer/jars/paranamer-2.3.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.scala-lang/scalap/jars/scalap-2.9.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/com.recursivity/recursivity-commons_2.9.1/jars/recursivity-commons_2.9.1-0.6.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.scalatra/scalatra-fileupload_2.9.1/jars/scalatra-fileupload_2.9.1-2.0.3.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.scalatra/scalatra_2.9.1/jars/scalatra_2.9.1-2.0.3.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/commons-fileupload/commons-fileupload/jars/commons-fileupload-1.2.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/commons-io/commons-io/jars/commons-io-2.1.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.fusesource.scalate/scalate-core/bundles/scalate-core-1.5.3.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.fusesource.scalate/scalate-util/bundles/scalate-util-1.5.3.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/net.liftweb/lift-json-ext_2.9.1/jars/lift-json-ext_2.9.1-2.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/net.liftweb/lift-common_2.9.1/jars/lift-common_2.9.1-2.4.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.slf4j/slf4j-nop/jars/slf4j-nop-1.6.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.mortbay.jetty/jetty/jars/jetty-6.1.26.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.mortbay.jetty/jetty-util/jars/jetty-util-6.1.26.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.mortbay.jetty/servlet-api/jars/servlet-api-2.5-20081211.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/org.scalatest/scalatest_2.9.0/jars/scalatest_2.9.0-1.8.jar" kind="lib"></classpathentry>
+  <classpathentry path="/Users/scott/.ivy2/cache/junit/junit/jars/junit-4.8.jar" kind="lib"></classpathentry>
+  <classpathentry exported="true" path="/omath-ui-rest" kind="src" combineaccessrules="false"></classpathentry>
+  <classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"></classpathentry>
+  <classpathentry path="bin" kind="output"></classpathentry>
+</classpath>

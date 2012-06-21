@@ -6,9 +6,9 @@ object Omath extends Build {
     import Dependencies._
     import com.typesafe.startscript.StartScriptPlugin
 
-    lazy val root = Project(id = "omath",
-                            base = file("."),
-			    settings = buildSettings) aggregate(api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, ui)
+//    lazy val root = Project(id = "omath",
+//                            base = file("."),
+//			    settings = buildSettings) aggregate(api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, ui)
 
     lazy val api = Project(id = "omath-api",
                            base = file("api"),
@@ -42,11 +42,21 @@ object Omath extends Build {
                            base = file("tungsten-core"),
                             settings = buildSettings) dependsOn(tungstenBootstrap, core)
 
-    lazy val ui = Project(id = "omath-ui",
-                           base = file("ui"),
-                            settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies += jline) ++ bowlerWebapp ++ heroku) dependsOn(tungstenCore)
+    lazy val rest = Project(id = "omath-ui-rest",
+				base = file("ui/rest"),
+				settings = buildSettings ++ bowlerWebapp ++ heroku) dependsOn(tungstenCore)
 
+    lazy val webstart = Project(id = "omath-ui-webstart",
+				base = file("ui/webstart"),
+				settings = buildSettings) dependsOn(rest)
 
+    lazy val applet = Project(id = "omath-ui-applet",
+				base = file("ui/applet"),
+				settings = buildSettings) dependsOn(tungstenCore)
+
+    lazy val repl = Project(id = "omath-ui-repl",
+				base = file("ui/repl"),
+				settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies += jline)) dependsOn(tungstenCore)
 }
 
 object BuildSettings {

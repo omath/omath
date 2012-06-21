@@ -1,4 +1,6 @@
-package org.omath.ui.rest
+package org.omath.ui.webstart
+
+import org.omath.ui.rest.Web
 
 object WebStart extends App {
 	Web.run
