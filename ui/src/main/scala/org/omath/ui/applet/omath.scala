@@ -15,8 +15,7 @@ class omath extends Applet {
   }
   def privileged[T](x: => T): T = AccessController.doPrivileged(x)
 
-  
-  privileged { TungstenCore }
+//  privileged { TungstenCore }
   
   def evaluateSyntax(syntax: String) = {
     try {
