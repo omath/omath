@@ -8,7 +8,7 @@ object Omath extends Build {
 
     lazy val all = Project(id = "omath",
                             base = file("aggregrate"),
-			    settings = buildSettings) aggregate(api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl)
+			    settings = buildSettings) aggregate(api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl, contrib)
 
     lazy val api = Project(id = "omath-api",
                            base = file("api"),
@@ -36,7 +36,7 @@ object Omath extends Build {
 
     lazy val core = Project(id = "omath-core",
                            base = file("core"),
-                            settings = buildSettings ++ Seq(libraryDependencies ++= Seq(commons.codec, toolkit.eval, toolkit.base))) dependsOn(bootstrap)
+                            settings = buildSettings ++ Seq(libraryDependencies ++= Seq(commons.codec, toolkit.base))) dependsOn(bootstrap)
 
     lazy val tungstenCore = Project(id = "omath-tungsten-core",
                            base = file("tungsten-core"),
@@ -57,6 +57,10 @@ object Omath extends Build {
     lazy val repl = Project(id = "omath-ui-repl",
 				base = file("ui/repl"),
 				settings = buildSettings ++ OneJar.settings ++ Seq(libraryDependencies += jline)) dependsOn(tungstenCore)
+
+    lazy val contrib = Project(id = "omath-contrib",
+				base = file("contrib"),
+				settings = buildSettings ++ Seq(libraryDependencies ++= Seq(toolkit.base, toolkit.eval))) dependsOn(api)
 }
 
 object BuildSettings {

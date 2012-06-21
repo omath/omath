@@ -56,7 +56,7 @@ case object ClassLoaders extends Logging {
     registerClassLoader(new URLClassLoader(Array[URL](new URL(url)), primaryClassLoader))
   }
   def lookupClass(name: String): Option[Class[_]] = {
-    loaders.view.map(cl => try { Some(cl.loadClass(name)) } catch { case _ => None }).find(_.nonEmpty).map(_.get)
+    loaders.view.map(cl => try { Option(cl.loadClass(name)) } catch { case _ => None }).find(_.nonEmpty).map(_.get)
   }
   def getResources(resource: String): Seq[URL] = {
     import JavaConversions._

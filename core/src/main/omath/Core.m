@@ -43,10 +43,6 @@ $Version := "0.0.1"
 	AsJavaObject[expression_] := ScalaObject["org.omath.core.javaObjects.AsJavaObject"]["apply"[expression]]
 	Serialize[object_JavaObject] := ScalaObject["org.omath.core.javaObjects.Serialize"]["apply"[object]]
 	Deserialize[base64_String] := ScalaObject["org.omath.core.javaObjects.Deserialize"]["apply"[base64]]
-	   (* ScalaEval only works in plain vanilla environments. It's not suitable for the Core. *)
-	ScalaEval[code_String] := ScalaObject["org.omath.core.eval.ScalaEval"]["apply"[code]]
-	ScalaFunction[function_String][arguments___] := ScalaEval[function]["apply"[arguments]]
-	   (* TODO need a cached version of ScalaEval, but this is waiting on pattern specificity! *)
 	AddToClassPath[path_String] := ScalaObject["org.omath.bootstrap.ClassLoaders"]["registerURL"[path]]
 	Exit[] := ScalaObject["org.omath.core.kernel.Exit"]["apply"[]]
 	   	   
@@ -62,12 +58,7 @@ Get["Core/Kernel.m"]
 Get["Core/FlowControl.m"]
 Get["Core/Strings.m"]
 Get["Core/Functional.m"]
-(* Comment out Groovy for now, until we have better package isolation... *)
-(* Get["Core/Groovy.m"] *)	
-	
-(* To ensure that we properly test serializability of the kernel, we need to create a new class via ScalaEval and save a reference to it. *)
-(*	scalaSquare = ScalaEval["{ x: Int => x*x }"] *)
-	
+		
 	
 (* TODO --- below this line is broken stuff being merged from init.t *)
 		Set[Part[s_Symbol, parts___], rhs_] := ScalaObject["org.omath.core.set.Set"]["setPart", Hold[s, {parts}, rhs]]
