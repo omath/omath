@@ -4,7 +4,7 @@
 	</head>
 	<body>
 		<input id="In" size=80/>
-		<button type="button" onclick="submitSyntax($('#In').val())">evaluate</button>
+		<button type="button" onclick="submitSyntax($('#In').val()); $('#In').val("")">evaluate</button>
 		<br/>
 		<textarea id="Out" rows="20" cols="120"></textarea>
 		<script>
