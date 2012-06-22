@@ -51,7 +51,7 @@ object omath extends App {
       case Success(org.omath.symbols.Null) =>
       case Success(result) => {
         print("Out[" + lineNumber + "]:= ");
-        println(result)
+        println(result.toContextualString(TungstenCore.newEvaluation))
       }
     }
     lineNumber = lineNumber + 1

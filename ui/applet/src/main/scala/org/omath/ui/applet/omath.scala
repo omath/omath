@@ -15,12 +15,12 @@ class omath extends Applet {
   }
   def privileged[T](x: => T): T = AccessController.doPrivileged(x)
 
-//  privileged { TungstenCore }
+  privileged { TungstenCore }
   
   def evaluateSyntax(syntax: String) = {
     try {
       privileged {
-        TungstenCore.evaluateSyntax(syntax).get.toString
+        TungstenCore.evaluateSyntax(syntax).get.toContextualString(TungstenCore.newEvaluation)
       }
     } catch {
       case e => {

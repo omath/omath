@@ -46,4 +46,7 @@ package object symbols {
 
   val MatchQ = SymbolExpression("MatchQ", "System")
   val SameQ = SymbolExpression("SameQ", "System")
+  
+  val $Context = SymbolExpression("$Context", "System")
+  val $ContextPath = SymbolExpression("$ContextPath", "System")
 }

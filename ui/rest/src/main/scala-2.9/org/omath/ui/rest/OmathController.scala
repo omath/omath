@@ -9,6 +9,6 @@ import org.omath.core.TungstenCore
 class OmathController extends Controller with FunctionNameConventionRoutes with Logging {
   
 	def `GET /omath/evaluate`(syntax: String): String = {
-	  TungstenCore.evaluateSyntax(syntax).get.toString
+	  TungstenCore.evaluateSyntax(syntax).get.toContextualString(TungstenCore.newEvaluation)
 	}
 }

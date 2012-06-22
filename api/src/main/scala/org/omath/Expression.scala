@@ -32,6 +32,18 @@ trait Expression extends PassiveBindable {
   final override def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
 
   def :>(bindable: Bindable) = patterns.ReplacementRule(this, bindable)
+  
+  final override def toString = toContextualString(Seq(Context.global, Context.system))
+  def toContextualString(symbolInContext: SymbolExpression => Boolean): String
+  def toContextualString(contexts: Seq[Context]): String = toContextualString({ s: SymbolExpression => contexts.contains(s.context) })
+  def toContextualString(implicit evaluation: Evaluation): String = {
+    evaluation.evaluate(symbols.$ContextPath) match {
+      case FullFormExpression(symbols.List, contexts) => {
+        toContextualString(contexts collect { case StringExpression(contextName) => Context(contextName) })
+      }
+      case _ => toString
+    }
+  }
 }
 
 trait RawExpression extends Expression {
@@ -41,6 +53,8 @@ trait RawExpression extends Expression {
 }
 trait LiteralExpression extends RawExpression {
   override def bindOption(binding: Map[SymbolExpression, Expression]) = None
+  final override def toContextualString(symbolInContext: SymbolExpression => Boolean): String = toLiteralString
+  def toLiteralString: String
 }
 
 trait SymbolExpression extends RawExpression {
@@ -59,7 +73,11 @@ trait SymbolExpression extends RawExpression {
     binding.get(this)
   }
 
-  override def toString = name
+  override def toContextualString(symbolInContext: SymbolExpression => Boolean) = if(symbolInContext(this)) {
+    name
+  } else {
+    context.toString + name
+  }
 }
 
 protected trait SymbolExpressionImplicits {
@@ -96,7 +114,7 @@ case class StringExpression(contents: String) extends LiteralExpression {
   }
   override def hashCode = contents.hashCode
 
-  override def toString = "\"" + contents + "\""
+  override def toLiteralString = "\"" + contents + "\""
   override val head = symbols.String
 }
 
@@ -114,7 +132,7 @@ trait IntegerExpression extends LiteralExpression {
 
   override val head = symbols.Integer
 
-  override def toString = toApint.toString
+  override def toLiteralString = toApint.toString
   override def equals(other: Any) = {
     other match {
       case other: IntegerExpression => toApint == other.toApint
@@ -146,7 +164,7 @@ trait RealExpression extends LiteralExpression {
 
   override val head = symbols.Real
 
-  override def toString = toApfloat.toString
+  override def toLiteralString = toApfloat.toString
   override def equals(other: Any) = {
     other match {
       case other: RealExpression => toApfloat == other.toApfloat
@@ -201,6 +219,8 @@ case class FullFormExpression(head: Expression, arguments: Seq[Expression]) exte
     case _ => head.symbolHead
   }
 
-  override def toString = head.toString + arguments.mkString("[", ", ", "]")
+  override def toContextualString(symbolInContext: SymbolExpression => Boolean) = {
+    head.toContextualString(symbolInContext) + arguments.map(_.toContextualString(symbolInContext)).mkString("[", ", ", "]")
+  }
 }
 
