@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class NamedPatternTest extends PatternTest {
+class NamedPatternTest extends PatternTest with MockAttributes {
 
   "Pattern" should "bind the result" in {
     val pattern: Pattern = symbols.Pattern('x, symbols.Blank())

@@ -7,7 +7,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class FullFormTest extends PatternTest {
+class FullFormTest extends PatternTest with MockAttributes {
 
   "empty arguments" should "not break FullFormExpressionPattern" in {
     val pattern1: Pattern = symbols.List()

@@ -9,8 +9,9 @@ import org.omath.patterns.ReplacementRuleTable
 import org.omath.symbols.{ Pattern, Blank, List }
 
 trait MockKernelState { kernel: Kernel =>
-  def kernelState = new EmptyKernelState {
+  def kernelState = new EmptyKernelState { kernelState =>
     override def downValues(symbol: SymbolExpression) = {
+      implicit val attributes = kernelState.attributes _
       symbol.name match {
         case "f" => ReplacementRule(SymbolExpression("f")(2), 4)
         case "g" => ReplacementRule(SymbolExpression("g")(Blank()), 6)
@@ -20,6 +21,7 @@ trait MockKernelState { kernel: Kernel =>
       }
     }
     override def ownValues(symbol: SymbolExpression) = {
+      implicit val attributes = kernelState.attributes _
       symbol.name match {
         case "x" => ReplacementRule(SymbolExpression("x"), 2)
         case _ => ReplacementRuleTable(Nil)

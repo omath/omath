@@ -40,6 +40,7 @@ class CoreUnitTests extends FlatSpec with ShouldMatchers with EvaluationMatchers
           case one :: Nil => symbol.toString should "satisfy: '" + one + "'"
           case one :: rest => (symbol.toString + " " + one.trim) should rest.mkString("should").trim
         }) in {
+          implicit val attributes = core3.kernelState.attributes _
           expression match {
             case symbols.MatchQ(expression, pattern) => expression should satisfy(pattern)(core3)
             case symbols.SameQ(expression1, expression2) => expression1 should evaluateTo(expression2)(core3)

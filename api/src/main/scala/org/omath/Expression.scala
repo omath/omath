@@ -31,7 +31,7 @@ trait Expression extends PassiveBindable {
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
   final override def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
 
-  def :>(bindable: Bindable) = patterns.ReplacementRule(this, bindable)
+  def :>(bindable: Bindable)(implicit attributes: SymbolExpression => Seq[SymbolExpression]) = patterns.ReplacementRule(this, bindable)
   
   final override def toString = toContextualString(Seq(Context.global, Context.system))
   def toContextualString(symbolInContext: SymbolExpression => Boolean): String

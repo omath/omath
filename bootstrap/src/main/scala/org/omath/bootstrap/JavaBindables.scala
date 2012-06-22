@@ -16,40 +16,40 @@ import scala.collection.JavaConversions
 case object ClassLoaders extends Logging {
   private lazy val primaryClassLoader = {
     val cl = getClass.getClassLoader
-//    info("... primary ClassLoader: " + cl)
-//    cl match {
-//      case cl: URLClassLoader => {
-//        info("... is a URLClassLoader with URLs:")
-//        for (url <- cl.getURLs) info("...  " + url)
-//      }
-//      case _ => {
-//        info("... does not appear to be a URLClassLoader.")
-//      }
-//    }
+    //    info("... primary ClassLoader: " + cl)
+    //    cl match {
+    //      case cl: URLClassLoader => {
+    //        info("... is a URLClassLoader with URLs:")
+    //        for (url <- cl.getURLs) info("...  " + url)
+    //      }
+    //      case _ => {
+    //        info("... does not appear to be a URLClassLoader.")
+    //      }
+    //    }
     cl
   }
-//  private lazy val primaryClassLoaderChain = Iterator.iterate(primaryClassLoader)(_.getParent).takeWhile(_ != null).toList
-//  private def initialClassLoaders = {
-//    primaryClassLoader :: (primaryClassLoader match {
-//      case cl: URLClassLoader => {
-//        for (url <- cl.getURLs.toList if url.toString.contains("omath-core")) yield {
-//          import JavaConversions._
-//          for (e <- new java.util.jar.JarFile(new java.io.File(url.toURI)).entries) {
-//            println(e)
-//          }
-//          new URLClassLoader(Array(url), cl)
-//        }
-//      }
-//      case _ => Nil
-//    })
-//  }
+  //  private lazy val primaryClassLoaderChain = Iterator.iterate(primaryClassLoader)(_.getParent).takeWhile(_ != null).toList
+  //  private def initialClassLoaders = {
+  //    primaryClassLoader :: (primaryClassLoader match {
+  //      case cl: URLClassLoader => {
+  //        for (url <- cl.getURLs.toList if url.toString.contains("omath-core")) yield {
+  //          import JavaConversions._
+  //          for (e <- new java.util.jar.JarFile(new java.io.File(url.toURI)).entries) {
+  //            println(e)
+  //          }
+  //          new URLClassLoader(Array(url), cl)
+  //        }
+  //      }
+  //      case _ => Nil
+  //    })
+  //  }
   private lazy val loaders = scala.collection.mutable.ListBuffer[ClassLoader]() += primaryClassLoader
   def registerClassLoader(classLoader: ClassLoader) {
     if (!loaders.contains(classLoader)) {
       loaders += classLoader
-//      info("registering new ClassLoader: " + classLoader)
+      //      info("registering new ClassLoader: " + classLoader)
     } else {
-//      info("ClassLoader " + classLoader + " already registered.")
+      //      info("ClassLoader " + classLoader + " already registered.")
     }
   }
   def registerURL(url: String) {
@@ -60,13 +60,13 @@ case object ClassLoaders extends Logging {
   }
   def getResources(resource: String): Seq[URL] = {
     import JavaConversions._
-//    info("ClassLoaders looking for resource: " + resource)
+    //    info("ClassLoaders looking for resource: " + resource)
     val result = loaders.flatMap({ c => Option(c.getResource(resource)) })
-//    info("... found: " + result.mkString(" "))
+    //    info("... found: " + result.mkString(" "))
     result
   }
 
-//  info("Initializing ClassLoaders...")
+  //  info("Initializing ClassLoaders...")
 }
 
 case object ClassForNameBindable extends PassiveBindable {
@@ -213,6 +213,9 @@ case object SetDelayedBindable extends Bindable {
     val lhs = binding('lhs)
     val rhs = binding('rhs)
     val state = evaluation.kernel.kernelState
+
+    implicit val attributes = state.attributes _
+
     lhs match {
       case lhs: SymbolExpression => state.addOwnValues(lhs, lhs :> rhs)
       case lhs @ FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, lhs :> rhs)

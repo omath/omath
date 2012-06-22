@@ -7,7 +7,7 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class BlankTest extends PatternTest {
+class BlankTest extends PatternTest with MockAttributes {
 
   "Blank" should "match anything" in {
     val pattern: Pattern = symbols.Blank()
