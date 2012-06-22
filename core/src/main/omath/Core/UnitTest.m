@@ -34,3 +34,7 @@
     	CreateUnitTest[Attributes, "should show attributes on a symbol.", Attributes[SetDelayed] === {HoldAll}]
 		CreateUnitTest[Context, "should return the context of a Symbol.", Context[Context] === "System`"]
     	CreateUnitTest[Append, "should add an element to the end of a list.", Append[{1,2,3}, 4] === {1,2,3,4}]
+    	
+    RunUnitTest[UnitTest[symbol_Symbol, should_String, Hold[condition_]]] /; condition := "SUCCESS: " <> ToString[symbol] <> " " <> should
+    RunUnitTest[UnitTest[symbol_Symbol, should_String, Hold[condition_]]] /; !condition := "FAILURE: " <> ToString[symbol] <> " " <> should <> " " <> StringTake[ToString[Hold[condition]], {6, -2}] <> " evaluated to " <> ToString[condition]    	
+    RunUnitTests[] := RunUnitTest /@ $UnitTests
