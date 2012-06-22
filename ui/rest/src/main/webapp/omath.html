@@ -1,28 +1,116 @@
-<html>
-	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	</head>
-	<body>
-		<input id="In" size=80/>
-		<button type="button" onclick="submitSyntax($('#In').val()); $('#In').val("")">evaluate</button>
-		<br/>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>omath</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+    </style>
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">omath</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">session</a></li>
+              <li><a href="http://github.com/omath/omath">github</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+	<div class="omath-session" id="omath-session">
+	
+	</div>
+
+	<script>
+	    var largestCellNumber = 0;
+		function newInputCell() {
+			largestCellNumber++;
+			var cell = $('<form class="omath-input" id="omath-input-' + largestCellNumber + '" onsubmit="return evaluateInputCell(this);"><input size=80/></form>');
+			cell.appendTo('#omath-session').find('input').focus();
+		}
+		function cellNumber(cell) {
+			return cell.id.replace(/^omath-input-/, '');
+		}
+		function evaluateInputCell(cell) {
+			var syntax = $(cell).find('input').val();
+			submitSyntax(syntax, function(result) { writeOutputAfter(cell, result); });
+			if(cellNumber(cell) == largestCellNumber) newInputCell();
+			return false;
+		}
+		function writeOutputAfter(cell, result) {
+			// cleanup old output
+			// TODO			
+			// create a new output cell
+			var outputCell = $('<div class="omath-output" id="omath-output-' + cellNumber(cell) + '">' + result + '</div>');
+			outputCell.insertAfter(cell);
+		}
+	</script>
+
 		<textarea id="Out" rows="20" cols="120"></textarea>
 		<script>
-			function submitSyntax(syntax) {
-			    append("In[] =  " + syntax)
+			function submitSyntax(syntax, callback) {
+			    append("In[] =  " + syntax);
 				$.ajax({
 			        type:"GET",
         			url: "/omath/evaluate?syntax=" + encodeURIComponent(syntax),
        				success: function(data){
        					if(data != "Null") {
-       						append("Out[] = " + data)
+       						append("Out[] = " + data);
+       						callback(data);
        					}
        				}
 		        })
         	}
         	function append(stuff) {
-        		$('#Out').val($('#Out').val() + stuff + "\n")
+        		$('#Out').val($('#Out').val() + stuff + "\n");
         	}
 		</script>
-	</body>
+
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script>
+    		newInputCell();
+    </script>
+  </body>
 </html>

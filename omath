@@ -1,2 +1,2 @@
 sbt one-jar
-java -jar ui/target/scala-2.10.0-M3/omath-ui_2.10.0-M3-0.0.1-one-jar.jar 
+java -jar ui/repl/target/scala-2.9.2/omath-ui-repl_2.9.2-0.0.1-one-jar.jar 

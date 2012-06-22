@@ -19,7 +19,7 @@ object Web extends App {
     context.setContextPath("/")
 
     // we might be run from various locations, so first work out where the webapp resides...
-    Seq("src/main/webapp/", "ui/src/main/webapp").find(p => new File(p).exists) match {
+    Seq("src/main/webapp/", "ui/rest/src/main/webapp").find(p => new File(p).exists) match {
       // we're running in the local filesystem, either under eclipse or sbt
       case Some(warLocation) => context.setWar(warLocation)
       // we're running out of a jar, perhaps deployed by java web start

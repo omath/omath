@@ -7,4 +7,3 @@ GroovyEval[closure_String] := JavaClass["groovy.util.Eval"]["me"[closure]]
 GroovyFunction[closure_String][arguments___] := GroovyEval[closure]["call"[arguments]]
 groovyCube[x_Integer] := GroovyFunction["{int x -> x*x*x}"][x]
 
-Deserialize[Serialize[GroovyEval["{int x -> x*x*x}"]]]
