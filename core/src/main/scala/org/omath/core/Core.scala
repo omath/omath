@@ -3,13 +3,10 @@ package org.omath.core
 import org.omath.Expression
 import org.omath.SymbolExpression
 import org.omath.kernel.Kernel
-import scala.collection.JavaConversions
 import org.omath.FullFormExpression
 import org.omath.StringExpression
 import net.tqft.toolkit.Logging
-import org.omath.core.io.$Path
 import org.omath.parser.SyntaxParser
-import org.omath.core.eval.ScalaEval
 import org.omath.core.io.Get
 import org.omath.bootstrap.ClassLoaders
 
