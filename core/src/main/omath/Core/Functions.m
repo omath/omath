@@ -1,0 +1,1 @@
+Function[body_][arguments___] := ScalaObject["org.omath.core.functions.Function"]["apply"[body, {arguments}]]

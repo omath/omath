@@ -43,6 +43,9 @@ package object symbols {
   val BlankNullSequence = SymbolExpression("BlankNullSequence", "System")
   val Pattern = SymbolExpression("Pattern", "System")
   val Alternatives = SymbolExpression("Alternatives", "System")
+  val Condition = SymbolExpression("Condition", "System")
+  val Repeated = SymbolExpression("Repeated", "System")
+  val RepeatedNull = SymbolExpression("RepeatedNull", "System")
 
   val MatchQ = SymbolExpression("MatchQ", "System")
   val SameQ = SymbolExpression("SameQ", "System")

@@ -5,7 +5,9 @@ import org.omath.patterns.Pattern
 import org.omath.kernel.Evaluation
 
 object MatchQ {
-	def apply(expression: Expression, pattern: Pattern)(implicit evaluation: Evaluation): Boolean = {
-	  pattern.matching(expression).nonEmpty
+	def apply(expression: Expression, pattern: Expression)(implicit evaluation: Evaluation): Boolean = {
+	  implicit val attributes = evaluation.kernel.kernelState.attributes _
+	  val _pattern: Pattern = pattern
+	  _pattern.matching(expression).nonEmpty
 	}
 }

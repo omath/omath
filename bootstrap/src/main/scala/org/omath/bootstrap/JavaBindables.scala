@@ -216,11 +216,18 @@ case object SetDelayedBindable extends Bindable {
 
     implicit val attributes = state.attributes _
 
-    lhs match {
-      case lhs: SymbolExpression => state.addOwnValues(lhs, lhs :> rhs)
-      case lhs @ FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, lhs :> rhs)
+    val unwrappedLHS = {
+      import org.omath.symbols.{ Condition }
+      lhs match {
+        case Condition(pattern, _) => pattern
+        case lhs => lhs
+      }
+    }
+
+    unwrappedLHS match {
+      case s: SymbolExpression => state.addOwnValues(s, lhs :> rhs)
+      case FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, lhs :> rhs)
       case SubValueAttachesTo(s) => state.addSubValues(s, lhs :> rhs)
-      case lhs: FullFormExpression => state.addSubValues(lhs.symbolHead, lhs :> rhs)
     }
 
     org.omath.symbols.Null

@@ -29,7 +29,7 @@ object Pattern {
   import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def expression2Pattern(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): ExpressionPattern = patternBuilder(e)(attributes)
-
+  
   def compose(patterns: Pattern*): Pattern = {
     patterns match {
       case Seq() => {
