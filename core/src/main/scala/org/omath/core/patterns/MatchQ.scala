@@ -8,6 +8,6 @@ object MatchQ {
 	def apply(expression: Expression, pattern: Expression)(implicit evaluation: Evaluation): Boolean = {
 	  implicit val attributes = evaluation.kernel.kernelState.attributes _
 	  val _pattern: Pattern = pattern
-	  _pattern.matching(expression).nonEmpty
+	  _pattern.matches(expression)
 	}
 }

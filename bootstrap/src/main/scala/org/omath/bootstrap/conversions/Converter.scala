@@ -33,7 +33,7 @@ object Converter extends Logging {
       case x: ReplacementRuleTable => toExpression(x.table)
       case x: ReplacementRule => x.asExpression
       case x: Context => StringExpression(x.toString)
-      case ConvertableToExpression(y) => y
+      case ConvertableToExpression(y) => y // FIXME this is probably broken.
       case _ => JavaObjectExpression(x)
     }
   }
@@ -76,6 +76,8 @@ object Converter extends Logging {
       case (x: RealExpression, "java.lang.Float") => Some(x.toFloat)
       case (x: RealExpression, "java.lang.Double") => Some(x.toDouble)
       case (x: RealExpression, "org.apfloat.Apfloat") => Some(x.toApfloat)
+      case (symbols.True, "boolean") => Some(true)
+      case (symbols.False, "boolean") => Some(false)
       case (x: StringExpression, "java.lang.String") => Some(x.contents)
       case (x: StringExpression, "org.omath.Context") => Some(Context(x.contents))
       case (FullFormExpression(org.omath.symbols.List, arguments), SeqPattern(innerType)) => {
@@ -87,8 +89,7 @@ object Converter extends Logging {
       case (x: JavaObjectExpression[_], `type`) if Class.forName(`type`).isAssignableFrom(x.contents.getClass) => {
         Some(x.contents)
       }
-      case ConvertableToInstance(i) => Some(i)
-      case _ => None
+      case p => toInstanceFunction.lift(p)
     }).map({ a =>
       info("success!")
       a.asInstanceOf[Object]
@@ -107,10 +108,6 @@ object Converter extends Logging {
 
   registerConversionToInstance({ case (x: JavaObjectExpression[_], "org.omath.bootstrap.JavaObjectExpression<?>") => x })
   
-  private object ConvertableToInstance {
-    def unapply[T](p: (Expression, String)): Option[T] = toInstanceFunction.lift(p).map(_.asInstanceOf[T])
-  }
-
   private object ConvertableToExpression {
     def unapply(x: Any): Option[Expression] = toExpressionFunction.lift(x)
   }

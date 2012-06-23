@@ -1,6 +1,7 @@
 package org.omath
 
 package object symbols {
+
   val Sequence = new SymbolExpression {
     override val name = "Sequence"
     override val context = Context.system
@@ -24,7 +25,7 @@ package object symbols {
   val Symbol = SymbolExpression("Symbol", "System")
   val Integer = SymbolExpression("Integer", "System")
   val Real = SymbolExpression("Real", "System")
-
+  
   val Set = SymbolExpression("Set", "System")
   val SetDelayed = SymbolExpression("SetDelayed", "System")
 
@@ -46,6 +47,13 @@ package object symbols {
   val Condition = SymbolExpression("Condition", "System")
   val Repeated = SymbolExpression("Repeated", "System")
   val RepeatedNull = SymbolExpression("RepeatedNull", "System")
+  val Optional = SymbolExpression("Optional", "System")
+  val PatternSequence = SymbolExpression("PatternSequence", "System")
+  val Except = SymbolExpression("Except", "System")
+  val Longest = SymbolExpression("Longest", "System")
+  val Shortest = SymbolExpression("Shortest", "System")
+  val PatternTest = SymbolExpression("PatternTest", "System")
+  val Verbatim = SymbolExpression("Verbatim", "System")
 
   val MatchQ = SymbolExpression("MatchQ", "System")
   val SameQ = SymbolExpression("SameQ", "System")

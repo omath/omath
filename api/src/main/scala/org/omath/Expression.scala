@@ -32,7 +32,7 @@ trait Expression extends PassiveBindable {
   final override def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
 
   def :>(bindable: Bindable)(implicit attributes: SymbolExpression => Seq[SymbolExpression]) = patterns.ReplacementRule(this, bindable)
-  
+
   final override def toString = toContextualString(Seq(Context.global, Context.system))
   def toContextualString(symbolInContext: SymbolExpression => Boolean): String
   def toContextualString(contexts: Seq[Context]): String = toContextualString({ s: SymbolExpression => contexts.contains(s.context) })
@@ -73,7 +73,7 @@ trait SymbolExpression extends RawExpression {
     binding.get(this)
   }
 
-  override def toContextualString(symbolInContext: SymbolExpression => Boolean) = if(symbolInContext(this)) {
+  override def toContextualString(symbolInContext: SymbolExpression => Boolean) = if (symbolInContext(this)) {
     name
   } else {
     context.toString + name
@@ -156,6 +156,14 @@ private case class ApintExpression(toApint: Apint) extends IntegerExpression {
 }
 
 object IntegerExpression extends IntegerExpressionImplicits
+
+object IntExpression {
+  def unapply(x: IntegerExpression) = try {
+    Some(x.toInt)
+  } catch {
+    case _ => None
+  }
+}
 
 trait RealExpression extends LiteralExpression {
   def toFloat: Float

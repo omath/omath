@@ -13,7 +13,8 @@ trait Pattern extends Serializable {
   def extend(binding: Map[SymbolExpression, Expression])(expressions: Expression*)(implicit evaluation: Evaluation): Iterator[Map[SymbolExpression, Expression]] = {
     extend(PartialBinding(binding, expressions, Nil)).collect({
       case PartialBinding(b, Nil, last) => {
-        require(last == expressions)
+        // This requirement doesn't make sense in the presence of optional arguments.
+        //        require(last == expressions)
         b
       }
     })
@@ -21,6 +22,7 @@ trait Pattern extends Serializable {
   def matching(expressions: Expression*)(implicit evaluation: Evaluation): Iterator[Map[SymbolExpression, Expression]] = {
     extend(Map.empty[SymbolExpression, Expression])(expressions: _*)
   }
+  def matches(expressions: Expression*)(implicit evaluation: Evaluation) = matching(expressions: _*)(evaluation).hasNext
 }
 
 object Pattern {
@@ -29,7 +31,7 @@ object Pattern {
   import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def expression2Pattern(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): ExpressionPattern = patternBuilder(e)(attributes)
-  
+
   def compose(patterns: Pattern*): Pattern = {
     patterns match {
       case Seq() => {
