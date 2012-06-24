@@ -6,16 +6,9 @@ import org.omath.kernel.Evaluation
 import org.omath.patterns.ReplacementRuleTable
 
 object ReplaceAll {
-  def apply(expression: Expression, rules: Seq[Expression])(implicit evaluation: Evaluation): Expression = {
-    import org.omath.symbols.{ Rule, RuleDelayed }
-    implicit val attributes = evaluation.kernel.kernelState.attributes _
-    val ruleTable = ReplacementRuleTable(rules collect {
-      case Rule(lhs, rhs) => lhs :> rhs
-      case RuleDelayed(lhs, rhs) => lhs :> rhs
-    })
-
+  def apply(expression: Expression, rules: ReplacementRuleTable)(implicit evaluation: Evaluation): Expression = {
     def impl(e: Expression): Option[Expression] = {
-      ruleTable.apply(e).find(_ => true) match {
+      rules.apply(e).find(_ => true) match {
         case Some(result) => Some(result)
         case None => {
           e match {
@@ -41,7 +34,6 @@ object ReplaceAll {
     }
 
     impl(expression).getOrElse(expression)
-
   }
 
 }

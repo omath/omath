@@ -9,3 +9,7 @@ class SystemSymbolExpression(override val name: String) extends SymbolExpression
 
 object Infinity extends SystemSymbolExpression("Infinity")
 object OptionsPattern extends SystemSymbolExpression("OptionsPattern")
+
+object Function extends SystemSymbolExpression("Function")
+object Slot extends SystemSymbolExpression("Slot")
+object SlotSequence extends SystemSymbolExpression("SlotSequence")

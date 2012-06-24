@@ -1,6 +1,7 @@
 package org.omath.bootstrap
 
 import org.omath._
+import org.omath.{ symbols => systemSymbols }
 import org.omath.kernel.Kernel
 import java.lang.reflect.Method
 import org.omath.bootstrap.conversions.Converter
@@ -216,20 +217,29 @@ case object SetDelayedBindable extends Bindable {
 
     implicit val attributes = state.attributes _
 
+    def evaluateArguments(e: Expression): Expression = {
+      e match {
+        case systemSymbols.Condition(pattern, condition) => systemSymbols.Condition(evaluateArguments(pattern), condition)
+        case FullFormExpression(head, arguments) => head(arguments.map(a => evaluation.evaluate(a)):_*)
+        case lhs => lhs
+      }
+    }
+    
+    val evaluatedLHS = evaluateArguments(lhs)
+    
     val unwrappedLHS = {
-      import org.omath.symbols.{ Condition }
       lhs match {
-        case Condition(pattern, _) => pattern
+        case systemSymbols.Condition(pattern, _) => pattern
         case lhs => lhs
       }
     }
 
     unwrappedLHS match {
-      case s: SymbolExpression => state.addOwnValues(s, lhs :> rhs)
-      case FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, lhs :> rhs)
-      case SubValueAttachesTo(s) => state.addSubValues(s, lhs :> rhs)
+      case s: SymbolExpression => state.addOwnValues(s, evaluatedLHS :> rhs)
+      case FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, evaluatedLHS :> rhs)
+      case SubValueAttachesTo(s) => state.addSubValues(s, evaluatedLHS :> rhs)
     }
 
-    org.omath.symbols.Null
+    systemSymbols.Null
   }
 }

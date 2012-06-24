@@ -48,9 +48,11 @@ object Converter extends Logging {
 
   private val SeqPattern = """scala.collection.Seq<(.*)>""".r
 
-  def fromExpression(x: Expression, `type`: Type): Option[Object] = fromExpression(x, `type`.toString.stripPrefix("class ").stripPrefix("interface "))
+  def fromExpression(x: Expression, `type`: Type)(implicit evaluation: Evaluation): Option[Object] = fromExpression(x, `type`.toString.stripPrefix("class ").stripPrefix("interface "))
 
-  def fromExpression(x: Expression, `type`: String): Option[Object] = {
+  def fromExpression(x: Expression, `type`: String)(implicit evaluation: Evaluation): Option[Object] = {
+    implicit val attributes = evaluation.kernel.kernelState.attributes _
+    
     def short(s: String) = {
       if(s.size > 200) {
         s.take(200) + "..."
@@ -80,7 +82,20 @@ object Converter extends Logging {
       case (symbols.False, "boolean") => Some(false)
       case (x: StringExpression, "java.lang.String") => Some(x.contents)
       case (x: StringExpression, "org.omath.Context") => Some(Context(x.contents))
-      case (FullFormExpression(org.omath.symbols.List, arguments), SeqPattern(innerType)) => {
+      case (x: Expression, "org.omath.patterns.Pattern") => Some({ val p: Pattern = x; p })
+      case (symbols.Rule(lhs, rhs), "org.omath.patterns.ReplacementRule") => Some(lhs :> rhs)
+      case (symbols.RuleDelayed(lhs, rhs), "org.omath.patterns.ReplacementRule") => Some(lhs :> rhs)
+      case (symbols.Rule(lhs, rhs), "org.omath.patterns.ReplacementRuleTable") => Some(ReplacementRuleTable.singletonTable(lhs :> rhs))
+      case (symbols.RuleDelayed(lhs, rhs), "org.omath.patterns.ReplacementRuleTable") => Some(ReplacementRuleTable.singletonTable(lhs :> rhs))
+      case (FullFormExpression(symbols.List, arguments), "org.omath.patterns.ReplacementRuleTable") => {
+        val lifted = arguments.map(a => fromExpression(a, "org.omath.patterns.ReplacementRule"))
+        if(lifted.forall(_.nonEmpty)) {
+          Some(ReplacementRuleTable(lifted.map(_.get.asInstanceOf[ReplacementRule])))
+        } else {
+          None
+        }
+      }
+      case (FullFormExpression(symbols.List, arguments), SeqPattern(innerType)) => {
         arguments.map(fromExpression(_, innerType)) match {
           case options if options.forall(_.nonEmpty) => Some(options.map(_.get))
           case _ => None

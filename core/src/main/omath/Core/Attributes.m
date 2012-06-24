@@ -7,6 +7,7 @@
 	"Some important attributes"
 		SetAttributes[Hold, HoldAll]
 		SetAttributes[RuleDelayed, HoldRest]
+		SetAttributes[Pattern, HoldFirst]
 	
 	"Attributes"
 		Attributes[symbol_Symbol] := ScalaObject["org.omath.core.attributes.Attributes"]["apply"[symbol]]

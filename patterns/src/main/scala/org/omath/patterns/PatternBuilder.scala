@@ -2,8 +2,9 @@ package org.omath.patterns
 
 import org.omath._
 
-object PatternBuilder {
+object PatternBuilder extends PartialOrdering[Pattern] {
   Pattern.patternBuilder = { e: Expression => { attributes: (SymbolExpression => Seq[SymbolExpression]) => apply(e)(attributes) } }
+  Pattern.patternComparator = tryCompare _
 
   def apply(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): ExpressionPattern = {
     import org.omath.util.Scala29Compatibility.???
@@ -38,6 +39,19 @@ object PatternBuilder {
           case e: FullFormExpression => FullFormExpressionPattern(e, apply(e.head), Pattern.compose(e.arguments.map(apply): _*))
         }
       }
+    }
+  }
+
+  override def lteq(x: Pattern, y: Pattern) = {
+    tryCompare(x, y).map(_ <= 0).getOrElse(false)
+  }
+
+  // the discrete partial ordering
+  override def tryCompare(a: Pattern, b: Pattern): Option[Int] = {
+    if (a == b) {
+      Some(0)
+    } else {
+      None
     }
   }
 

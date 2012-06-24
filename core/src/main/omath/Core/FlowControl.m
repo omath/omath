@@ -22,3 +22,7 @@
 	"While"
 		SetAttributes[While, HoldAll]
 		While[test_, expression___] := If[test === True, expression; While[test, expression], Null]
+		
+	"FixedPoint"
+		FixedPoint[function_, expression_] := With[{application = function[expression]}, If[application === expression, expression, FixedPoint[function, application]]]
+			"TODO write some tests"
