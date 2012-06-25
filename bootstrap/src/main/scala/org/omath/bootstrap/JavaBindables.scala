@@ -103,7 +103,11 @@ case object JavaMethodBindable extends PassiveBindable {
 
     val StringExpression(methodName) = binding('method)
 
-    JavaMethodExpression(clazz.getMethods.find(_.getName == methodName).get)
+    val methods = clazz.getMethods.filter(_.getName == methodName)
+    // a hack to work around scala implementation details
+    val preferredMethod = methods.sortBy(_.toString.split("java.lang.Object").length).head
+    
+    JavaMethodExpression(preferredMethod)
   }
 }
 

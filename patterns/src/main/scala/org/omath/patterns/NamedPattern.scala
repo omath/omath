@@ -4,7 +4,7 @@ import org.omath._
 import org.omath.kernel.Evaluation
 
 private case class NamedPattern(override val expression: FullFormExpression, val inner: ExpressionPattern) extends ExpressionPattern {
-  private def name = expression.arguments(0).asInstanceOf[SymbolExpression]
+  def name = expression.arguments(0).asInstanceOf[SymbolExpression]
   override def pure = inner.pure
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     for (
