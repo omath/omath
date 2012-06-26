@@ -4,6 +4,9 @@ import org.omath.Bindable
 import org.omath.Expression
 import org.omath.symbols
 import org.omath.kernel.Evaluation
+import org.omath.kernel.KernelState
+import org.omath.SymbolExpression
+import org.omath.FullFormExpression
 
 trait Replacement {
   def apply(x: Expression)(implicit evaluation: Evaluation): Iterator[Expression]
@@ -32,6 +35,30 @@ case class ReplacementRule(pattern: Pattern, result: Bindable) extends Replaceme
     result match {
       case expression: Expression => expression
     })
+
+  def install(state: KernelState) = {
+    object SubValueAttachesTo {
+      @scala.annotation.tailrec
+      final def unapply(x: FullFormExpression): Option[SymbolExpression] = {
+        import org.omath.symbols.{ Pattern, Blank }
+        x.head match {
+          case s: SymbolExpression => None
+          case Pattern(_, Blank(s: SymbolExpression)) => Some(s)
+          case FullFormExpression(s: SymbolExpression, _) => Some(s)
+          case h: FullFormExpression => unapply(h)
+        }
+      }
+    }
+
+    val unwrappedLHS = Pattern.unwrap(pattern.asExpression)
+
+    unwrappedLHS match {
+      case s: SymbolExpression => state.addOwnValues(s, this)
+      case FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, this)
+      case SubValueAttachesTo(s) => state.addSubValues(s, this)
+    }
+
+  }
 }
 
 case class ReplacementRuleTable(table: Seq[ReplacementRule]) extends Replacement {
@@ -42,7 +69,7 @@ case class ReplacementRuleTable(table: Seq[ReplacementRule]) extends Replacement
 
   def isEmpty = table.isEmpty
   def nonEmpty = table.nonEmpty
-  
+
   def +(rule: ReplacementRule): ReplacementRuleTable = {
     val index = table.indexWhere({ other =>
       Pattern.tryCompare(rule.pattern, other.pattern) match {
@@ -65,7 +92,7 @@ case class ReplacementRuleTable(table: Seq[ReplacementRule]) extends Replacement
   def ++(rules: Seq[ReplacementRule]): ReplacementRuleTable = {
     // FIXME this is stuff that really doesn't belong in the api package...
     // ReplacementRuleTable(table.filterNot({ a: ReplacementRule => rules.exists({ b: ReplacementRule => a.pattern == b.pattern }) }) ++ rules)
-    rules.foldLeft(this)(_ + _)    
+    rules.foldLeft(this)(_ + _)
   }
 }
 

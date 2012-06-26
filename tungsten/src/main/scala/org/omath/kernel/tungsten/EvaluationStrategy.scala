@@ -91,7 +91,7 @@ trait ValueEvaluation extends EvaluationStrategy { es: Kernel with AbstractKerne
       case FullFormExpression(_, arguments) => arguments.collect({
         case s: SymbolExpression => s // TODO is this right? perhaps leave this out?
         case FullFormExpression(s: SymbolExpression, _) => s
-      }).map(kernelState.upValues(_)).ensuring({ z => Logging.info("Found UpValues: " + z); true })
+      }).map(kernelState.upValues(_)) // .ensuring({ z => Logging.info("Found UpValues: " + z); true })
       case _ => Nil
     }
   }
@@ -122,9 +122,9 @@ trait ValueEvaluation extends EvaluationStrategy { es: Kernel with AbstractKerne
     // TODO is this the right order?
     previousStep.updateUsing(constructIterator(
         () => findOwnValues(c),
+        () => findUpValues(c),
         () => findDownValues(c),
-        () => findSubValues(c),
-        () => findUpValues(c)
+        () => findSubValues(c)
         ).filter(_.nonEmpty))
   }
 }

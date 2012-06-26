@@ -67,6 +67,7 @@ object Converter extends Logging {
       case (x: IntegerExpression, "org.omath.IntegerExpression") => Some(x)
       case (x: RealExpression, "org.omath.RealExpression") => Some(x)
       case (x: StringExpression, "org.omath.StringExpression") => Some(x)
+      case (x: FullFormExpression, "org.omath.FullFormExpression") => Some(x)
       case (x: Expression, "org.omath.Expression") => Some(x)
       case (x: IntegerExpression, "int") => Some(x.toInt)
       case (x: IntegerExpression, "long") => Some(x.toLong)

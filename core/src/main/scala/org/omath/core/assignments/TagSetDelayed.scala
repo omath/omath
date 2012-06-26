@@ -13,11 +13,11 @@ object TagSetDelayed {
     implicit val attributes = evaluation.kernel.kernelState.attributes _
 
     val evaluatedLHS: Pattern = lhs.evaluateArguments
-    val unwrappedLHS = evaluatedLHS.unwrap
+    val unwrappedLHS = Pattern.unwrap(evaluatedLHS.asExpression)
 
     // make sure that s is findable in the lhs
     unwrappedLHS match {
-      case FullFormExpression(head, arguments) if (arguments.exists(_.head == s)) => {
+      case FullFormExpression(head, arguments) if (arguments.exists(a => Pattern.unwrap(a).head == s)) => {
         evaluation.kernel.kernelState.addUpValues(s, evaluatedLHS :> rhs)
       }
       case _ => {

@@ -29,13 +29,6 @@ trait Pattern extends Serializable {
 
   def :>(bindable: Bindable) = ReplacementRule(this, bindable)
   
-  def unwrap: Expression = {
-    this.asExpression match {
-      case symbols.Condition(pattern, _) => pattern
-      case other => other
-    }
-  }
-
   def evaluateArguments(implicit evaluation: Evaluation): Expression = {
     implicit val attributes = evaluation.kernel.kernelState.attributes _
 
@@ -91,6 +84,15 @@ object Pattern extends PartialOrdering[Pattern] {
         patterns.reduce(PairPattern(_, _))
       }
     }
+  }
+  
+  def unwrap(expression: Expression): Expression = {
+    expression match {
+      case symbols.Condition(pattern, _) => unwrap(pattern)
+      case symbols.Pattern(_, pattern) => unwrap(pattern)
+      case other => other
+  }
+
   }
 }
 

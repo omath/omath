@@ -13,6 +13,7 @@ import org.omath.bootstrap.MethodInvocationBindable
 import org.omath.bootstrap.JavaMethodBindable
 import org.omath.bootstrap.SingletonHelper
 import org.omath.FullFormExpression
+import org.omath.patterns.Pattern
 
 case class EagerReflectionBindable(constructedAs: FullFormExpression, javaObject: JavaObjectExpression[_], method: JavaMethodExpression, methodArguments: Seq[Expression]) extends FullFormExpression {
   override def head = constructedAs.head
@@ -22,22 +23,26 @@ case class EagerReflectionBindable(constructedAs: FullFormExpression, javaObject
     val boundArguments = methodArguments.map(_.bind(binding))
 
     val passedBinding = Map(
-        SymbolExpression('object) -> javaObject,
-        SymbolExpression('method) -> method,
-        SymbolExpression('arguments) -> symbols.Sequence(boundArguments:_*))
-    
+      SymbolExpression('object) -> javaObject,
+      SymbolExpression('method) -> method,
+      SymbolExpression('arguments) -> symbols.List(boundArguments: _*))
+
     MethodInvocationBindable.activeBind(passedBinding)
   }
 }
 
 object EagerReflection {
-  def scalaObject(constructedAs: FullFormExpression, scalaObjectName: String, methodName: String, arguments: Seq[Expression]) = {
+  def scalaObject(lhs: Pattern, constructedAs: FullFormExpression, scalaObjectName: String, methodName: String, arguments: Seq[Expression])(implicit evaluation: Evaluation) = {
 
     val javaObject = JavaObjectExpression(SingletonHelper(scalaObjectName))
     val method = JavaMethodBindable.bind(Map(
       SymbolExpression('class) -> JavaObjectExpression(javaObject.contents.getClass),
       SymbolExpression('method) -> StringExpression(methodName)))
 
-    EagerReflectionBindable(constructedAs, javaObject, method, arguments)
+    implicit val attributes = evaluation.kernel.kernelState.attributes _
+
+    (lhs.evaluateArguments :> EagerReflectionBindable(constructedAs, javaObject, method, arguments)).install(evaluation.kernel.kernelState)
+
+    symbols.Null
   }
 }

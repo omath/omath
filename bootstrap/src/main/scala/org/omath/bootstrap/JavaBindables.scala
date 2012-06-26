@@ -120,11 +120,11 @@ trait Boxing extends Logging {
       // try to provide some arguments 'implicitly'
       types.last.toString match {
         case "interface org.omath.kernel.Evaluation" => {
-          info("providing an implicit evaluation instance while boxing arguments")
+//          info("providing an implicit evaluation instance while boxing arguments")
           box(arguments, types.dropRight(1)).map(_ :+ evaluation)
         }
         case "interface org.omath.kernel.Kernel" => {
-          info("providing an implicit kernel instance while boxing arguments")
+//          info("providing an implicit kernel instance while boxing arguments")
           box(arguments, types.dropRight(1)).map(_ :+ evaluation.kernel)
         }
         case _ => None
@@ -202,19 +202,6 @@ case object JavaNewBindable extends Bindable with Boxing {
 }
 
 case object SetDelayedBindable extends Bindable {
-  private object SubValueAttachesTo {
-    @scala.annotation.tailrec
-    final def unapply(x: FullFormExpression): Option[SymbolExpression] = {
-      import org.omath.symbols.{ Pattern, Blank }
-      x.head match {
-        case s: SymbolExpression => None
-        case Pattern(_, Blank(s: SymbolExpression)) => Some(s)
-        case FullFormExpression(s: SymbolExpression, _) => Some(s)
-        case h: FullFormExpression => unapply(h)
-      }
-    }
-  }
-
   override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): SymbolExpression = {
     val state = evaluation.kernel.kernelState
 
@@ -224,14 +211,9 @@ case object SetDelayedBindable extends Bindable {
     val rhs = binding('rhs)
 
     val evaluatedLHS = lhs.evaluateArguments
-    val unwrappedLHS = lhs.unwrap
-
-    unwrappedLHS match {
-      case s: SymbolExpression => state.addOwnValues(s, evaluatedLHS :> rhs)
-      case FullFormExpression(s: SymbolExpression, _) => state.addDownValues(s, evaluatedLHS :> rhs)
-      case SubValueAttachesTo(s) => state.addSubValues(s, evaluatedLHS :> rhs)
-    }
-
+    
+    (evaluatedLHS :> rhs).install(state)
+    
     systemSymbols.Null
   }
 }
