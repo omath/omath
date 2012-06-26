@@ -13,3 +13,7 @@ object OptionsPattern extends SystemSymbolExpression("OptionsPattern")
 object Function extends SystemSymbolExpression("Function")
 object Slot extends SystemSymbolExpression("Slot")
 object SlotSequence extends SystemSymbolExpression("SlotSequence")
+
+object Power extends SystemSymbolExpression("Power")
+object Plus extends SystemSymbolExpression("Plus")
+object Times extends SystemSymbolExpression("Times")

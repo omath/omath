@@ -155,7 +155,9 @@ private case class ApintExpression(toApint: Apint) extends IntegerExpression {
   def toLong = toApint.longValue
 }
 
-object IntegerExpression extends IntegerExpressionImplicits
+object IntegerExpression extends IntegerExpressionImplicits {
+  def unapply(x: IntegerExpression) = Some(x.toApint)
+}
 
 object IntExpression {
   def unapply(x: IntegerExpression) = try {

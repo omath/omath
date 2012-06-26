@@ -1,4 +1,4 @@
-(* TODO take a "Heads" -> _ option; probably best to sort out PatternOptions[] *)
+(* TODO take a "Heads" -> True option; probably best to sort out PatternOptions[] *)
 
 Cases[expression_, pattern_, levelSpecification_:{1}, take_:Infinity] := ScalaObject["org.omath.core.cases.Cases"]["apply"[expression, pattern, levelSpecification, take, False]]
 Cases[expression_, rule:(_Rule|_RuleDelayed), levelSpecification_:{1}, take_:Infinity] := ScalaObject["org.omath.core.cases.Cases"]["withRule"[expression, rule, levelSpecification, take, False]]
