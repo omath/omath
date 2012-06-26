@@ -8,3 +8,5 @@ class SingletonHelper() {
 	  }
 	}
 }
+
+object SingletonHelper extends SingletonHelper()

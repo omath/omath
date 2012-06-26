@@ -31,12 +31,14 @@ object PatternBuilder extends PatternComparator {
           case symbols.RepeatedNull(pattern) => RepeatedNullPattern(apply(pattern))
           case symbols.Optional(pattern, default) => OptionalPattern(apply(pattern), default)
           case FullFormExpression(symbols.PatternSequence, patterns) => ??? // PatternSequence(...)
+          case _ => e match {
           case symbols.Except(pattern) => ??? // ExceptPattern(apply(pattern))
           case symbols.Longest(pattern) => ??? // LongestPattern(apply(pattern))
           case symbols.Shortest(pattern) => ??? // ShortestPattern(apply(pattern))
           case symbols.Verbatim(pattern) => ??? // VerbatimPattern(apply(pattern))
           case symbols.OptionsPattern() => OptionsPatternPattern
           case e: FullFormExpression => FullFormExpressionPattern(apply(e.head), Pattern.compose(e.arguments.map(apply): _*))
+        }
         }
       }
     }

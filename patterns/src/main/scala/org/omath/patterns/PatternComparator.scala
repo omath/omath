@@ -96,46 +96,52 @@ trait PatternComparator extends PartialOrdering[Pattern] {
           }
         }
 
-        // discard HoldPatterns
-        case (a: HoldPattern, b) => switch
-        case (a, b: HoldPattern) => tryCompare(pa, (pb._1, b.inner))
-        
-        case (a: NamedPattern, b) => {
-          // FIXME ignore names for now
-          tryCompare((a.name +: pa._1, a.inner), pb)
-        }
-        case (a, b: NamedPattern) => {
-          switch
-        }
-        case (a: GenericBlank, b: GenericBlank) => {
-          PartialOrderingHelper.combine(Some(a.length.compare(b.length)), HeadComparator.tryCompare(a.head, b.head))
-        }
-        case (a: GenericBlank, b) => switch
-        case (a, b: GenericBlank) => {
-          // Let's see... a could be a sequence, but let's not worry about that now. TODO fix this.
-          b.head match {
-            case None => Some(-1)
-            case Some(h) => if(a.asExpression.head == h) Some(-1) else None 
+        case _ => (a, b) match { // we need to split up the match because of https://issues.scala-lang.org/browse/SI-1133 (fixed in 2.10.0)
+
+          // discard HoldPatterns
+          case (a: HoldPattern, b) => switch
+          case (a, b: HoldPattern) => tryCompare(pa, (pb._1, b.inner))
+
+          case (a: NamedPattern, b) => {
+            // FIXME ignore names for now
+            tryCompare((a.name +: pa._1, a.inner), pb)
           }
-        }
+          case (a, b: NamedPattern) => {
+            switch
+          }
+          case (a: GenericBlank, b: GenericBlank) => {
+            PartialOrderingHelper.combine(Some(a.length.compare(b.length)), HeadComparator.tryCompare(a.head, b.head))
+          }
+          case (a: GenericBlank, b) => switch
+          case (a, b: GenericBlank) => {
+            // Let's see... a could be a sequence, but let's not worry about that now. TODO fix this.
+            b.head match {
+              case None => Some(-1)
+              case Some(h) => if (a.asExpression.head == h) Some(-1) else None
+            }
+          }
 
-        case (a: FullFormExpressionPattern, b: FullFormExpressionPattern) => {
-          PartialOrderingHelper.combine(
-            tryCompare((sa, a.headPattern), (sb, b.headPattern)),
-            tryCompare((sa ++ a.headPattern.names, a.argumentPattern), (sb ++ b.headPattern.names, b.argumentPattern)))
-        }
-        case (a: FullFormExpressionPattern, b) => switch
-        case (a, b: FullFormExpressionPattern) => {
-          ???
-        }
+          case _ => (a, b) match {
 
-        // TODO
-        // Final catch all case.
-        case _ => {
-          if (a == b) {
-            Some(0)
-          } else {
-            None
+            case (a: FullFormExpressionPattern, b: FullFormExpressionPattern) => {
+              PartialOrderingHelper.combine(
+                tryCompare((sa, a.headPattern), (sb, b.headPattern)),
+                tryCompare((sa ++ a.headPattern.names, a.argumentPattern), (sb ++ b.headPattern.names, b.argumentPattern)))
+            }
+            case (a: FullFormExpressionPattern, b) => switch
+            case (a, b: FullFormExpressionPattern) => {
+              ???
+            }
+
+            // TODO
+            // Final catch all case.
+            case _ => {
+              if (a == b) {
+                Some(0)
+              } else {
+                None
+              }
+            }
           }
         }
       }

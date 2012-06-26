@@ -9,7 +9,7 @@ trait Bindable extends Serializable {
 }
 trait PassiveBindable extends Bindable {
   def bind(binding: Map[SymbolExpression, Expression]): Expression
-  final override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = bind(binding)
+  override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): Expression = bind(binding)
 }
 
 object Bindable extends IntegerExpressionImplicits with RealExpressionImplicits with StringExpressionImplicits with SymbolExpressionImplicits
@@ -29,7 +29,7 @@ trait Expression extends PassiveBindable {
   }
 
   def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression]
-  final override def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
+  override def bind(binding: Map[SymbolExpression, Expression]): Expression = bindOption(binding).getOrElse(this)
 
   def :>(bindable: Bindable)(implicit attributes: SymbolExpression => Seq[SymbolExpression]) = patterns.ReplacementRule(this, bindable)
 
@@ -198,8 +198,8 @@ private case class ApfloatExpression(toApfloat: Apfloat) extends RealExpression 
   def toDouble = toApfloat.doubleValue
 }
 
-// TODO maybe this should just be a trait with an extractor on the companion object
-case class FullFormExpression(head: Expression, arguments: Seq[Expression]) extends Expression {
+trait FullFormExpression extends Expression {
+  def arguments: Seq[Expression]
   private def bindArguments(binding: Map[SymbolExpression, Expression], arguments: Seq[Expression]): Option[Seq[Expression]] = {
     val boundArguments = arguments.map(_.bindOption(binding))
     if (boundArguments.forall(_.isEmpty)) {
@@ -234,3 +234,10 @@ case class FullFormExpression(head: Expression, arguments: Seq[Expression]) exte
   }
 }
 
+object FullFormExpression {
+  def apply(head: Expression, arguments: Seq[Expression]) = _FullFormExpression(head, arguments)
+  def unapply(expression: FullFormExpression) = Some((expression.head, expression.arguments))
+}
+
+
+case class _FullFormExpression(override val head: Expression, override val arguments: Seq[Expression]) extends FullFormExpression
