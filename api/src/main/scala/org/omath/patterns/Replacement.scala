@@ -40,6 +40,9 @@ case class ReplacementRuleTable(table: Seq[ReplacementRule]) extends Replacement
   }
   override def asExpression = symbols.List(table.map(_.asExpression): _*)
 
+  def isEmpty = table.isEmpty
+  def nonEmpty = table.nonEmpty
+  
   def +(rule: ReplacementRule): ReplacementRuleTable = {
     val index = table.indexWhere({ other =>
       Pattern.tryCompare(rule.pattern, other.pattern) match {

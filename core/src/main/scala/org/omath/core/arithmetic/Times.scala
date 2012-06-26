@@ -9,7 +9,7 @@ object Times {
 	def apply(factors: Seq[Expression]): Expression = {
 	  val (numeric, others) = factors.partition({ case _:IntegerExpression => true; case _ => false })
 
-	  val numericProduct = numeric.map(_.asInstanceOf[IntegerExpression].toApint).reduceOption(_.multiply(_)).map(IntegerExpression(_)).toSeq
+	  val numericProduct = IntegerExpressionArithmetic.addOption(numeric.map(_.asInstanceOf[IntegerExpression])).toSeq
 	  
 	  // find all the powers, and combine them
 	  val collected = (others collect {
@@ -23,3 +23,4 @@ object Times {
 	  symbols.Times((numericProduct ++ collected):_*)
 	}
 }
+

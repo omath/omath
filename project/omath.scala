@@ -36,7 +36,7 @@ object Omath extends Build {
 
     lazy val core = Project(id = "omath-core",
                            base = file("core"),
-                            settings = buildSettings ++ Seq(libraryDependencies ++= Seq(commons.codec, toolkit.base))) dependsOn(bootstrap)
+                            settings = buildSettings ++ Seq(libraryDependencies ++= Seq(commons.codec, toolkit.base, toolkit.algebra))) dependsOn(bootstrap)
 
     lazy val tungstenCore = Project(id = "omath-tungsten-core",
                            base = file("tungsten-core"),
@@ -124,6 +124,7 @@ object Dependencies {
 	object toolkit {
 		val base = "net.tqft" %% "toolkit-base" % "0.1.7"
 		val eval = "net.tqft" %% "toolkit-eval" % "0.1.7"
+		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.7"
 	}
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"

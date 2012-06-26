@@ -11,7 +11,9 @@ trait EvaluationStrategy { es: AbstractKernel =>
 }
 
 trait TrivialEvaluationStrategy extends EvaluationStrategy { es: AbstractKernel =>
-  override def evaluateOneStep(evaluation: _Evaluation) = evaluation
+  override def evaluateOneStep(evaluation: _Evaluation) = {
+  evaluation
+  }
 }
 
 trait HeadEvaluation extends EvaluationStrategy { es: AbstractKernel =>
@@ -89,7 +91,7 @@ trait ValueEvaluation extends EvaluationStrategy { es: Kernel with AbstractKerne
       case FullFormExpression(_, arguments) => arguments.collect({
         case s: SymbolExpression => s // TODO is this right? perhaps leave this out?
         case FullFormExpression(s: SymbolExpression, _) => s
-      }).map(kernelState.upValues(_))
+      }).map(kernelState.upValues(_)).ensuring({ z => Logging.info("Found UpValues: " + z); true })
       case _ => Nil
     }
   }
@@ -123,7 +125,7 @@ trait ValueEvaluation extends EvaluationStrategy { es: Kernel with AbstractKerne
         () => findDownValues(c),
         () => findSubValues(c),
         () => findUpValues(c)
-        ))
+        ).filter(_.nonEmpty))
   }
 }
 

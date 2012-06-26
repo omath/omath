@@ -13,6 +13,7 @@ import java.net.URLClassLoader
 import java.net.URL
 import java.net.URI
 import scala.collection.JavaConversions
+import org.omath.patterns.Pattern
 
 case object ClassLoaders extends Logging {
   private lazy val primaryClassLoader = {
@@ -215,28 +216,15 @@ case object SetDelayedBindable extends Bindable {
   }
 
   override def activeBind(binding: Map[SymbolExpression, Expression])(implicit evaluation: Evaluation): SymbolExpression = {
-    val lhs = binding('lhs)
-    val rhs = binding('rhs)
     val state = evaluation.kernel.kernelState
 
     implicit val attributes = state.attributes _
 
-    def evaluateArguments(e: Expression): Expression = {
-      e match {
-        case systemSymbols.Condition(pattern, condition) => systemSymbols.Condition(evaluateArguments(pattern), condition)
-        case FullFormExpression(head, arguments) => head(arguments.map(a => evaluation.evaluate(a)):_*)
-        case lhs => lhs
-      }
-    }
-    
-    val evaluatedLHS = evaluateArguments(lhs)
-    
-    val unwrappedLHS = {
-      lhs match {
-        case systemSymbols.Condition(pattern, _) => pattern
-        case lhs => lhs
-      }
-    }
+    val lhs: Pattern = binding('lhs)
+    val rhs = binding('rhs)
+
+    val evaluatedLHS = lhs.evaluateArguments
+    val unwrappedLHS = lhs.unwrap
 
     unwrappedLHS match {
       case s: SymbolExpression => state.addOwnValues(s, evaluatedLHS :> rhs)

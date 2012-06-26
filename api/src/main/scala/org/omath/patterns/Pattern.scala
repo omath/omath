@@ -26,6 +26,25 @@ trait Pattern extends Serializable {
     extend(Map.empty[SymbolExpression, Expression])(expressions: _*)
   }
   def matches(expressions: Expression*)(implicit evaluation: Evaluation) = matching(expressions: _*)(evaluation).hasNext
+
+  def :>(bindable: Bindable) = ReplacementRule(this, bindable)
+  
+  def unwrap: Expression = {
+    this.asExpression match {
+      case symbols.Condition(pattern, _) => pattern
+      case other => other
+    }
+  }
+
+  def evaluateArguments(implicit evaluation: Evaluation): Expression = {
+    implicit val attributes = evaluation.kernel.kernelState.attributes _
+
+    this.asExpression match {
+      case symbols.Condition(pattern, condition) => symbols.Condition(Pattern.expression2Pattern(pattern).evaluateArguments, condition)
+      case FullFormExpression(head, arguments) => head(arguments.map(a => evaluation.evaluate(a)): _*)
+      case other => other
+    }
+  }
 }
 
 case class PairPattern(first: Pattern, second: Pattern) extends Pattern {
@@ -40,7 +59,7 @@ case class PairPattern(first: Pattern, second: Pattern) extends Pattern {
   }) ++ (second.asExpression match {
     case FullFormExpression(symbols.Sequence, fs) => fs
     case f => Seq(f)
-  }):_*)
+  }): _*)
 }
 
 object Pattern extends PartialOrdering[Pattern] {

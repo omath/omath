@@ -95,6 +95,11 @@ trait PatternComparator extends PartialOrdering[Pattern] {
             }
           }
         }
+
+        // discard HoldPatterns
+        case (a: HoldPattern, b) => switch
+        case (a, b: HoldPattern) => tryCompare(pa, (pb._1, b.inner))
+        
         case (a: NamedPattern, b) => {
           // FIXME ignore names for now
           tryCompare((a.name +: pa._1, a.inner), pb)
