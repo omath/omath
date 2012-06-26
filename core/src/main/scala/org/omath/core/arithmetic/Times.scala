@@ -5,7 +5,7 @@ import org.omath.Expression
 import org.omath.IntExpression
 import org.omath.IntegerExpression
 
-object Times extends Serializable {
+object Times {
   def apply(factors: Seq[Expression]): Expression = {
     val (numeric, others) = factors.partition({ case _: IntegerExpression => true; case _ => false })
 

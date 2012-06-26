@@ -15,7 +15,15 @@ import org.omath.bootstrap.SingletonHelper
 import org.omath.FullFormExpression
 import org.omath.patterns.Pattern
 
-case class EagerReflectionBindable(constructedAs: FullFormExpression, javaObject: JavaObjectExpression[_], method: JavaMethodExpression, methodArguments: Seq[Expression]) extends FullFormExpression {
+case class EagerReflectionBindable(constructedAs: FullFormExpression, scalaObjectName: String, methodName: String, methodArguments: Seq[Expression]) extends FullFormExpression {
+  
+  @scala.transient
+  private lazy val javaObject: JavaObjectExpression[_] = JavaObjectExpression(SingletonHelper(scalaObjectName))
+  @scala.transient
+  private lazy val method: JavaMethodExpression = JavaMethodBindable.bind(Map(
+      SymbolExpression('class) -> JavaObjectExpression(javaObject.contents.getClass),
+      SymbolExpression('method) -> StringExpression(methodName)))
+  
   override def head = constructedAs.head
   override def arguments = constructedAs.arguments
   override def bindOption(binding: Map[SymbolExpression, Expression]): Option[Expression] = ???
@@ -34,14 +42,9 @@ case class EagerReflectionBindable(constructedAs: FullFormExpression, javaObject
 object EagerReflection {
   def scalaObject(lhs: Pattern, constructedAs: FullFormExpression, scalaObjectName: String, methodName: String, arguments: Seq[Expression])(implicit evaluation: Evaluation) = {
 
-    val javaObject = JavaObjectExpression(SingletonHelper(scalaObjectName))
-    val method = JavaMethodBindable.bind(Map(
-      SymbolExpression('class) -> JavaObjectExpression(javaObject.contents.getClass),
-      SymbolExpression('method) -> StringExpression(methodName)))
-
     implicit val attributes = evaluation.kernel.kernelState.attributes _
 
-    (lhs.evaluateArguments :> EagerReflectionBindable(constructedAs, javaObject, method, arguments)).install(evaluation.kernel.kernelState)
+    (lhs.evaluateArguments :> EagerReflectionBindable(constructedAs, scalaObjectName, methodName, arguments)).install(evaluation.kernel.kernelState)
 
     symbols.Null
   }

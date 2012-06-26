@@ -6,7 +6,7 @@ import org.omath.FullFormExpression
 import org.omath.symbols
 import net.tqft.toolkit.Logging
 
-object Plus extends Logging with Serializable {
+object Plus extends Logging {
   def apply(terms: Seq[Expression]): Expression = {
     val (numeric, others) = terms.partition({ case _: IntegerExpression => true; case _ => false })
 
