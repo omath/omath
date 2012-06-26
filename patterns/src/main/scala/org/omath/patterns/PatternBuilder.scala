@@ -6,7 +6,7 @@ object PatternBuilder extends PatternComparator {
   Pattern.patternBuilder = { e: Expression => { attributes: (SymbolExpression => Seq[SymbolExpression]) => apply(e)(attributes) } }
   Pattern.patternComparator = tryCompare _
 
-  def apply(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): ExpressionPattern = {
+  def apply(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): Pattern = {
     import org.omath.util.Scala29Compatibility.???
 
     // TODO throw more exceptions?
@@ -19,11 +19,11 @@ object PatternBuilder extends PatternComparator {
       case symbols.BlankNullSequence() => BlankNullSequence(None)
       case symbols.BlankNullSequence(head: SymbolExpression) => BlankNullSequence(Some(head))
       case _ => e match { // we need to split up the match because of https://issues.scala-lang.org/browse/SI-1133 (fixed in 2.10.0)
-        case e @ symbols.Pattern(n: SymbolExpression, x) => NamedPattern(e, apply(x))
+        case symbols.Pattern(n: SymbolExpression, x) => NamedPattern(n, apply(x))
         case FullFormExpression(symbols.Pattern, _) => throw new PatternException(e)
         case symbols.HoldPattern(p) => HoldPattern(apply(p))
         case FullFormExpression(symbols.HoldPattern, _) => throw new PatternException(e)
-        case e @ FullFormExpression(symbols.Alternatives, arguments) => AlternativesPattern(e, arguments.map(apply): _*)
+        case e @ FullFormExpression(symbols.Alternatives, arguments) => AlternativesPattern(arguments.map(apply): _*)
         case symbols.Condition(pattern, condition) => ConditionPattern(apply(pattern), condition)
         case symbols.PatternTest(pattern, test) => ??? // PatternTestPattern(apply(pattern), test)
         case _ => e match {
@@ -36,7 +36,7 @@ object PatternBuilder extends PatternComparator {
           case symbols.Shortest(pattern) => ??? // ShortestPattern(apply(pattern))
           case symbols.Verbatim(pattern) => ??? // VerbatimPattern(apply(pattern))
           case symbols.OptionsPattern() => OptionsPatternPattern
-          case e: FullFormExpression => FullFormExpressionPattern(e, apply(e.head), Pattern.compose(e.arguments.map(apply): _*))
+          case e: FullFormExpression => FullFormExpressionPattern(apply(e.head), Pattern.compose(e.arguments.map(apply): _*))
         }
       }
     }

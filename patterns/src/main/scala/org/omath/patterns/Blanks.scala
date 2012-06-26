@@ -37,14 +37,15 @@ object HeadComparator extends PartialOrdering[Option[SymbolExpression]] {
   }
 }
 
-trait GenericBlank extends ExpressionPattern {
+trait GenericBlank extends Pattern {
   override def pure = true
+  override def names = Seq.empty
   def head: Option[SymbolExpression]
   def length: PatternLength
 }
 
 private case class Blank(override val head: Option[SymbolExpression]) extends GenericBlank {
-  override val expression = symbols.Blank(head.toSeq: _*)
+  override val asExpression = symbols.Blank(head.toSeq: _*)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     (a.remainingExpressions match {
       case h +: t => {
@@ -60,8 +61,7 @@ private case class Blank(override val head: Option[SymbolExpression]) extends Ge
 }
 
 private case class BlankSequence(override val head: Option[SymbolExpression]) extends GenericBlank {
-  override def pure = true
-  override val expression = symbols.BlankSequence(head.toSeq: _*)
+  override val asExpression = symbols.BlankSequence(head.toSeq: _*)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     if (a.remainingExpressions.isEmpty || (head.nonEmpty && a.remainingExpressions.head.head != head.get)) {
       Iterator.empty
@@ -77,8 +77,7 @@ private case class BlankSequence(override val head: Option[SymbolExpression]) ex
 }
 
 private case class BlankNullSequence(override val head: Option[SymbolExpression]) extends GenericBlank {
-  override def pure = true
-  override val expression = symbols.BlankNullSequence(head.toSeq: _*)
+  override val asExpression = symbols.BlankNullSequence(head.toSeq: _*)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     val range = head match {
       case None => (0 to a.remainingExpressions.size).iterator

@@ -3,9 +3,14 @@ package org.omath.patterns
 import org.omath._
 import org.omath.kernel.Evaluation
 
-private case class RepeatedPattern(inner: ExpressionPattern) extends ExpressionPattern {
+trait GenericRepeated extends Pattern {
+  def inner: Pattern
   override def pure = inner.pure
-  override def expression = symbols.Repeated(inner.expression)
+  override def names = inner.names
+}
+
+private case class RepeatedPattern(override val inner: Pattern) extends GenericRepeated {
+  override def asExpression = symbols.Repeated(inner.asExpression)
   private val nullCompanion = RepeatedNullPattern(inner)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     if (a.remainingExpressions.isEmpty) {
@@ -21,9 +26,8 @@ private case class RepeatedPattern(inner: ExpressionPattern) extends ExpressionP
   }
 }
 
-private case class RepeatedNullPattern(inner: ExpressionPattern) extends ExpressionPattern {
-  override def pure = inner.pure
-  override def expression = symbols.RepeatedNull(inner.expression)
+private case class RepeatedNullPattern(override val inner: Pattern) extends GenericRepeated {
+  override def asExpression = symbols.RepeatedNull(inner.asExpression)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     if (a.remainingExpressions.isEmpty) {
       Iterator(a.copy(lastBound = Seq.empty))

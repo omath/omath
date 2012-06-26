@@ -4,7 +4,11 @@ import org.omath._
 import org.omath.kernel.Evaluation
 import org.omath.util.Scala29Compatibility.+:
 
-private case class FullFormExpressionPattern(override val expression: FullFormExpression, headPattern: Pattern, argumentPattern: Pattern) extends ExpressionPattern {
+private case class FullFormExpressionPattern(headPattern: Pattern, argumentPattern: Pattern) extends Pattern {
+  override def asExpression = (headPattern.asExpression)((argumentPattern.asExpression match {
+    case FullFormExpression(symbols.Sequence, arguments) => arguments
+    case argument => Seq(argument)
+  }):_*)
   override lazy val pure = headPattern.pure && argumentPattern.pure
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     a match {
@@ -16,4 +20,5 @@ private case class FullFormExpressionPattern(override val expression: FullFormEx
       case _ => Iterator.empty
     }
   }
+  override def names = headPattern.names ++ argumentPattern.names
 }

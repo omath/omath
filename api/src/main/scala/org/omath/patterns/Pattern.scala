@@ -9,6 +9,11 @@ case class PartialBinding(binding: Map[SymbolExpression, Expression], remainingE
 trait Pattern extends Serializable {
   def pure: Boolean
 
+  def names: Seq[SymbolExpression]
+
+  def asExpression: Expression
+  override def toString = asExpression.toString
+
   def extend(partialBinding: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding]
   def extend(binding: Map[SymbolExpression, Expression])(expressions: Expression*)(implicit evaluation: Evaluation): Iterator[Map[SymbolExpression, Expression]] = {
     extend(PartialBinding(binding, expressions, Nil)).collect({
@@ -23,23 +28,40 @@ trait Pattern extends Serializable {
   def matches(expressions: Expression*)(implicit evaluation: Evaluation) = matching(expressions: _*)(evaluation).hasNext
 }
 
+case class PairPattern(first: Pattern, second: Pattern) extends Pattern {
+  override lazy val pure = first.pure && second.pure
+  override def extend(a: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding] = {
+    for (b <- first.extend(a); c <- second.extend(b)) yield c.copy(lastBound = b.lastBound ++ c.lastBound)
+  }
+  override def names = first.names ++ second.names
+  override def asExpression = symbols.Sequence((first.asExpression match {
+    case FullFormExpression(symbols.Sequence, fs) => fs
+    case f => Seq(f)
+  }) ++ (second.asExpression match {
+    case FullFormExpression(symbols.Sequence, fs) => fs
+    case f => Seq(f)
+  }):_*)
+}
+
 object Pattern extends PartialOrdering[Pattern] {
-  var patternBuilder: Expression => ((SymbolExpression => Seq[SymbolExpression]) => ExpressionPattern) = { _ => throw new Exception("The patternBuilder field of the Pattern object must be initialized before Expressions can be converted into Patterns. Probably you forgot to mention the PatternBuilder object in the patterns subproject.") }
+  var patternBuilder: Expression => ((SymbolExpression => Seq[SymbolExpression]) => Pattern) = { _ => throw new Exception("The patternBuilder field of the Pattern object must be initialized before Expressions can be converted into Patterns. Probably you forgot to mention the PatternBuilder object in the patterns subproject.") }
   var patternComparator: (Pattern, Pattern) => Option[Int] = { (_, _) => throw new Exception("The patternComparator field of the Pattern object must be initialized before tables of rules can be built.") }
-  
+
   import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
-  implicit def expression2Pattern(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): ExpressionPattern = patternBuilder(e)(attributes)
-  
+  implicit def expression2Pattern(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): Pattern = patternBuilder(e)(attributes)
+
   // Should this line by on PartialOrdering?
   override def lteq(x: Pattern, y: Pattern) = tryCompare(x, y).map(_ <= 0).getOrElse(false)
   override def tryCompare(x: Pattern, y: Pattern) = patternComparator(x, y)
-  
+
   object Empty extends Pattern {
     override def pure = true
+    override def asExpression = org.omath.symbols.Sequence()
     override def extend(a: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding] = {
       Iterator(a.copy(lastBound = Seq()))
     }
+    override def names = Seq.empty
   }
 
   def compose(patterns: Pattern*): Pattern = {
@@ -47,21 +69,10 @@ object Pattern extends PartialOrdering[Pattern] {
       case Seq() => Empty
       case h +: Nil => h
       case patterns => {
-        case class PairPattern(first: Pattern, second: Pattern) extends Pattern {
-          override lazy val pure = first.pure && second.pure
-          override def extend(a: PartialBinding)(implicit evaluation: Evaluation): Iterator[PartialBinding] = {
-            for (b <- first.extend(a); c <- second.extend(b)) yield c.copy(lastBound = b.lastBound ++ c.lastBound)
-          }
-        }
         patterns.reduce(PairPattern(_, _))
       }
     }
   }
-}
-
-trait ExpressionPattern extends Pattern {
-  def expression: Expression
-  override def toString = expression.toString
 }
 
 

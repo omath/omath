@@ -27,7 +27,7 @@ case class ReplacementRule(pattern: Pattern, result: Bindable) extends Replaceme
   }
   override def asExpression = symbols.RuleDelayed(
     pattern match {
-      case pattern: ExpressionPattern => symbols.HoldPattern(pattern.expression)
+      case pattern: Pattern => symbols.HoldPattern(pattern.asExpression)
     },
     result match {
       case expression: Expression => expression

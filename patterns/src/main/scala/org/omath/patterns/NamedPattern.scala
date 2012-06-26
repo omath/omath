@@ -3,8 +3,8 @@ package org.omath.patterns
 import org.omath._
 import org.omath.kernel.Evaluation
 
-private case class NamedPattern(override val expression: FullFormExpression, val inner: ExpressionPattern) extends ExpressionPattern {
-  def name = expression.arguments(0).asInstanceOf[SymbolExpression]
+private case class NamedPattern(val name: SymbolExpression, val inner: Pattern) extends Pattern {
+  def asExpression = symbols.Pattern(name, inner.asExpression)
   override def pure = inner.pure
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     for (
@@ -17,5 +17,6 @@ private case class NamedPattern(override val expression: FullFormExpression, val
       })
     ) yield PartialBinding(binding + (name -> lastSequence), remaining, last)
   }
+  override def names = name +: inner.names
 }
 
