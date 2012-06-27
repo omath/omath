@@ -41,11 +41,8 @@ case class EagerReflectionBindable(constructedAs: FullFormExpression, scalaObjec
 
 object EagerReflection {
   def scalaObject(lhs: Pattern, constructedAs: FullFormExpression, scalaObjectName: String, methodName: String, arguments: Seq[Expression])(implicit evaluation: Evaluation) = {
-
     implicit val attributes = evaluation.kernel.kernelState.attributes _
-
     (lhs.evaluateArguments :> EagerReflectionBindable(constructedAs, scalaObjectName, methodName, arguments)).install(evaluation.kernel.kernelState)
-
     symbols.Null
   }
 }

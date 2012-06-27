@@ -7,3 +7,6 @@ SetAttributes[Plus, {Flat, Orderless, OneIdentity}]
 
 Times[x___] := EagerReflection[ScalaObject["org.omath.core.arithmetic.Times"]["apply", Hold[{x}]]]
 SetAttributes[Times, {Flat, Orderless, OneIdentity}]
+
+Power[x_, 0] := 1
+	CreateUnitTest[Power, "should cancel opposite powers." a^(-1) a === 1]

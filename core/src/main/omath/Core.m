@@ -66,6 +66,7 @@ Get["Core/Assignments.m"]
 Get["Core/Strings.m"]
 Get["Core/Functional.m"]
 Get["Core/Arithmetic.m"]
+Get["Core/Algebra.m"]
 	
 (* TODO --- below this line is broken stuff being merged from init.t *)
 		Set[Part[s_Symbol, parts___], rhs_] := ScalaObject["org.omath.core.set.Set"]["setPart", Hold[s, {parts}, rhs]]
