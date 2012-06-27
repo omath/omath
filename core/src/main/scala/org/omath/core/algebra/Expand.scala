@@ -4,7 +4,6 @@ import org.omath.Expression
 import org.omath.IntExpression
 import org.omath.IntegerExpression
 import org.omath.symbols
-import org.omath.util.Scala29Compatibility.???
 import org.apfloat.ApintMath
 
 object Expand {
@@ -32,13 +31,30 @@ object Expand {
 }
 
 object Compositions {
-  def apply(n: Int, k: Int, maximum: Int => Int = { i: Int => Integer.MAX_VALUE }, minimum: Int => Int = { i: Int => 0 }): Iterable[List[Int]] = {
-    case class CompositionOdometer(c: List[Int]) extends Odometer[List[Int]] {
-      override def increment() = ???
-      override def carry() = ???
-      override def reset() = ???
+  private case class o(l: List[Int]) extends Odometer[List[Int]] {
+    require(l.nonEmpty)
+
+    override def increment(): List[Int] = {
+      l.head + 1 :: l.tail
     }
-    ???
+    override def carry(): Option[List[Int]] = {
+      // set the first nonzero entry to zero, increment the next entry
+      l match {
+        case 0 :: tail => (o(tail).carry) map { 0 :: _ }
+        case a :: b :: tail => Some(0 :: (b + 1) :: tail)
+        case _ => None
+      }
+    }
+    override def reset = List.fill(l.size)(0)
+  }
+
+  def apply(n: Int, k: Int): Iterable[List[Int]] = {
+    Odometer(List.fill(0)(k - 1))(o.apply _, { l: List[Int] => l.sum > n }).map(l => l :+ (n - l.sum))
+  }
+  def apply(n: Int, k: Int, maximum: List[Option[Int]]): Iterable[List[Int]] = {
+    Odometer(List.fill(0)(k - 1))(o.apply _, { l: List[Int] =>
+      l.sum > n || l.zipWithIndex.collect({ case (li, i) if maximum(i).map(_ < li).getOrElse(true) => i }).nonEmpty || maximum(k - 1).map(l.sum > n - _).getOrElse(false)
+    }).map(l => l :+ (n - l.sum))
   }
 }
 
