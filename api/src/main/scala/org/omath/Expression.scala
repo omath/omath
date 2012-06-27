@@ -80,6 +80,16 @@ trait SymbolExpression extends RawExpression {
   }
 }
 
+trait OneIdentity extends SymbolExpression {
+  override def apply(arguments: Expression*) = {
+    if (arguments.size == 1) {
+      arguments.head
+    } else {
+      super.apply(arguments: _*)
+    }
+  }
+}
+
 protected trait SymbolExpressionImplicits {
   import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
@@ -238,6 +248,5 @@ object FullFormExpression {
   def apply(head: Expression, arguments: Seq[Expression]) = _FullFormExpression(head, arguments)
   def unapply(expression: FullFormExpression) = Some((expression.head, expression.arguments))
 }
-
 
 case class _FullFormExpression(override val head: Expression, override val arguments: Seq[Expression]) extends FullFormExpression

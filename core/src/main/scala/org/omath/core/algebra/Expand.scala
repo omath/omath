@@ -8,7 +8,9 @@ import org.apfloat.ApintMath
 
 object Expand {
   def expandPower(terms: Seq[Expression], power: Int): Expression = {
-    def multinomials(n: Int, k: Int): Iterator[(IntegerExpression, List[Int])] = Compositions(n, k).map(c => (multinomial(c), c)).iterator
+    def multinomials(n: Int, k: Int): Iterator[(IntegerExpression, List[Int])] = {
+      Compositions(n, k).map(c => (multinomial(c), c)).iterator
+    }
     def multinomial(c: List[Int]): IntegerExpression = {
       import org.apfloat.Apint
       IntegerExpression(ApintMath.factorial(c.sum).divide(c.map(i => ApintMath.factorial(i)).reduce(_.multiply(_))))
@@ -49,11 +51,11 @@ object Compositions {
   }
 
   def apply(n: Int, k: Int): Iterable[List[Int]] = {
-    Odometer(List.fill(0)(k - 1))(o.apply _, { l: List[Int] => l.sum > n }).map(l => l :+ (n - l.sum))
+    Odometer(List.fill(k - 1)(0))(o.apply _, { l: List[Int] => l.sum <= n }).map(l => l :+ (n - l.sum))
   }
   def apply(n: Int, k: Int, maximum: List[Option[Int]]): Iterable[List[Int]] = {
-    Odometer(List.fill(0)(k - 1))(o.apply _, { l: List[Int] =>
-      l.sum > n || l.zipWithIndex.collect({ case (li, i) if maximum(i).map(_ < li).getOrElse(true) => i }).nonEmpty || maximum(k - 1).map(l.sum > n - _).getOrElse(false)
+    Odometer(List.fill(k - 1)(0))(o.apply _, { l: List[Int] =>
+      l.sum <= n && l.zipWithIndex.collect({ case (li, i) if maximum(i).map(_ < li).getOrElse(true) => i }).isEmpty && maximum(k - 1).map(l.sum <= n - _).getOrElse(true)
     }).map(l => l :+ (n - l.sum))
   }
 }

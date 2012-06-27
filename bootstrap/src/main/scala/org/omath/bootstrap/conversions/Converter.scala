@@ -96,14 +96,14 @@ object Converter extends Logging {
           None
         }
       }
-      case (FullFormExpression(symbols.List, arguments), SeqPattern(innerType)) => {
+      case (x: JavaObjectExpression[_], `type`) if Class.forName(`type`).isAssignableFrom(x.contents.getClass) => {
+        Some(x.contents)
+      }
+      case (FullFormExpression(_, arguments), SeqPattern(innerType)) => {
         arguments.map(fromExpression(_, innerType)) match {
           case options if options.forall(_.nonEmpty) => Some(options.map(_.get))
           case _ => None
         }
-      }
-      case (x: JavaObjectExpression[_], `type`) if Class.forName(`type`).isAssignableFrom(x.contents.getClass) => {
-        Some(x.contents)
       }
       case p => toInstanceFunction.lift(p)
     }).map({ a =>
