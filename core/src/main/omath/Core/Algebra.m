@@ -2,7 +2,7 @@
 
 Expand[x_] := x //. {
 	Power[t_Plus, k_Integer] :> ScalaObject["org.omath.core.algebra.Expand"]["expandPower"[t, k]],
-	Times[f___Plus] :> ScalaObject["org.omath.core.algebra.Expand"]["expandProduct"[{f}]]
+	HoldPattern[Times[f___Plus]] :> ScalaObject["org.omath.core.algebra.Expand"]["expandProduct"[{f}]]
 }
 
 	CreateUnitTest[Expand, "should expand powers of sums.", Expand[(a+b)^2] === a^2 + 2 a b + b^2]

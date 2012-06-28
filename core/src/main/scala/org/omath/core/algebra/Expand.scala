@@ -25,10 +25,10 @@ object Expand {
     }).toSeq: _*)
   }
   def expandProduct(terms: Seq[Seq[Expression]]): Expression = {
-    symbols.Plus(
-      terms.foldLeft[List[List[Expression]]](List(Nil))({ (f: List[List[Expression]], t: Seq[Expression]) =>
+    val expansion = terms.foldLeft[Seq[List[Expression]]](Seq(Nil))({ (f: Seq[List[Expression]], t: Seq[Expression]) =>
         f.flatMap(x => t.map(_ :: x))
-      }).map(f => symbols.Times(f: _*)): _*)
+      })
+    symbols.Plus(expansion.map(f => symbols.Times(f.reverse: _*)): _*)
   }
 }
 
