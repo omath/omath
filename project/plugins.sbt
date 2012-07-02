@@ -9,7 +9,7 @@ libraryDependencies <+= sbtVersion(v => "com.github.siasia" %% "xsbt-web-plugin"
 
 addSbtPlugin("de.djini" % "xsbt-webstart" % "0.0.5")
 
-addSbtPlugin("com.github.retronym" % "sbt-onejar" % "0.8-SNAPSHOT")
+addSbtPlugin("com.github.retronym" % "sbt-onejar" % "0.8")
 
 resolvers += Classpaths.typesafeResolver
 

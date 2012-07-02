@@ -7,7 +7,7 @@ object Omath extends Build {
     import com.typesafe.startscript.StartScriptPlugin
 
     lazy val all = Project(id = "omath",
-                            base = file("aggregrate"),
+                            base = file("aggregate"),
 			    settings = buildSettings) aggregate(api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl, contrib)
 
     lazy val api = Project(id = "omath-api",
