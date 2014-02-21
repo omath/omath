@@ -28,8 +28,6 @@ $Version := "0.0.1"
     (object_JavaObject)[method_, head_[arguments___]] := JavaMethod[JavaClass[object], method][object, head[arguments]]
     (class_JavaClass)[method_, head_[arguments___]] := JavaMethod[class, method][Null, head[arguments]]
 
-  (* TODO? get field values *)
-  
   (* And then allow just writing symbols for methods. *)
   (* Note that ToString isn't defined at this point, so you can't rely on this rule for a little while longer. *)
     
@@ -67,15 +65,3 @@ Get["Core/Strings.m"]
 Get["Core/Functional.m"]
 Get["Core/Arithmetic.m"]
 Get["Core/Algebra.m"]
-	
-(* TODO --- below this line is broken stuff being merged from init.t *)
-		Set[Part[s_Symbol, parts___], rhs_] := ScalaObject["org.omath.core.set.Set"]["setPart", Hold[s, {parts}, rhs]]
-		Set[lhs_List, rhs_List] := ScalaObject["org.omath.core.set.Set"]["setList", Hold[lhs, rhs]]
-
-"Updating line numbers with $Pre and $Post"
-	$Line = 0
-	$Pre  := Function[{expression}, In[++$Line]:=expression; expression, {HoldAll}]
-	$Post := Function[{expression}, Out[$Line]:=expression; expression]
-
-
-(*		CreateUnitTest[Function, "should respect attributes.", List @@ (Function[x, Hold[x], {HoldAll}] /@ Hold[!True]) === {Hold[!True]}]  *)

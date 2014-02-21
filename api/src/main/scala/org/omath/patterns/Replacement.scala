@@ -83,7 +83,7 @@ case class ReplacementRuleTable(table: Seq[ReplacementRule]) extends Replacement
         Pattern.tryCompare(rule.pattern, table(k).pattern) match {
           case Some(0) => table.take(k) ++ (rule +: table.drop(k + 1))
           case Some(n) if n < 0 => table.take(k) ++ (rule +: table.drop(0))
-          case _ => org.omath.util.Scala29Compatibility.???
+          case _ => net.tqft.toolkit.collections.Scala29Compatibility.???
         }
       }
     })

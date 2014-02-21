@@ -70,9 +70,8 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1-SNAPSHOT"
-  val buildScalaVersion = "2.9.2"
-//  val buildScalaVersion = "2.10.0-M3"
-  val buildCrossScalaVersions = Seq("2.9.2", "2.10.0-M3")
+  val buildScalaVersion = "2.10.3"
+  val buildCrossScalaVersions = Seq("2.9.2", "2.10.3")
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -122,9 +121,9 @@ object Resolvers {
 
 object Dependencies {
 	object toolkit {
-		val base = "net.tqft" %% "toolkit-base" % "0.1.7"
-		val eval = "net.tqft" %% "toolkit-eval" % "0.1.7"
-		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.7"
+		val base = "net.tqft" %% "toolkit-base" % "0.1.16"
+		val eval = "net.tqft" %% "toolkit-eval" % "0.1.16"
+		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.16"
 	}
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
