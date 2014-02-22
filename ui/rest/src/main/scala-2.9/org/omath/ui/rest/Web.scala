@@ -1,37 +1,48 @@
 package org.omath.ui.rest
 
-import org.mortbay.jetty.Connector
-import org.mortbay.jetty.Server
-import org.mortbay.jetty.webapp.WebAppContext
-import org.mortbay.jetty.nio._
-import scala.util.Properties
-import java.io.File
+import org.jboss.netty.handler.codec.http.{ HttpRequest, HttpResponse }
+import com.twitter.finagle.builder.ServerBuilder
+import com.twitter.finagle.http.{ Http, Response }
+import com.twitter.finagle.Service
+import com.twitter.util.Future
+import java.net.InetSocketAddress
+import util.Properties
+import java.net.URI
+import org.jboss.netty.handler.codec.http.QueryStringDecoder
+import java.net.URL
+import scala.io.Source
+import argonaut._
+import Argonaut._
 
-object Web extends App {
-  def run {
-    val server = new Server
-    val scc = new SelectChannelConnector
-    scc.setPort(Properties.envOrElse("PORT", "8080").toInt)
-    server.setConnectors(Array(scc))
+object Web {
+  def main(args: Array[String]) {
+    val port = Properties.envOrElse("PORT", "8080").toInt
+    println("Starting on port:" + port)
+    ServerBuilder()
+      .codec(Http())
+      .name("omath")
+      .bindTo(new InetSocketAddress(port))
+      .build(new ResolverService)
+    println("Started omath.")
 
-    val context = new WebAppContext()
-    context.setServer(server)
-    context.setContextPath("/")
-
-    // we might be run from various locations, so first work out where the webapp resides...
-    Seq("src/main/webapp/", "ui/rest/src/main/webapp").find(p => new File(p).exists) match {
-      // we're running in the local filesystem, either under eclipse or sbt
-      case Some(warLocation) => context.setWar(warLocation)
-      // we're running out of a jar, perhaps deployed by java web start
-      case None => {
-        context.setResourceBase(Web.getClass.getClassLoader.getResource("webapp").toExternalForm())
-      }
-    }
-
-    server.addHandler(context)
-
-    server.start()
   }
+}
 
-  run
+class ResolverService extends Service[HttpRequest, HttpResponse] {
+
+  def apply(req: HttpRequest): Future[HttpResponse] = {
+    val response = Response()
+
+    val parameters = new QueryStringDecoder(req.getUri()).getParameters
+    import scala.collection.JavaConverters._
+    val syntax = Option(parameters.get("syntax")).map(_.asScala.headOption).flatten.getOrElse("")
+    val result = TungstenCore.evaluateSyntax(syntax).get.toContextualString(TungstenCore.newEvaluation)
+
+    response.setStatusCode(200)
+
+    response.setContentType("text/plain")
+    response.contentString = result
+
+    Future(response)
+  }
 }

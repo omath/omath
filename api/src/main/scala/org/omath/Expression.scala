@@ -91,7 +91,6 @@ trait OneIdentity extends SymbolExpression {
 }
 
 protected trait SymbolExpressionImplicits {
-  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def scalaSymbol2Expression(s: Symbol): SymbolExpression = SymbolExpression(s)
 }
@@ -109,7 +108,7 @@ object SymbolExpression {
       require(name.head.isLetter || name.head == '$')
       for (c <- name) require(c.isLetterOrDigit || c == '$')
     } catch {
-      case e => throw new SymbolExpression.SymbolFormatException("'" + name + "' is not a valid omath symbol name.")
+      case e: Exception => throw new SymbolExpression.SymbolFormatException("'" + name + "' is not a valid omath symbol name.")
     }
   }
 
@@ -129,7 +128,6 @@ case class StringExpression(contents: String) extends LiteralExpression {
 }
 
 trait StringExpressionImplicits {
-  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def string2StringExpression(s: String) = StringExpression(s)
 }
@@ -152,7 +150,6 @@ trait IntegerExpression extends LiteralExpression {
   override def hashCode = toApint.hashCode
 }
 trait IntegerExpressionImplicits {
-  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def apply(i: Int): IntegerExpression = ApintExpression(new Apint(i))
   implicit def apply(i: Long): IntegerExpression = ApintExpression(new Apint(i))
@@ -173,7 +170,7 @@ object IntExpression {
   def unapply(x: IntegerExpression) = try {
     Some(x.toInt)
   } catch {
-    case _ => None
+    case e: Exception => None
   }
 }
 
@@ -194,7 +191,6 @@ trait RealExpression extends LiteralExpression {
   override def hashCode = toApfloat.hashCode
 }
 trait RealExpressionImplicits {
-  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def apply(i: Float): RealExpression = ApfloatExpression(new Apfloat(i))
   implicit def apply(i: Double): RealExpression = ApfloatExpression(new Apfloat(i))

@@ -59,7 +59,6 @@ object Pattern extends PartialOrdering[Pattern] {
   var patternBuilder: Expression => ((SymbolExpression => Seq[SymbolExpression]) => Pattern) = { _ => throw new Exception("The patternBuilder field of the Pattern object must be initialized before Expressions can be converted into Patterns. Probably you forgot to mention the PatternBuilder object in the patterns subproject.") }
   var patternComparator: (Pattern, Pattern) => Option[Int] = { (_, _) => throw new Exception("The patternComparator field of the Pattern object must be initialized before tables of rules can be built.") }
 
-  import org.omath.util.Scala29Compatibility._
   import language.implicitConversions
   implicit def expression2Pattern(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): Pattern = patternBuilder(e)(attributes)
 

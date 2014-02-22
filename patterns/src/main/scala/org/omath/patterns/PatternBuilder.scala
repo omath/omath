@@ -7,8 +7,6 @@ object PatternBuilder extends PatternComparator {
   Pattern.patternComparator = tryCompare _
 
   def apply(e: Expression)(implicit attributes: SymbolExpression => Seq[SymbolExpression]): Pattern = {
-    import org.omath.util.Scala29Compatibility.???
-
     // TODO throw more exceptions?
     e match {
       case e: RawExpression => RawExpressionPattern(e)

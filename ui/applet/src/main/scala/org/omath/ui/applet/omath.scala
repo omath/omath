@@ -7,7 +7,6 @@ import java.security.AccessController
 import java.security.PrivilegedAction
 
 class omath extends Applet {
-  import org.omath.util.Scala29Compatibility.language
   import language.implicitConversions
 
   implicit def any2PrivilegedAction[T](x: => T) = new PrivilegedAction[T] {
@@ -23,7 +22,7 @@ class omath extends Applet {
         TungstenCore.evaluateSyntax(syntax).get.toContextualString(TungstenCore.newEvaluation)
       }
     } catch {
-      case e => {
+      case e: Exception => {
         e.toString + "\n" + e.getStackTrace.mkString("\n")
       }
     }

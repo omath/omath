@@ -2,7 +2,6 @@ package org.omath.patterns
 
 import org.omath._
 import org.omath.kernel.Evaluation
-import org.omath.util.Scala29Compatibility.+:
 
 private case class FullFormExpressionPattern(headPattern: Pattern, argumentPattern: Pattern) extends Pattern {
   override def asExpression = (headPattern.asExpression)((argumentPattern.asExpression match {

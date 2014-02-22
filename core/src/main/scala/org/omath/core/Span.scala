@@ -5,7 +5,6 @@ import org.omath.IntExpression
 import org.omath.bootstrap.conversions.Converter
 
 case class Span(start: Int, finish: Int, step: Int = 1) {
-  import org.omath.util.Scala29Compatibility.???
   def shift(k: Int): Span = {
     if (start < 0) require(start + k < 0)
     if (finish < 0) require(finish + k < 0)

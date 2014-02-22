@@ -51,7 +51,6 @@ trait PatternComparator extends PartialOrdering[Pattern] {
   //    }
   //  }
 
-  import org.omath.util.Scala29Compatibility.???
 
   def tryCompare(a: Pattern, b: Pattern): Option[Int] = FancyComparator.tryCompare((Nil, a), (Nil, b))
 

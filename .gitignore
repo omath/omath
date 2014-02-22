@@ -5,4 +5,5 @@ project/target
 
 .cache
 .classpath
+.project
 org.scala-ide.sdt.core.prefs

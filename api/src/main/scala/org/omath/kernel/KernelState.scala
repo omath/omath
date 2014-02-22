@@ -23,7 +23,6 @@ trait KernelState {
 // TODO move all the following to a .state subpackage?
 
 trait EmptyKernelState extends KernelState {
-  import org.omath.util.Scala29Compatibility.???
  
   override def attributes(symbol: SymbolExpression) = Seq.empty
   override def ownValues(symbol: SymbolExpression) = ReplacementRuleTable(Nil)

@@ -60,7 +60,6 @@ trait ArgumentEvaluation extends EvaluationStrategy { es: Kernel with AbstractKe
           val holdRest = attributes.contains(symbols.HoldRest) || attributes.contains(symbols.HoldAll)
           // TODO evaluate Evaluate (and maybe JavaClass, etc?) anyway // NB maybe that's meant to be achieved via UpValues??
           // TODO if nothing changes, return the original Expression
-          import org.omath.util.Scala29Compatibility.+:
           Some(FullFormExpression(head, arguments match {
             case Nil => arguments
             case h +: t => {

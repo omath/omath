@@ -5,7 +5,6 @@ import org.omath.SymbolExpression
 import org.omath.StringExpression
 import org.omath.SymbolExpression
 import org.omath.symbols
-import org.omath.util.Scala29Compatibility.???
 import org.omath.kernel.Evaluation
 import org.omath.bootstrap.JavaObjectExpression
 import org.omath.bootstrap.JavaMethodExpression

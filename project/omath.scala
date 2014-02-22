@@ -4,7 +4,7 @@ import Keys._
 object Omath extends Build {
     import BuildSettings._
     import Dependencies._
-    import com.typesafe.startscript.StartScriptPlugin
+    import com.typesafe.sbt.SbtStartScript
 
     lazy val all = Project(id = "omath",
                             base = file("aggregate"),
@@ -66,11 +66,11 @@ object Omath extends Build {
 object BuildSettings {
   import Resolvers._
   import Dependencies._
-  import com.typesafe.startscript.StartScriptPlugin
+  import com.typesafe.sbt.SbtStartScript
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1-SNAPSHOT"
-  val buildScalaVersion = "2.11.0-M8"
+  val buildScalaVersion = "2.10.3"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -83,11 +83,11 @@ object BuildSettings {
     libraryDependencies ++= Seq(junit, slf4j, scalatest),
     exportJars := true,
     unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" },
-    StartScriptPlugin.stage in Compile := Unit, 			// fake 'stage' task in the aggregate project, per https://github.com/typesafehub/xsbt-start-script-plugin
+    SbtStartScript.stage in Compile := Unit, 			// fake 'stage' task in the aggregate project, per https://github.com/typesafehub/xsbt-start-script-plugin
     mainClass in Compile := Some("org.omath.ui.rest.Web")
   )
 
-  val heroku = StartScriptPlugin.startScriptForClassesSettings
+  val heroku = SbtStartScript.startScriptForClassesSettings
 }
 
 object OneJar {
@@ -107,12 +107,13 @@ object Resolvers {
 
 object Dependencies {
 	object toolkit {
-		val base = "net.tqft" %% "toolkit-base" % "0.1.16"
-		val eval = "net.tqft" %% "toolkit-eval" % "0.1.16"
-		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.16"
+		val base = "net.tqft" %% "toolkit-base" % "0.1.17-SNAPSHOT"
+		val eval = "net.tqft" %% "toolkit-eval" % "0.1.17-SNAPSHOT"
+		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.17-SNAPSHOT"
 	}
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
+	val scalatest = "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
         val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
 	val jline = "jline" % "jline" % "1.0"
 	object finagle {

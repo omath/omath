@@ -7,7 +7,6 @@ object OptionsPatternPattern extends Pattern {
   override val asExpression = symbols.OptionsPattern()
   override def pure = true
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
-    import org.omath.util.Scala29Compatibility.???
     ???
   }
   override def names = Seq.empty

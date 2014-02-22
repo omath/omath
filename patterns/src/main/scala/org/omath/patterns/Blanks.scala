@@ -2,7 +2,6 @@ package org.omath.patterns
 
 import org.omath._
 import org.omath.kernel.Evaluation
-import org.omath.util.Scala29Compatibility.+:
 
 sealed trait PatternLength extends Ordered[PatternLength] {
   override def compare(other: PatternLength) = {

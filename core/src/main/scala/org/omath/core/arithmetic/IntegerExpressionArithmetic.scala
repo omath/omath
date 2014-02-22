@@ -1,9 +1,9 @@
 package org.omath.core.arithmetic
 
-import net.tqft.toolkit.algebra.EuclideanDomain
+import net.tqft.toolkit.algebra.EuclideanRing
 import org.omath.IntegerExpression
 
-object IntegerExpressionArithmetic extends EuclideanDomain[IntegerExpression] {
+object IntegerExpressionArithmetic extends EuclideanRing[IntegerExpression] {
   override def fromInt(x: Int): IntegerExpression = IntegerExpression(x)
   override val zero = IntegerExpression(0)
   override val one = IntegerExpression(1)
@@ -13,6 +13,6 @@ object IntegerExpressionArithmetic extends EuclideanDomain[IntegerExpression] {
   override def quotientRemainder(x: IntegerExpression, y: IntegerExpression) = (IntegerExpression(x.toApint.divide(y.toApint)), IntegerExpression(x.toApint.mod(y.toApint)))
   
   // TODO lift to toolkit-algebra
-  def addOption(x: Seq[IntegerExpression]) = if(x.size == 0) None else Some(add(x))
-  def multiplyOption(x: Seq[IntegerExpression]) = if(x.size == 0) None else Some(multiply(x))
+  def addOption(x: Seq[IntegerExpression]) = if(x.size == 0) None else Some(sum(x))
+  def multiplyOption(x: Seq[IntegerExpression]) = if(x.size == 0) None else Some(product(x))
 }

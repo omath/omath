@@ -82,7 +82,7 @@ trait ScalaEval extends Logging { scalaEval =>
   try {
     init
   } catch {
-    case e => e.printStackTrace
+    case e: Exception => e.printStackTrace
   }
 
   lazy val init = {
