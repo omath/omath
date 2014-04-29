@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 
 import org.omath.parser.Syntax2FullFormParser;
 
-import org.omath.util.*;
+import scala.util.Try;
 
 public final class ParserCommandLine {
 
@@ -23,9 +23,9 @@ public final class ParserCommandLine {
 		while (true) {
 			System.out.print("(parser) In[" + lineNumber + "] := ");
 			inputString = in.readLine();
-			Result<String> output = Syntax2FullFormParser.apply(inputString);
+			Try<String> output = Syntax2FullFormParser.apply(inputString);
 			if (output.isFailure()) {
-				System.err.println(output.getFailureMessage());
+				System.err.println(/* output */);
 			} else {
 				String outputString = output.get();
 				System.out.print("(parser) Out[" + lineNumber + "]:= ");
