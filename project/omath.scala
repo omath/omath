@@ -8,7 +8,7 @@ object Omath extends Build {
 
     lazy val all = Project(id = "omath",
                             base = file("aggregate"),
-			    settings = buildSettings) aggregate(api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl, contrib)
+			    settings = buildSettings) aggregate(expressions, api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl, contrib)
 
     lazy val expressions = Project(id = "omath-expressions",
                            base = file("expressions"),
@@ -85,7 +85,6 @@ object BuildSettings {
     publishTo    := Some(Resolver.sftp("toolkit.tqft.net Maven repository", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa"))),
     resolvers    := sonatypeResolvers ++ tqftResolvers,
     libraryDependencies ++= Seq(junit, slf4j, scalatest),
-    libraryDependencies += Dependencies.scala.xml,
     exportJars := true,
     unmanagedResourceDirectories in Compile <+= (baseDirectory) { bd => bd / "src" / "main" / "omath" },
     SbtStartScript.stage in Compile := Unit, 			// fake 'stage' task in the aggregate project, per https://github.com/typesafehub/xsbt-start-script-plugin
@@ -101,10 +100,10 @@ object OneJar {
 }
 
 object Resolvers {
-        val sonatypeResolvers = Seq(
-                "Sonatype Nexus Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-                "Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases"
-        )
+  val sonatypeResolvers = Seq(
+          "Sonatype Nexus Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+          "Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases"
+  )
 	val tqftResolvers = Seq(
 		"tqft.net Maven repository" at "http://tqft.net/releases"	
 	)
@@ -122,9 +121,9 @@ object Dependencies {
   }
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
-	val scalatest = "org.scalatest" %% "scalatest" % "2.1.3" % "test"
+	val scalatest = "org.scalatest" %% "scalatest" % "2.1.4" % "test"
   val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
-	val jline = "jline" % "jline" % "2.11"
+	val jline = "jline" % "jline" % "1.0"
 	object finagle {
 		val core = "com.twitter" %% "finagle-core" % "6.14.0"
 		val http = "com.twitter" %% "finagle-http" % "6.14.0"
