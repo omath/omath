@@ -70,7 +70,7 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1-SNAPSHOT"
-  val buildScalaVersion = "2.10.3"
+  val buildScalaVersion = "2.10.4"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -113,7 +113,7 @@ object Dependencies {
 	}
 	val junit = "junit" % "junit" % "4.8" % "test"
 	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
-	val scalatest = "org.scalatest" % "scalatest_2.10" % "2.0" % "test"
+	val scalatest = "org.scalatest" % "scalatest_2.10" % "2.1.3" % "test"
         val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
 	val jline = "jline" % "jline" % "1.0"
 	object finagle {
