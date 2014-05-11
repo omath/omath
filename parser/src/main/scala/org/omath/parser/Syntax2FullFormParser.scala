@@ -1,6 +1,6 @@
 package org.omath.parser
 
-import org.omath.util._
+import scala.util.{Try, Success, Failure}
 
 object Syntax2FullFormParser {
   @scala.annotation.tailrec
@@ -23,7 +23,7 @@ object Syntax2FullFormParser {
     }
   }
 
-  def apply(syntax: String): Result[String] = {
+  def apply(syntax: String): Try[String] = {
     try {
       stripComments(syntax).trim match {
         case "" => Success("")
@@ -31,7 +31,7 @@ object Syntax2FullFormParser {
       }
     } catch {
       case e: Exception => {
-        Failure(e.toString, Some(e))
+        Failure(e)
       }
     }
   }

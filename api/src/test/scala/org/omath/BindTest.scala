@@ -2,11 +2,10 @@ package org.omath
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FlatSpec
+import org.scalatest._
 
 @RunWith(classOf[JUnitRunner])
-class BindTest extends FlatSpec with ShouldMatchers {
+class BindTest extends FlatSpec with Matchers {
 
 	"bindOption" should "flatten Sequences" in {
 	  val a = SymbolExpression("a")

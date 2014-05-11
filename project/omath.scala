@@ -8,11 +8,15 @@ object Omath extends Build {
 
     lazy val all = Project(id = "omath",
                             base = file("aggregate"),
-			    settings = buildSettings) aggregate(api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl, contrib)
+			    settings = buildSettings) aggregate(expressions, api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl, contrib)
+
+    lazy val expressions = Project(id = "omath-expressions",
+                           base = file("expressions"),
+                            settings = buildSettings) dependsOn()
 
     lazy val api = Project(id = "omath-api",
                            base = file("api"),
-                            settings = buildSettings ++ Seq(libraryDependencies += apfloat)) dependsOn()
+                            settings = buildSettings ++ Seq(libraryDependencies += apfloat)) dependsOn(expressions)
 
     lazy val patterns = Project(id = "omath-patterns",
                            base = file("patterns"),
@@ -32,7 +36,7 @@ object Omath extends Build {
 
     lazy val parser = Project(id = "omath-parser",
                            base = file("parser"),
-                            settings = buildSettings) dependsOn(api)
+                            settings = buildSettings ++ Seq(libraryDependencies += scala.parser)) dependsOn(expressions)
 
     lazy val core = Project(id = "omath-core",
                            base = file("core"),
@@ -44,7 +48,7 @@ object Omath extends Build {
 
     lazy val rest = Project(id = "omath-ui-rest",
 				base = file("ui/rest"),
-				settings = buildSettings ++ heroku ++ Seq(libraryDependencies ++= Seq(finagle.core, finagle.http))) dependsOn(tungstenCore)
+				settings = buildSettings ++ heroku ++ Seq(libraryDependencies ++= Seq(/* finagle.core, finagle.http */))) dependsOn(tungstenCore)
 
     lazy val webstart = Project(id = "omath-ui-webstart",
 				base = file("ui/webstart"),
@@ -70,7 +74,7 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1-SNAPSHOT"
-  val buildScalaVersion = "2.10.4"
+  val buildScalaVersion = "2.11.0"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -96,10 +100,10 @@ object OneJar {
 }
 
 object Resolvers {
-        val sonatypeResolvers = Seq(
-                "Sonatype Nexus Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-                "Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases"
-        )
+  val sonatypeResolvers = Seq(
+          "Sonatype Nexus Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+          "Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases"
+  )
 	val tqftResolvers = Seq(
 		"tqft.net Maven repository" at "http://tqft.net/releases"	
 	)
@@ -107,18 +111,22 @@ object Resolvers {
 
 object Dependencies {
 	object toolkit {
-		val base = "net.tqft" %% "toolkit-base" % "0.1.17-SNAPSHOT"
-		val eval = "net.tqft" %% "toolkit-eval" % "0.1.17-SNAPSHOT"
-		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.17-SNAPSHOT"
+		val base = "net.tqft" %% "toolkit-base" % "0.1.18-SNAPSHOT"
+		val eval = "net.tqft" %% "toolkit-eval" % "0.1.18-SNAPSHOT"
+		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.18-SNAPSHOT"
 	}
-	val junit = "junit" % "junit" % "4.8" % "test"
-	val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
-	val scalatest = "org.scalatest" % "scalatest_2.10" % "2.1.3" % "test"
-        val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
-	val jline = "jline" % "jline" % "1.0"
+  object scala {
+    val parser = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1"
+    val xml = "org.scala-lang.modules" %% "scala-xml" % "1.0.1"
+  }
+  val junit = "junit" % "junit" % "4.8" % "test"
+  val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
+  val scalatest = "org.scalatest" %% "scalatest" % "2.1.4" % "test"
+  val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
+  val jline = "jline" % "jline" % "1.0"
 	object finagle {
-		val core = "com.twitter" %% "finagle-core" % "6.1.0"
-		val http = "com.twitter" %% "finagle-http" % "6.1.0"
+		val core = "com.twitter" %% "finagle-core" % "6.14.0"
+		val http = "com.twitter" %% "finagle-http" % "6.14.0"
 	}
 	object commons {
 		val codec = "commons-codec" % "commons-codec" % "1.6"

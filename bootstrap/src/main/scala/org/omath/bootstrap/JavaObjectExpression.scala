@@ -1,5 +1,7 @@
 package org.omath.bootstrap
 
+import scala.language.existentials 
+
 import org.omath._
 import java.lang.reflect.Method
 

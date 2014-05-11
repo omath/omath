@@ -14,7 +14,7 @@ trait PassiveBindable extends Bindable {
 
 object Bindable extends IntegerExpressionImplicits with RealExpressionImplicits with StringExpressionImplicits with SymbolExpressionImplicits
 
-trait Expression extends PassiveBindable {
+trait Expression extends expression.Expression with PassiveBindable {
   def head: Expression
   def headDepth: Int // how many heads do you need to take to get a SymbolExpression
   def symbolHead: SymbolExpression
@@ -46,18 +46,18 @@ trait Expression extends PassiveBindable {
   }
 }
 
-trait RawExpression extends Expression {
+trait RawExpression extends expression.RawExpression with Expression {
   override def head: SymbolExpression
   override def headDepth = 1
   override def symbolHead = head
 }
-trait LiteralExpression extends RawExpression {
+trait LiteralExpression extends expression.LiteralExpression with RawExpression {
   override def bindOption(binding: Map[SymbolExpression, Expression]) = None
   final override def toContextualString(symbolInContext: SymbolExpression => Boolean): String = toLiteralString
   def toLiteralString: String
 }
 
-trait SymbolExpression extends RawExpression {
+trait SymbolExpression extends expression.SymbolExpression with RawExpression {
   def context: Context
   def name: String
   override val head = symbols.Symbol
@@ -114,7 +114,7 @@ object SymbolExpression {
 
 }
 
-case class StringExpression(contents: String) extends LiteralExpression {
+case class StringExpression(contents: String) extends expression.StringExpression with LiteralExpression {
   override def equals(other: Any) = {
     other match {
       case other: StringExpression => contents == other.contents
@@ -133,7 +133,7 @@ trait StringExpressionImplicits {
 }
 object StringExpression extends StringExpressionImplicits
 
-trait IntegerExpression extends LiteralExpression {
+trait IntegerExpression extends expression.IntegerExpression with LiteralExpression {
   def toInt: Int
   def toLong: Long
   def toApint: Apint
@@ -174,7 +174,7 @@ object IntExpression {
   }
 }
 
-trait RealExpression extends LiteralExpression {
+trait RealExpression extends expression.RealExpression with LiteralExpression {
   def toFloat: Float
   def toDouble: Double
   def toApfloat: Apfloat
@@ -204,7 +204,7 @@ private case class ApfloatExpression(toApfloat: Apfloat) extends RealExpression 
   def toDouble = toApfloat.doubleValue
 }
 
-trait FullFormExpression extends Expression {
+trait FullFormExpression extends expression.FullFormExpression with Expression {
   def arguments: Seq[Expression]
   private def bindArguments(binding: Map[SymbolExpression, Expression], arguments: Seq[Expression]): Option[Seq[Expression]] = {
     val boundArguments = arguments.map(_.bindOption(binding))

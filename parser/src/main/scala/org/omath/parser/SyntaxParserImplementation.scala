@@ -1,20 +1,21 @@
 package org.omath.parser
 
-import org.omath.util._
-import org.omath._
+import org.omath.expression._
+import scala.util.Try
+import scala.util.Success
 
 trait SyntaxParserImplementation extends SyntaxParser {
-  override def parseSyntax(syntax: String)(implicit symbolizer: String => SymbolExpression): Result[Expression] = {
+  override def parseSyntax[E](syntax: String)(implicit builder: ExpressionBuilder[E]): Try[E] = {
     Syntax2FullFormParser(syntax).flatMap(FullFormParser(_))
   }
-  
-  override def parseSyntax(lines: Iterator[String])(implicit symbolizer: String => SymbolExpression): Iterator[Result[Expression]] = {
-    new Iterator[Result[Expression]] {
+
+  override def parseSyntax[E](lines: Iterator[String])(implicit builder: ExpressionBuilder[E]): Iterator[Try[E]] = {
+    new Iterator[Try[E]] {
       val cache = scala.collection.mutable.ListBuffer[String]()
       def parseCache = parseSyntax(cache.mkString(" "))
-      var nextOption: Option[Result[Expression]] = produceNextOption
+      var nextOption: Option[Try[E]] = produceNextOption
       @scala.annotation.tailrec
-      private def produceNextOption: Option[Result[Expression]] = {
+      private def produceNextOption: Option[Try[E]] = {
         def parseAndClearCache = {
           val result = parseCache
           cache.clear
