@@ -23,6 +23,8 @@
 
 package org.omath.parser;
 
+import java.math.BigInteger;
+
  class ASTMyInteger extends RawNode {
 
   ASTMyInteger(int id){
@@ -34,8 +36,16 @@ package org.omath.parser;
 	    setValue(i.toString());
   }
   
+  public void setValue(BigInteger i) {
+	  setValue(i.toString());
+  }
+  
   public Integer getIntegerValue(){
 	  return new Integer(super.getValue());
   }
 
+  public BigInteger getBigIntegerValue(){
+	  return new BigInteger(super.getValue());
+  }
+  
 }

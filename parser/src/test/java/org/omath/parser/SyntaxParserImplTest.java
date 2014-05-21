@@ -52,6 +52,18 @@ public class SyntaxParserImplTest extends TestCase {
 		String result = node.toString();
 		assertEquals("137", result);	
 	}
+	
+	public void testBigInteger() throws org.omath.parser.ParseException {
+		Node node = SyntaxParserImpl.parseSyntaxString("12345678901234567890");
+		String result = node.toString();
+		assertEquals("12345678901234567890", result);	
+	}
+
+	public void testNegativeBigInteger() throws org.omath.parser.ParseException {
+		Node node = SyntaxParserImpl.parseSyntaxString("-12345678901234567890");
+		String result = node.toString();
+		assertEquals("-12345678901234567890", result);	
+	}
 
 	public void testUnaryminus0() throws org.omath.parser.ParseException {
 		Node node = SyntaxParserImpl.parseSyntaxString("-1");
@@ -974,7 +986,7 @@ public class SyntaxParserImplTest extends TestCase {
 	public void testApply1() throws org.omath.parser.ParseException {
 		Node node = SyntaxParserImpl.parseSyntaxString("f @@@ g");
 		String result = node.toString();
-		assertEquals("Apply[f, g, {1}]", result);	
+		assertEquals("Apply[f, g, List[1]]", result);	
 	}
 
 	public void testRepeatedNull() throws org.omath.parser.ParseException {

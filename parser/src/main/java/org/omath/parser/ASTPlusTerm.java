@@ -24,7 +24,7 @@ public void jjtClose(){
 	Node n =children.get(children.size()-1); 
 	if(n instanceof ASTMyInteger ){
 		ASTMyInteger integer = (ASTMyInteger)n;
-		integer.setValue( integer.getIntegerValue()*(-1));
+		integer.setValue( integer.getBigIntegerValue().negate());
 		children.set(children.size()-1,integer);
 		children.remove(0);
 	}
