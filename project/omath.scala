@@ -6,9 +6,22 @@ object Omath extends Build {
     import Dependencies._
     import com.typesafe.sbt.SbtStartScript
 
-    lazy val all = Project(id = "omath",
-                            base = file("aggregate"),
-			    settings = buildSettings) aggregate(expressions, api, tungsten, bootstrap, tungstenBootstrap, core, tungstenCore, parser, rest, webstart, applet, repl, contrib)
+    lazy val root = Project(id = "omath",
+                           base = file("aggregate"),
+			                     settings = buildSettings) aggregate (
+                            expressions, 
+                            parser, 
+                            api, 
+                            tungsten, 
+                            bootstrap, 
+                            tungstenBootstrap, 
+                            core, 
+                            tungstenCore, 
+                            rest, 
+                            webstart, 
+                            applet, 
+                            repl, 
+                            contrib)
 
     lazy val expressions = Project(id = "omath-expressions",
                            base = file("expressions"),
@@ -74,7 +87,7 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1-SNAPSHOT"
-  val buildScalaVersion = "2.11.0"
+  val buildScalaVersion = "2.11.1"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -82,7 +95,7 @@ object BuildSettings {
     scalaVersion := buildScalaVersion,
     scalacOptions += "-feature",
     scalacOptions += "-unchecked",
-    publishTo    := Some(Resolver.sftp("toolkit.tqft.net Maven repository", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa"))),
+    publishTo    := Some(Resolver.sftp("tqft.net Maven repository (publishing)", "tqft.net", "tqft.net/releases") as ("scottmorrison", new java.io.File("/Users/scott/.ssh/id_rsa"))),
     resolvers    := sonatypeResolvers ++ tqftResolvers,
     libraryDependencies ++= Seq(junit, slf4j, scalatest),
     exportJars := true,
