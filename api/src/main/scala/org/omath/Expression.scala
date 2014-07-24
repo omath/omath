@@ -96,13 +96,13 @@ protected trait SymbolExpressionImplicits {
 }
 object SymbolExpression {
   def apply(s: Symbol): SymbolExpression = SymbolExpression(s.toString.stripPrefix("'"))
-  def apply(name: String, context: Context = Context.global): SymbolExpression = SymbolExpression_(name, context)
+  def apply(name: String, context: Context = Context.global): SymbolExpression = SymbolExpressionImplementation(name, context)
   def apply(name: String, context: String): SymbolExpression = apply(name, Context(context.split('`')))
   def apply(name: String, context: Seq[String]): SymbolExpression = apply(name, Context(context.flatMap(_.split('`'))))
 
   class SymbolFormatException(message: String) extends Exception(message)
 
-  case class SymbolExpression_(name: String, context: Context) extends SymbolExpression {
+  private case class SymbolExpressionImplementation(name: String, context: Context) extends SymbolExpression {
     try {
       require(name.nonEmpty)
       require(name.head.isLetter || name.head == '$')
