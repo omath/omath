@@ -1,6 +1,6 @@
 package org.omath.ui.repl
 
-import org.omath.util._
+//import org.omath.util._
 import org.omath.SymbolExpression
 import org.omath.core.TungstenCore
 import org.omath.parser.SyntaxParser
@@ -10,6 +10,8 @@ import org.omath.core.io.$Path
 import org.omath.core.io.Get
 import org.omath.core.kernel.Exit
 import jline.ConsoleReader
+import scala.util.Failure
+import scala.util.Success
 
 object in {
   
@@ -42,9 +44,7 @@ object omath extends App {
 
   while (running) {
     TungstenCore.evaluateSyntax(in.readLine("In[" + lineNumber + "] := ")) match {
-      case Failure(error, None) => System.err.println(error)
-      case Failure(error, Some(exception)) => {
-        if (error != exception.getMessage) System.err.println(error)
+      case Failure(exception) => {
         System.err.println(exception)
         throw exception
       }
