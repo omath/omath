@@ -86,10 +86,11 @@ object BuildSettings {
   import com.typesafe.sbt.SbtStartScript
 
   val buildOrganization = "org.omath"
-  val buildVersion      = "0.0.1-SNAPSHOT"
-  val buildScalaVersion = "2.11.2"
+  val buildVersion      = "0.0.1"
+  val buildScalaVersion = "2.11.6"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
+  	isSnapshot := true,
     organization := buildOrganization,
     version      := buildVersion,
     scalaVersion := buildScalaVersion,
@@ -118,7 +119,7 @@ object Resolvers {
           "Sonatype Nexus Releases" at "https://oss.sonatype.org/content/repositories/releases"
   )
 	val tqftResolvers = Seq(
-		"tqft.net Maven repository" at "http://tqft.net/releases"	
+		"tqft.net Maven repository" at "https://tqft.net/releases"	
 	)
 }
 

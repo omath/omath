@@ -2,12 +2,12 @@ package org.omath.kernel
 
 import org.omath._
 import org.omath.patterns.ReplacementRuleTable
-import org.omath.util._
 import scala.io.Source
 import org.omath.parser.SyntaxParser
 import org.omath.expression.ExpressionBuilder
 import org.apfloat.Apint
 import org.apfloat.Apfloat
+import scala.util.{Try, Success, Failure}
 
 trait Kernel { kernel: SyntaxParser =>
   def kernelState: KernelState
@@ -24,10 +24,10 @@ trait Kernel { kernel: SyntaxParser =>
     override def createFullFormExpression(head: Expression, arguments: Seq[Expression]) = head(arguments:_*)
   }
 
-  def evaluateSyntax(syntax: String): Result[Expression] = {
+  def evaluateSyntax(syntax: String): Try[Expression] = {
     evaluateSyntax(Iterator(syntax.trim))
   }
-  def evaluateSyntax(code: Iterator[String]): Result[Expression] = {
+  def evaluateSyntax(code: Iterator[String]): Try[Expression] = {
     if (code.hasNext) {
       parseSyntax(code.flatMap(_.split('\n')))(builder).map(_.map(evaluate)).reduce({ (x, y) =>
         x match {
