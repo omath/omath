@@ -3,10 +3,11 @@ package org.omath.patterns
 import org.omath.Expression
 import org.omath.kernel.Evaluation
 
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.FlatSpec
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+import org.scalatest._
 
-trait PatternTest extends FlatSpec with ShouldMatchers {
+trait PatternTest extends FlatSpec with Matchers {
   // mention PatternBuilder, so it registers itself with the Pattern companion object
   PatternBuilder
 

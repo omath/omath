@@ -31,10 +31,10 @@ trait Kernel { kernel: SyntaxParser =>
     if (code.hasNext) {
       parseSyntax(code.flatMap(_.split('\n')))(builder).map(_.map(evaluate)).reduce({ (x, y) =>
         x match {
-          case x: Failure[_] => {
+          case x @ scala.util.Failure(_) => {
             System.err.println(x)
           }
-          case _: Success[_] =>
+          case scala.util.Success(_) =>
         }
         y
       })

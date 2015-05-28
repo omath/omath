@@ -1,5 +1,7 @@
 package org.omath.patterns
 
+import scala.language.implicitConversions 
+
 import org.omath.SymbolExpression
 
 trait PartialOrdering[T] extends scala.math.PartialOrdering[T] {

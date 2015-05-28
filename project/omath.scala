@@ -87,7 +87,7 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1-SNAPSHOT"
-  val buildScalaVersion = "2.11.1"
+  val buildScalaVersion = "2.11.2"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
@@ -123,7 +123,7 @@ object Resolvers {
 }
 
 object Dependencies {
-	object toolkit {
+  object toolkit {
 		val base = "net.tqft" %% "toolkit-base" % "0.1.18-SNAPSHOT"
 		val eval = "net.tqft" %% "toolkit-eval" % "0.1.18-SNAPSHOT"
 		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.18-SNAPSHOT"
