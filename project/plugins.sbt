@@ -1,4 +1,4 @@
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.4.0")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "3.0.0")
 
 resolvers += Resolver.url("scalasbt",
   new URL("http://scalasbt.artifactoryonline.com/scalasbt/sbt-plugin-releases"))(Resolver.ivyStylePatterns)
@@ -7,12 +7,12 @@ resolvers += Resolver.url("scalasbt",
 
 // addSbtPlugin("com.jsuereth" % "xsbt-gpg-plugin" % "0.5")
 
-addSbtPlugin("de.djini" % "xsbt-classpath" % "0.8.0")
+// addSbtPlugin("de.djini" % "xsbt-classpath" % "0.8.0")
 
 // addSbtPlugin("de.djini" % "xsbt-webstart" % "0.15.0")
 
-addSbtPlugin("com.github.retronym" % "sbt-onejar" % "0.8")
+addSbtPlugin("org.scala-sbt.plugins" % "sbt-onejar" % "0.8")
 
-resolvers += Classpaths.typesafeResolver
+resolvers += Classpaths.typesafeReleases
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-start-script" % "0.10.0")

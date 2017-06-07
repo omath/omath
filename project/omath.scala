@@ -87,7 +87,7 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1"
-  val buildScalaVersion = "2.11.6"
+  val buildScalaVersion = "2.12.2"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
   	isSnapshot := true,
@@ -130,14 +130,14 @@ object Dependencies {
 		val algebra = "net.tqft" %% "toolkit-algebra" % "0.1.18-SNAPSHOT"
 	}
   object scala {
-    val parser = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1"
+    val parser = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6"
     val xml = "org.scala-lang.modules" %% "scala-xml" % "1.0.1"
   }
   val junit = "junit" % "junit" % "4.8" % "test"
   val slf4j = "org.slf4j" % "slf4j-log4j12" % "1.6.1"
-  val scalatest = "org.scalatest" %% "scalatest" % "2.1.4" % "test"
-  val apfloat = "org.apfloat" % "apfloat" % "1.6.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
-  val jline = "jline" % "jline" % "1.0"
+  val scalatest = "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  val apfloat = "org.apfloat" % "apfloat" % "1.8.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
+  val jline = "jline" % "jline" % "2.14.3"
 	object finagle {
 		val core = "com.twitter" %% "finagle-core" % "6.14.0"
 		val http = "com.twitter" %% "finagle-http" % "6.14.0"
