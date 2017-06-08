@@ -2,7 +2,7 @@ package org.omath.core
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.FlatSpec
 import org.omath.util._
 import org.omath._
@@ -14,7 +14,7 @@ import org.omath.core.javaObjects.Serialize
 import org.omath.kernel.KernelState
 
 @RunWith(classOf[JUnitRunner])
-class CoreUnitTests extends FlatSpec with ShouldMatchers with EvaluationMatchers {
+class CoreUnitTests extends FlatSpec with Matchers with EvaluationMatchers {
 
   // No actual tests are contained in this file. You can create tests directly in Core.m via commands like
   //    CreateUnitTest[Plus, "should be commutative", 1+2 === 2+1]

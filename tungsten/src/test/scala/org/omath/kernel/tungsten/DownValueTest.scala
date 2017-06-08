@@ -2,7 +2,7 @@ package org.omath.kernel.tungsten
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.FlatSpec
 
 import org.omath.IntegerExpression
@@ -11,7 +11,7 @@ import org.omath.SymbolExpression
 
 
 @RunWith(classOf[JUnitRunner])
-class DownValueTest extends FlatSpec with ShouldMatchers {
+class DownValueTest extends FlatSpec with Matchers {
 
 
   "down values" should "correctly apply to a literal" in {

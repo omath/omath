@@ -139,8 +139,8 @@ object Dependencies {
   val apfloat = "org.apfloat" % "apfloat" % "1.8.3"               // arbitrary precision integers and floats; much better than BigInt and BigDecimal
   val jline = "jline" % "jline" % "2.14.3"
 	object finagle {
-		val core = "com.twitter" %% "finagle-core" % "6.14.0"
-		val http = "com.twitter" %% "finagle-http" % "6.14.0"
+		val core = "com.twitter" %% "finagle-core" % "6.41.0"
+		val http = "com.twitter" %% "finagle-http" % "6.41.0"
 	}
 	object commons {
 		val codec = "commons-codec" % "commons-codec" % "1.6"

@@ -2,14 +2,14 @@ package org.omath.core
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.FlatSpec
 import org.omath.util._
 import org.omath.StringExpression
 import org.omath.SymbolExpression
 
 @RunWith(classOf[JUnitRunner])
-class SetTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
+class SetTest extends FlatSpec with Matchers with EvaluationMatchers {
 
   "SetDelayed" should "hold its right hand side" in {
     """f[x_]:={x,x}

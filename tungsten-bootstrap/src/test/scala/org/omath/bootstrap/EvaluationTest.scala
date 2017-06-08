@@ -8,11 +8,11 @@ import org.omath.patterns.ReplacementRuleTable
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.FlatSpec
 
 @RunWith(classOf[JUnitRunner])
-class EvaluationTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
+class EvaluationTest extends FlatSpec with Matchers with EvaluationMatchers {
 
    "evaluateOneStep" should "not apply a DownValue immediately after an OwnValue" in {
     """f := g[k]

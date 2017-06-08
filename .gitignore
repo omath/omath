@@ -3,7 +3,8 @@
 target
 project/target
 
-.cache
+.cache-main
+.cache-tests
 .classpath
 .project
 org.scala-ide.sdt.core.prefs

@@ -9,7 +9,7 @@ import java.io.InputStreamReader
 import org.omath.core.io.$Path
 import org.omath.core.io.Get
 import org.omath.core.kernel.Exit
-import jline.ConsoleReader
+import jline.console.ConsoleReader
 import scala.util.Failure
 import scala.util.Success
 

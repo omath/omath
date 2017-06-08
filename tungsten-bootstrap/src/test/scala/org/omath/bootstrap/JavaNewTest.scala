@@ -8,11 +8,11 @@ import org.omath.patterns.ReplacementRuleTable
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.FlatSpec
 
 @RunWith(classOf[JUnitRunner])
-class JavaNewTest extends FlatSpec with ShouldMatchers {
+class JavaNewTest extends FlatSpec with Matchers {
 
   "JavaNew" should "successfully instantiate a java.util.Date object" in {
     TungstenBootstrap.evaluateSyntax("""

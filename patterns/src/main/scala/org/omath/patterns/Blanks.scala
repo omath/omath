@@ -43,7 +43,7 @@ trait GenericBlank extends Pattern {
   def length: PatternLength
 }
 
-private case class Blank(override val head: Option[SymbolExpression]) extends GenericBlank {
+protected case class Blank(override val head: Option[SymbolExpression]) extends GenericBlank {
   override val asExpression = symbols.Blank(head.toSeq: _*)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     (a.remainingExpressions match {
@@ -59,7 +59,7 @@ private case class Blank(override val head: Option[SymbolExpression]) extends Ge
   override val length = One
 }
 
-private case class BlankSequence(override val head: Option[SymbolExpression]) extends GenericBlank {
+protected case class BlankSequence(override val head: Option[SymbolExpression]) extends GenericBlank {
   override val asExpression = symbols.BlankSequence(head.toSeq: _*)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     if (a.remainingExpressions.isEmpty || (head.nonEmpty && a.remainingExpressions.head.head != head.get)) {
@@ -75,7 +75,7 @@ private case class BlankSequence(override val head: Option[SymbolExpression]) ex
   override val length = OneOrMore
 }
 
-private case class BlankNullSequence(override val head: Option[SymbolExpression]) extends GenericBlank {
+protected case class BlankNullSequence(override val head: Option[SymbolExpression]) extends GenericBlank {
   override val asExpression = symbols.BlankNullSequence(head.toSeq: _*)
   override def extend(a: PartialBinding)(implicit evaluation: Evaluation) = {
     val range = head match {

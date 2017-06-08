@@ -8,11 +8,11 @@ import org.omath.patterns.ReplacementRuleTable
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 import org.scalatest.FlatSpec
 
 @RunWith(classOf[JUnitRunner])
-class SetDelayedTest extends FlatSpec with ShouldMatchers with EvaluationMatchers {
+class SetDelayedTest extends FlatSpec with Matchers with EvaluationMatchers {
 
   import org.omath.symbols.{ SetDelayed, Null, List, Pattern, Blank }
 

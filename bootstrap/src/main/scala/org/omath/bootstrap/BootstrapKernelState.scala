@@ -19,8 +19,6 @@ class BootstrapKernelState extends MutableMapKernelState {
     val object_JavaObject = Pattern('object, Blank(JavaObject))
     val `arguments:_[___]` = Pattern('arguments, Blank()(BlankNullSequence()))
     val `object:Null` = Pattern('object, Null)
-
-    implicit val attributesFunction = attributes _
     
     addDownValues(JavaClass, JavaClass(class_String) :> ClassForNameBindable)
     addDownValues(JavaClass, JavaClass(object_JavaObject) :> GetClassBindable)

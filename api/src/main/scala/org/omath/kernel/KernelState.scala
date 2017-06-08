@@ -13,6 +13,8 @@ trait KernelState {
   def upValues(symbol: SymbolExpression): ReplacementRuleTable
   def symbols: Map[Context, Seq[SymbolExpression]]
 
+  implicit val attributeFunction = attributes _
+  
   def addAttributes(symbol: SymbolExpression, attributes: SymbolExpression*): KernelState
   def addOwnValues(symbol: SymbolExpression, rules: ReplacementRule*): KernelState
   def addDownValues(symbol: SymbolExpression, rules: ReplacementRule*): KernelState
