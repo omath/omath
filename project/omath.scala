@@ -87,7 +87,8 @@ object BuildSettings {
 
   val buildOrganization = "org.omath"
   val buildVersion      = "0.0.1"
-  val buildScalaVersion = "2.12.2"
+  // val buildScalaVersion = "2.12.2"
+  val buildScalaVersion = "2.11.7"
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
   	isSnapshot := true,
